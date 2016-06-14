@@ -29,3 +29,6 @@ FORMS    += dfrssfilter.ui \
     feeds_settings.ui
 
 CONFIG += c++11
+
+RESOURCES += \
+    res.qrc

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>trell.ico</file>
+    </qresource>
+</RCC>
