@@ -233,7 +233,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon();
-    trayIcon->setIcon(QIcon("trell.gsd"));
+    trayIcon->setIcon(QIcon(":/trell.ico"));
     trayIcon->setContextMenu(trayIconMenu); // добавляем контекстное меню
     trayIcon->show();
     // соединяем сигнал активации значка в систсемном трее со слотом обработки этого события
