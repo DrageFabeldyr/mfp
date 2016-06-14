@@ -16,7 +16,7 @@ QStringList old_feeds;
 bool win_norm, win_max;
 QString feed_name;
 int request_period = 1*60*1000, show_period = 30*1000;
-
+int iuuu =0;
 
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
@@ -280,13 +280,16 @@ void DFRSSFilter::get(const QUrl &url)
 void DFRSSFilter::fetch()
 {
     treeWidget->clear();
-    for (int i = 0; i < feeds.size(); i++)
-        if (feeds.at(i).is_on)
+    iuuu = 0;
+    for (; iuuu < feeds.size(); iuuu++)
+        if (feeds.at(iuuu).is_on)
         {
             xml.clear();
-            QUrl url(feeds.at(i).link);
+            QUrl url(feeds.at(iuuu).link);
             get(url);
             statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(num_of_filters));
+            iuuu++;
+            break;
         }
     /*
     if (!lineEdit->text().isEmpty())
@@ -350,6 +353,21 @@ void DFRSSFilter::readyRead()
 void DFRSSFilter::finished(QNetworkReply *reply)
 {
     Q_UNUSED(reply);
+    qWarning() << "Feed finished: "  << QString(reply->url().toString());
+    currentReply->disconnect(this);
+    currentReply->deleteLater();
+    currentReply = nullptr;
+
+    for (; iuuu < feeds.size(); iuuu++)
+        if (feeds.at(iuuu).is_on)
+        {
+            xml.clear();
+            QUrl url(feeds.at(iuuu).link);
+            get(url);
+            statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(num_of_filters));
+            iuuu++;
+            break;
+        }
     lineEdit->setReadOnly(false);
     fetchButton->setEnabled(true);
 }
