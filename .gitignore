@@ -1,2 +1,4 @@
 /debug/
 /release/
+*.DF-RSS-filter.Release
+*.DF-RSS-filter.Debug

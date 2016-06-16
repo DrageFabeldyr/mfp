@@ -15,8 +15,7 @@ struct feeds_struct
 };
 
 extern QList<feeds_struct> feeds;
-
-//extern QStringList feeds;
+void read_feeds();
 
 namespace Ui {
 class feeds_settings;
@@ -34,13 +33,14 @@ public slots:
     void add_feed();
     void del_feed();
     void set_feeds_header_label();
+    void check_all();
+    void uncheck_all();
 
 private:
     Ui::feeds_settings *ui;
     QLineEdit *lineEdit;
-    QLabel *hint;
+    QLabel *feed_hint, *choice_hint;
     QListWidget *feeds_list;
-    QStatusBar *statusbar;
 
 private slots:
     void closeEvent(QCloseEvent *);

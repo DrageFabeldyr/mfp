@@ -11,12 +11,13 @@
 #include "feeds_settings.h"
 
 bool need_a_name; // для проверки необходимости обновления имени окна
-int num_of_feeds;
-QStringList old_feeds;
-bool win_norm, win_max;
+bool win_max; // переменная для хранения размеров окна
 QString feed_name;
-int request_period = 1*60*1000, show_period = 30*1000;
-int iuuu =0;
+int request_period = 1*60*1000; // запрос новостей раз в 1 минут
+int show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
+int counter = 0;
+settings *sett;
+bool have_news; // переменная для вывода уведомления о наличии новостей
 
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
@@ -25,40 +26,29 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
     {
         if (this->windowState() & Qt::WindowMinimized) // "==" почему-то не работает, а "&" работает
         {
-            if (static_cast<QWindowStateChangeEvent*>(event)->oldState() == Qt::WindowNoState)
-            {
-                win_norm = true;
-                win_max = false;
-            }
             if (static_cast<QWindowStateChangeEvent*>(event)->oldState() == Qt::WindowMaximized)
-            {
-                win_norm = false;
                 win_max = true;
-            }
-            if (nocover->isChecked())
+            else
+                win_max = false;
+
+            if (sett->min_to_tray->isChecked())
                 this->hide();
         }
     }
     if (event->type() == QEvent::Close && obj != NULL)
     {
-        if (noclose->isChecked())
+        if (sett->close_to_tray->isChecked())
         {
             if (this->isMaximized())
-            {
-                win_norm = false;
                 win_max = true;
-            }
             else
-            {
-                win_norm = true;
                 win_max = false;
-            }
             this->hide();
             event->ignore();
             return true; // чтобы событие сбросилось из очереди, иначе его обработает стандартный eventClose
         }
         else
-            write_settings_and_quit();
+            quit();
     }
     return false;
 }
@@ -71,68 +61,37 @@ void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
     {
         if (!this->isVisible() || this->isMinimized())// || !this->isActiveWindow())
         {
-            if (win_norm)
-                this->showNormal();
             if (win_max)
                 this->showMaximized();
+            else
+                this->showNormal();
 
             this->activateWindow(); // делает окно активным
         }
         else
         {
             if (this->isMaximized())
-            {
-                win_norm = false;
                 win_max = true;
-            }
             else
-            {
-                win_norm = true;
                 win_max = false;
-            }
             this->hide(); //иначе скрываем
         }
     }
 }
 
-void DFRSSFilter::set_feed(QAction *action_name)
-{
-    lineEdit->setText(action_name->text().trimmed());
-    // trimmed обрезает \n в конце строки, иначе он превращается в пробел в строке поиска и в лишнюю строку в файле
-}
 
-void DFRSSFilter::refreshlastfeeds(QMenu *menu)
-{
-    QAction *feedsaction;
-    menu->clear();
-    QString actionname;
-
-    for (int  i = 0; i < num_of_feeds; i++)
-    {
-        feedsaction = new QAction(old_feeds.at(i), this);
-        menu->addAction(feedsaction);
-        connect(feedsaction, &QAction::triggered, [this, feedsaction]() { set_feed(feedsaction); });
-        // тут используется "лямбда" - что это такое я не очень понимаю
-    }
-}
-
-/*
-    Конструирует виджет RSSListing с простым интерфейсом пользователя и устанавливает
-    ридер XML для использования пользовательского класса обработки.
-
-    Интерфейс пользователя состоит из строки ввода, кнопки и
-    виджета просмотра списка. Строка ввода используется для ввода URL источника новостей;
-    источников; кнопка начинает процесс чтения новостей.
-*/
+/*  Конструирует виджет RSSListing с простым интерфейсом пользователя и устанавливает
+ *  ридер XML для использования пользовательского класса обработки.
+ *  Интерфейс пользователя состоит из строки ввода, кнопки и
+ *  виджета просмотра списка. Строка ввода используется для ввода URL источника новостей;
+ *  источников; кнопка начинает процесс чтения новостей. */
 DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
     read_filters(); // считываем фильтры
     read_feeds(); // считываем ленты
-    win_norm = true; // окно обычного размера
+    sett = new settings;
+    sett->read_settings();
     win_max = false; // окно не развёрнуто
-
-    lineEdit = new QLineEdit(this);
-    lineEdit->setPlaceholderText("Введите адрес ленты или используйте недавние");
 
     fetchButton = new QPushButton(tr("Поиск"), this);
 
@@ -144,64 +103,26 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // здесь решается вопрос растяжения - нужно его решить
     treeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
     connect(&manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(fetch()));
-    connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch()));
+    connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
 
     // создание основного меню программы
     mainmenubar = new QMenuBar(this);
-    mainmenu = new QMenu(this);
-    mainmenu->setTitle("Недавние ленты");
-    refreshlastfeeds(mainmenu);
-    old_settings_menu = new QMenu(this);
-    old_settings_menu->setTitle("Старые настройки");
-    nocover = new QAction(tr("&Сворачивать в трей"), this);
-    nocover->setCheckable(true);
-    old_settings_menu->addAction(nocover);
-    noclose = new QAction(tr("&Закрывать в трей"), this);
-    noclose->setCheckable(true);
-    old_settings_menu->addAction(noclose);
-
-    int set = read_settings();
-    switch (set)
-    {
-    case 0:
-        nocover->setChecked(true);
-        noclose->setChecked(true);
-        break;
-    case 1:
-        nocover->setChecked(false);
-        noclose->setChecked(true);
-        break;
-    case 2:
-        nocover->setChecked(true);
-        noclose->setChecked(false);
-        break;
-    case 3:
-        nocover->setChecked(false);
-        noclose->setChecked(false);
-        break;
-    default:
-        nocover->setChecked(true);
-        noclose->setChecked(true);
-        break;
-    }
 
     settings_menu = new QMenu(this);
     settings_menu->setTitle("Меню");
     open_settings = new QAction(tr("Настройки"), this);
     // нужно обязательно создавать action, потому что menu при нажатии не отрабатывает, а раскрывается
     settings_menu->addAction(open_settings);
-    connect(open_settings, SIGNAL(triggered()), this, SLOT(set_settings()));
+    connect(open_settings, SIGNAL(triggered()), this, SLOT(edit_settings()));
     open_feeds = new QAction(tr("RSS-ленты"), this);
     settings_menu->addAction(open_feeds);
     connect(open_feeds, SIGNAL(triggered()), this, SLOT(edit_feeds()));
     open_filters = new QAction(tr("Фильтры"), this);
     settings_menu->addAction(open_filters);
-    connect(open_filters, SIGNAL(triggered()), this, SLOT(addfilter()));
+    connect(open_filters, SIGNAL(triggered()), this, SLOT(edit_filters()));
 
-    mainmenubar->addMenu(mainmenu);
-    mainmenubar->addMenu(old_settings_menu);
     mainmenubar->addMenu(settings_menu);
     mainmenubar->show();
 
@@ -211,7 +132,6 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     statusbar = new QStatusBar(this);
     statusbar->showMessage("Добро пожаловать =))");
 
-    hboxLayout->addWidget(lineEdit);
     hboxLayout->addWidget(fetchButton);
 
     layout->addWidget(mainmenubar);
@@ -226,7 +146,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     // создаем пункты контекстного меню в трее
     quitAction = new QAction(tr("&Выход"), this);
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(write_settings_and_quit()));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quit()));
 
     // создаем само контекстное меню, добавляем в него созданные только что пункты
     trayIconMenu = new QMenu(this);
@@ -236,7 +156,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     trayIcon->setIcon(QIcon(":/trell.ico"));
     trayIcon->setContextMenu(trayIconMenu); // добавляем контекстное меню
     trayIcon->show();
-    // соединяем сигнал активации значка в систсемном трее со слотом обработки этого события
+    // соединяем сигнал активации значка в системном трее со слотом обработки этого события
     connect(trayIcon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(show_hide(QSystemTrayIcon::ActivationReason)));
 
     // устанавливаем наш обработчик событий
@@ -279,39 +199,23 @@ void DFRSSFilter::get(const QUrl &url)
 */
 void DFRSSFilter::fetch()
 {
+    fetchButton->setEnabled(false);
     treeWidget->clear();
-    iuuu = 0;
-    for (; iuuu < feeds.size(); iuuu++)
-        if (feeds.at(iuuu).is_on)
+    /* пробег по списку лент происходит быстрее, чем чтение лент
+     * поэтому после первого совпадения выходим из цикла, а продолжим по событию finished */
+    counter = 0;
+    have_news = false;
+    for (; counter < feeds.size(); counter++)
+        if (feeds.at(counter).is_on)
         {
+            need_a_name = true;
             xml.clear();
-            QUrl url(feeds.at(iuuu).link);
+            QUrl url(feeds.at(counter).link);
             get(url);
-            statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(num_of_filters));
-            iuuu++;
+            statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(filters.size()));
+            counter++;
             break;
         }
-    /*
-    if (!lineEdit->text().isEmpty())
-    {
-        need_a_name = true; // установка флага на переименование окна
-
-        lineEdit->setReadOnly(true);
-        fetchButton->setEnabled(false);
-        treeWidget->clear();
-
-        xml.clear();
-
-        QUrl url(lineEdit->text());
-
-        get(url);
-
-        add_feed(lineEdit->text()); // запись ленты (при необходимости)
-        refreshlastfeeds(mainmenu); // перестроение списка последних лент
-
-        statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(num_of_filters));
-    }
-    */
 }
 
 void DFRSSFilter::metaDataChanged()
@@ -323,12 +227,8 @@ void DFRSSFilter::metaDataChanged()
     }
 }
 
-/*
-    Считывает данные, полученные из источника RDF.
-
-    Мы считываем все доступные данные и передаём их потоковому XML
-    ридеру. Затем мы вызываем функцию парсинга XML.
-*/
+/*  Считывает данные, полученные из источника RDF.
+ *  Считываем все доступные данные и передаём их потоковому XML ридеру, затем вызываем функцию парсинга XML. */
 void DFRSSFilter::readyRead()
 {
     int statusCode = currentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -339,17 +239,10 @@ void DFRSSFilter::readyRead()
     }
 }
 
-/*
-    Заканчивает обработку запроса HTTP.
-
-    Поведение по умолчанию сохраняет редактор текста в режиме только для чтения.
-
-    Если происходит ошибка, интерфейс пользователя становится доступен
-    пользователю для дальнейшего ввода, позволяя новой скачке начаться.
-
-    Если запрос получения HTTP завершается, мы делаем
-    интерфейс пользователя доступным пользователю для дальнейшего ввода.
-*/
+/*  Заканчивает обработку запроса HTTP.
+ *  Поведение по умолчанию сохраняет редактор текста в режиме только для чтения.
+ *  Если происходит ошибка, интерфейс пользователя становится доступен для дальнейшего ввода, позволяя новой скачке начаться.
+ *  Если запрос получения HTTP завершается, мы делаем интерфейс пользователя доступным для дальнейшего ввода. */
 void DFRSSFilter::finished(QNetworkReply *reply)
 {
     Q_UNUSED(reply);
@@ -358,24 +251,36 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     currentReply->deleteLater();
     currentReply = nullptr;
 
-    for (; iuuu < feeds.size(); iuuu++)
-        if (feeds.at(iuuu).is_on)
+    // продолжаем проход по выбранным лентам
+    for (; counter < feeds.size(); counter++)
+        if (feeds.at(counter).is_on)
         {
+            need_a_name = true;
             xml.clear();
-            QUrl url(feeds.at(iuuu).link);
+            QUrl url(feeds.at(counter).link);
             get(url);
-            statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(num_of_filters));
-            iuuu++;
+            statusbar->showMessage(QString("Количество применённых фильтров: %1").arg(filters.size()));
+            counter++;
             break;
         }
-    lineEdit->setReadOnly(false);
-    fetchButton->setEnabled(true);
+    if (counter >= feeds.size()) // если пробежали всё
+    {
+        if ((!this->isVisible() || this->isMinimized()) && have_news)
+        {
+            // если окно свёрнуто или убрано - выведем уведомление
+            trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, show_period);
+        }
+        fetchButton->setEnabled(true);
+    }
 }
 
 // Парсит данные XML и создаёт соответственно элементы treeWidget.
 void DFRSSFilter::parseXml()
 {
     QString str;
+
+    QTreeWidgetItem *feed_item = new QTreeWidgetItem;
+//    treeWidget->addTopLevelItem(feed_item);
 
     while (!xml.atEnd())
     {
@@ -390,9 +295,9 @@ void DFRSSFilter::parseXml()
         {
             if (xml.name() == "item")
             {
-                if (num_of_filters > 0)
+                if (filters.size() > 0)
                 {
-                    for (int i = 0; i < num_of_filters; i++)
+                    for (int i = 0; i < filters.size(); i++)
                     {
                         // добавим обработку разных языковых символов
                         QTextDocument doc;
@@ -409,14 +314,13 @@ void DFRSSFilter::parseXml()
                             doc.setHtml(linkString);
                             item->setText(1, doc.toPlainText());
 
-                            treeWidget->addTopLevelItem(item);
+                            feed_item->addChild(item);
+
+                            //treeWidget->addTopLevelItem(item);
                             titleString.clear();
                             linkString.clear();
-                            if (!this->isVisible() || this->isMinimized())
-                            {
-                                // если окно свёрнуто или убрано - выведем уведомление
-                                trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, show_period);
-                            }
+
+                            have_news = true; // если есть хоть один результат - нужно вывести уведомление
                         }
                     }
                 }
@@ -431,7 +335,9 @@ void DFRSSFilter::parseXml()
                     doc.setHtml(linkString);
                     item->setText(1, doc.toPlainText());
 
-                    treeWidget->addTopLevelItem(item);
+                    feed_item->addChild(item);
+                    //treeWidget->addTopLevelItem(item);
+
                     titleString.clear();
                     linkString.clear();
                 }
@@ -451,9 +357,15 @@ void DFRSSFilter::parseXml()
                 titleString += xml.text().toString();
                 if (need_a_name)
                 {
+                    /*
                     feed_name.clear();
                     feed_name = titleString;
-                    setWindowTitle(titleString);
+*/
+                    QTextDocument doc;
+                    doc.setHtml(titleString);
+                    feed_item->setText(0, doc.toPlainText());
+                    treeWidget->addTopLevelItem(feed_item);
+                    //setWindowTitle(titleString);
                     need_a_name = false;
                 }
             }
@@ -484,7 +396,7 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 
 // dm -->
 // открытие окна работы с фильтрами
-void DFRSSFilter::addfilter()
+void DFRSSFilter::edit_filters()
 {
     filter *new_filter = new filter();
     new_filter->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
@@ -494,125 +406,10 @@ void DFRSSFilter::addfilter()
     new_filter->show();                                      // и рисуем его
 }
 
-// для вывода из памяти последних просмотренных rss-лент, для удобства
-void DFRSSFilter::read_feeds()
-{
-    QFile file("feeds.gsd"); // создаем объект класса QFile
-    int  i = 0;
-    if(file.open(QIODevice::ReadOnly |QIODevice::Text)) // если файл открылся и там текст
-    {
-        while(!file.atEnd()) // пока не упрёмся в конец файла
-        {
-            QString str = file.readLine(); // читаем строку
-            old_feeds << str;
-
-            feeds_struct temp;  // создаём элемент типа
-            temp.link = str;    // заносим в него данные
-            feeds.push_back(temp); // запихиваем элемент в контейнер
-
-            i++;
-        }
-        file.close(); // прочли и закрыли
-    }
-    num_of_feeds = i;
-}
-
-// для запоминания последних просмотренных rss-лент, для удобства
-void DFRSSFilter::write_feeds()
-{
-    QFile file("feeds.gsd"); // создаем объект класса QFile
-    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
-    {
-        QTextStream outStream(&file);
-
-        for (int i = 0; i < num_of_feeds; i++)
-            outStream << old_feeds.at(i);
-        file.close(); // записали и закрыли
-    }
-}
-
-// добавление ленты в список, при необходимости
-void DFRSSFilter::add_feed(QString str)
-{
-    bool add_this = true;
-    int i = 0, old_feed_pos;
-    QStringList temp_list;
-
-    for (i = 0; i < num_of_feeds; i++)
-        if (QString::compare(str, old_feeds.at(i).simplified()) == 0)
-        {
-            add_this = false;
-            old_feed_pos = i; // запоминаем позицию ленты, которая "повторилась"
-        }
-
-    if (add_this) // если лента новая - надо добавить
-    {
-        temp_list << QString("%1\n").arg(str); // чтобы добавить перенос строки в конец нашей ссылки
-        for (i = 0; i < num_of_feeds; i++)
-            temp_list << old_feeds.at(i);
-        num_of_feeds++;
-        if (num_of_feeds > 10)
-            num_of_feeds = 10;
-        old_feeds.clear();
-        for (i = 0; i < num_of_feeds; i++)
-            old_feeds << temp_list.at(i);
-    }
-    else // если уже есть в списке - перенести вверх
-    {
-        temp_list << old_feeds.at(old_feed_pos);
-        for (i = 0; i < num_of_feeds; i++)
-            if (i != old_feed_pos)
-                temp_list << old_feeds.at(i);
-        old_feeds.clear();
-        for (i = 0; i < num_of_feeds; i++)
-            old_feeds << temp_list.at(i);
-    }
-    write_feeds();
-}
-
-// чтение сохранённых настроек
-int DFRSSFilter::read_settings()
-{
-    QString str;
-
-    QFile file("setts.gsd"); // создаем объект класса QFile
-    if(file.open(QIODevice::ReadOnly |QIODevice::Text)) // если файл открылся и там текст
-    {
-        while(!file.atEnd()) // пока не упрёмся в конец файла
-            str = file.readLine(); // читаем строку
-        file.close(); // прочли и закрыли
-        int i = str.toInt();
-        return i;
-    }
-    return 0;
-}
-
-// сохранение настроек и выход
-void DFRSSFilter::write_settings_and_quit()
-{
-    QFile file("setts.gsd"); // создаем объект класса QFile
-    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
-    {
-        QTextStream outStream(&file);
-
-        if (nocover->isChecked() && noclose->isChecked())
-            outStream << "0";
-        if (!nocover->isChecked() && noclose->isChecked())
-            outStream << "1";
-        if (nocover->isChecked() && !noclose->isChecked())
-            outStream << "2";
-        if (!nocover->isChecked() && !noclose->isChecked())
-            outStream << "3";
-
-        file.close(); // записали и закрыли
-    }
-    exit(0);
-}
-
 // открытие окна работы с настройками
-void DFRSSFilter::set_settings()
+void DFRSSFilter::edit_settings()
 {
-    settings *sett = new settings;
+    //settings *sett = new settings;
     sett->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
@@ -629,4 +426,9 @@ void DFRSSFilter::edit_feeds()
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
     f_sett->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
     f_sett->show();                                       // и рисуем его
+}
+
+void DFRSSFilter::quit()
+{
+    exit(0);
 }

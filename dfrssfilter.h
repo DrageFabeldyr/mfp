@@ -16,17 +16,21 @@
 
 extern QString prog_name_ver;
 
-class QLineEdit;
+//class QLineEdit;
+/*
 class QTreeWidget;
 class QTreeWidgetItem;
 class QPushButton;
+*/
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QPushButton>
 
 class DFRSSFilter : public QWidget
 {
     Q_OBJECT
 public:
     DFRSSFilter(QWidget *widget = 0);
-//    QAction *feedsaction;
 
 public slots:
     void fetch();
@@ -36,16 +40,13 @@ public slots:
     void itemActivated(QTreeWidgetItem * item);
     void error(QNetworkReply::NetworkError);
     // dm -->
-    void addfilter();
-    void read_feeds();
-    void write_feeds();
-    void add_feed(QString str);
-    void refreshlastfeeds(QMenu *menu);
-    void set_feed(QAction *action_name);
-    int read_settings();
-    void write_settings_and_quit();
-    void set_settings();
+    void edit_filters();
+    void edit_settings();
     void edit_feeds();
+    //void read_feeds();
+    //int read_settings();
+    //void write_settings_and_quit();
+    void quit();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -63,12 +64,11 @@ private:
     QNetworkAccessManager manager;
     QNetworkReply *currentReply;
 
-    QLineEdit *lineEdit;
     QTreeWidget *treeWidget;
     QPushButton *fetchButton;
     // dm -->
     QStatusBar *statusbar;
-    QMenu *mainmenu, *trayIconMenu, *old_settings_menu, *settings_menu;
+    QMenu *trayIconMenu, *settings_menu;
     QMenuBar *mainmenubar;
     QSystemTrayIcon *trayIcon;
     QAction *quitAction, *nocover, *noclose, *open_settings, *open_feeds, *open_filters;

@@ -1,8 +1,12 @@
 #include "filter.h"
 #include "ui_filter.h"
 
-int num_of_filters;
-QStringList filters, temp_values;
+#include <QDir>
+
+#include "settings.h"
+extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
+
+QStringList filters;
 QStringList headerLabels;
 
 
@@ -35,43 +39,46 @@ QString encodeEntities(const QString& src, const QString& force=QString())
 
 void read_filters()
 {
-    QFile file("filters.gsd"); // создаем объект класса QFile
+    QString name = qApp->applicationDirPath() + QDir::separator() + "filters.gsd";
+    QFile file(name); // создаем объект класса QFile
     int  i = 0;
     if(file.open(QIODevice::ReadOnly |QIODevice::Text)) // если файл открылся и там текст
     {
         while(!file.atEnd()) // пока не упрёмся в конец файла
         {
             QString str = file.readLine(); // читаем строку
-            QTextDocument doc;
-            doc.setHtml(str);
-            filters << doc.toPlainText();
-            i++;
+            if (str.trimmed() != "") // проверим, что строка не пуста
+            {
+                QTextDocument doc;
+                doc.setHtml(str.trimmed());
+                filters << doc.toPlainText();
+                i++;
+            }
         }
         file.close(); // прочли и закрыли
     }
-    num_of_filters = i;
 }
 
 void write_filters()
 {
-    QFile file("filters.gsd"); // создаем объект класса QFile
+    QString name = qApp->applicationDirPath() + QDir::separator() + "filters.gsd";
+    QFile file(name); // создаем объект класса QFile
     if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
     {
         QTextStream outStream(&file);
         QTextDocument doc;
 
-        for (int i = 0; i < num_of_filters; i++)
-//            outStream << encodeEntities(values.at(i));
-            outStream << QString("%1\n").arg(encodeEntities(filters.at(i)));
+        for (int i = 0; i < filters.size(); i++)
+            outStream << QString("%1").arg(encodeEntities(filters.at(i))) << endl;
         file.close(); // записали и закрыли
     }
 }
 
 // функция вывода фильтров в таблицу
-void show_filters(QTreeWidget *treewidget, QStringList filters, int num)
+void show_filters(QTreeWidget *treewidget, QStringList filters)
 {
     treewidget->clear();
-    for (int i = 0; i < num; i++)
+    for (int i = 0; i < filters.size(); i++)
     {
         QTreeWidgetItem *item = new QTreeWidgetItem;
         item->setText(0, filters.at(i));
@@ -82,7 +89,7 @@ void show_filters(QTreeWidget *treewidget, QStringList filters, int num)
 void set_filters_header_label(QTreeWidget *treewidget)
 {
     headerLabels.clear();
-    headerLabels << QString("Имеющиеся фильтры: (Всего: %1)").arg(num_of_filters);
+    headerLabels << QString("Имеющиеся фильтры: (Всего: %1)").arg(filters.size());
     treewidget->setHeaderLabels(headerLabels);
 }
 
@@ -96,7 +103,7 @@ filter::filter(QDialog *parent) : QDialog(parent), ui(new Ui::filter)
     add_button->setText("Добавить");
     QPushButton *del_button = new QPushButton;       // удалить фильтр
     del_button->setText("Удалить");
-    hint = new QLabel(this);
+    filter_hint = new QLabel(this);
 
     filers_list = new QTreeWidget(this);
     filers_list->setSelectionMode(QAbstractItemView::ExtendedSelection); // чтобы можно было выделять несколько элементов с помощью Ctrl и Shift
@@ -104,10 +111,10 @@ filter::filter(QDialog *parent) : QDialog(parent), ui(new Ui::filter)
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // здесь решается вопрос растяжения - нужно его решить
     filers_list->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    show_filters(filers_list, filters, num_of_filters);
+    show_filters(filers_list, filters);
 
-    statusbar = new QStatusBar(this);
-    statusbar->showMessage("Используйте Ctrl и Shift для множественного выделения");
+    choice_hint = new QLabel(this);
+    choice_hint->setText("Используйте Ctrl и Shift для множественного выделения удаляемых фильтров");
 
     QHBoxLayout *h_layout = new QHBoxLayout;         //
     h_layout->addWidget(lineEdit);
@@ -115,9 +122,9 @@ filter::filter(QDialog *parent) : QDialog(parent), ui(new Ui::filter)
     h_layout->addWidget(del_button);
     QVBoxLayout *v_layout = new QVBoxLayout;         //
     v_layout->addLayout(h_layout);
-    v_layout->addWidget(hint);
+    v_layout->addWidget(filter_hint);
     v_layout->addWidget(filers_list);
-    v_layout->addWidget(statusbar);
+    v_layout->addWidget(choice_hint);
     setLayout(v_layout); // установка главного лэйаута
     resize(640,480);
 
@@ -147,46 +154,37 @@ void filter::add_filter()
         help_str.clear();
         help_str = lineEdit->text();
 
-        for (int i = 0; i < num_of_filters; i++)
+        for (int i = 0; i < filters.size(); i++)
         {
             if (QString::compare(help_str, filters.at(i).simplified(), Qt::CaseInsensitive) == 0)
             {
-                hint->setText("Такой фильтр уже есть");
+                filter_hint->setText("Такой фильтр уже есть");
                 add_this = false;
             }
         }
         if (add_this)
         {
-//            values << QString("%1\n").arg(lineEdit->text());
             filters << QString("%1").arg(lineEdit->text());
-            num_of_filters++;
-            hint->setText("Фильтр добавлен");
+            filter_hint->setText("Фильтр добавлен");
             /**/
             write_filters();
-            show_filters(filers_list, filters, num_of_filters);
+            show_filters(filers_list, filters);
             set_filters_header_label(filers_list);
             /**/
         }
     }
     else
-        hint->setText("Нельзя добавить пустой фильтр");
+        filter_hint->setText("Нельзя добавить пустой фильтр");
 }
 
 void filter::del_filter()
 {
-    int filters_left = 0;
-    filters.clear();
-
-    for (int i = 0; i < num_of_filters; i++)
-        if (!filers_list->topLevelItem(i)->isSelected())
-        {
-            filters << QString("%1").arg(filers_list->topLevelItem(i)->text(0));
-            filters_left++;
-        }
-    num_of_filters = filters_left;
+    for (int i = filters.size() - 1; i >= 0; i--) // идём от конца к началу, т.к. при удалении элемента размер списка уменьшается
+        if (filers_list->topLevelItem(i)->isSelected())
+            filters.removeAt(i);
     /**/
     write_filters();
-    show_filters(filers_list, filters, num_of_filters);
+    show_filters(filers_list, filters);
     set_filters_header_label(filers_list);
     /**/
 }

@@ -15,7 +15,6 @@
 #include <QTreeWidgetItemIterator>
 #include <QStatusBar>
 
-extern int num_of_filters;
 extern QStringList filters;
 void read_filters();     // чтение фильтров из файла
 void write_filters();    // запись фильтров в файл
@@ -40,9 +39,8 @@ public slots:
 private:
     Ui::filter *ui;
     QLineEdit *lineEdit;
-    QLabel *hint;
+    QLabel *filter_hint, *choice_hint;
     QTreeWidget *filers_list;
-    QStatusBar *statusbar;
 
 private slots:
     void closeEvent(QCloseEvent *);
