@@ -16,7 +16,7 @@ settings::settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
     close_to_tray = new QCheckBox(this);
     close_to_tray->setText("Сворачивать в трей при закрытии");
     run_in_tray = new QCheckBox(this);
-    run_in_tray->setText("Запускать свёрнутым в трей");
+    run_in_tray->setText("Сворачивать в трей при запуске");
     activate_filters = new QCheckBox(this);
     activate_filters->setText("Активировать фильтры при добавлении");
     activate_feeds = new QCheckBox(this);
@@ -31,6 +31,8 @@ settings::settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
     layout->addWidget(activate_feeds);
     layout->setMargin(0); // убирает промежуток между layout и границами окна
     setLayout(layout);
+
+    this->setWindowIcon(QIcon(":/settings.ico"));
 }
 
 settings::~settings()

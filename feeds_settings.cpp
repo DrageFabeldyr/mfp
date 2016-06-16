@@ -14,7 +14,7 @@ extern settings *sett; // чтобы взять тот, что уже опред
 
 QList<feeds_struct> feeds;
 
-// функция вывода фильтров в таблицу
+// функция вывода лент в таблицу
 void show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
 {
     listwidget->clear();
@@ -88,7 +88,7 @@ void get_feed_name()
 feeds_settings::feeds_settings(QWidget *parent) : QDialog(parent), ui(new Ui::feeds_settings)
 {
     lineEdit = new QLineEdit(this);
-    lineEdit->setPlaceholderText("Введите ленту...");
+    lineEdit->setPlaceholderText("Введите адрес ленты...");
 
     QPushButton *add_button = new QPushButton;       // добавить фильтр
     add_button->setText("Добавить");
@@ -133,7 +133,9 @@ feeds_settings::feeds_settings(QWidget *parent) : QDialog(parent), ui(new Ui::fe
     connect(del_button, SIGNAL(clicked()), this, SLOT(del_feed()));  //
     connect(check_all_button, SIGNAL(clicked()), this, SLOT(check_all()));  //
     connect(uncheck_all_button, SIGNAL(clicked()), this, SLOT(uncheck_all()));  //
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_feed())); // запуск по нажатию клавиши ENTER
+    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_feed())); // добавление по нажатию клавиши ENTER
+
+    this->setWindowIcon(QIcon(":/rss.ico"));
 }
 
 feeds_settings::~feeds_settings()
@@ -148,6 +150,7 @@ void feeds_settings::add_feed()
 
     if (!lineEdit->text().isEmpty() && lineEdit->text().contains("http", Qt::CaseInsensitive) && lineEdit->text().contains("://"))
     {
+        save_checked(feeds_list); // сохраним галочки на случай если они будут изменены одновременно с изменением количества элементов
         help_str.clear();
         help_str = lineEdit->text();
 
@@ -161,8 +164,6 @@ void feeds_settings::add_feed()
         }
         if (add_this)
         {
-//            values << QString("%1\n").arg(lineEdit->text());
-            //feeds.links << QString("%1").arg(lineEdit->text());
             feeds_struct temp;  // создаём элемент типа
             temp.link = QString("%1").arg(lineEdit->text());    // заносим в него данные
             if (sett->activate_feeds->isChecked())
@@ -185,7 +186,7 @@ void feeds_settings::add_feed()
 
 void feeds_settings::del_feed()
 {
-    save_checked(feeds_list);
+    save_checked(feeds_list); // сохраним галочки
     for (int i = feeds.size() - 1; i >= 0; i--) // идём от конца к началу, т.к. при удалении элемента размер списка уменьшается
         if (feeds_list->item(i)->isSelected())
             feeds.removeAt(i);
@@ -196,6 +197,7 @@ void feeds_settings::del_feed()
     /**/
 }
 
+// устанавливаем заголовок окна
 void feeds_settings::set_feeds_header_label()
 {
     this->setWindowTitle(QString("RSS-ленты: (Всего: %1)").arg(feeds.size()));

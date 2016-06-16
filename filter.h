@@ -15,7 +15,15 @@
 #include <QTreeWidgetItemIterator>
 #include <QStatusBar>
 
-extern QStringList filters;
+struct filters_struct
+{
+    QString title;
+    QString feed;
+    bool is_on;
+};
+
+extern QList<filters_struct> filters;
+
 void read_filters();     // чтение фильтров из файла
 void write_filters();    // запись фильтров в файл
 
@@ -35,6 +43,9 @@ public:
 public slots:
     void add_filter();
     void del_filter();
+    void set_filters_header_label();
+    void check_all();
+    void uncheck_all();
 
 private:
     Ui::filter *ui;

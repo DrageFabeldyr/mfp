@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QCheckBox>
 
-//extern bool min_to_tray, close_to_tray, run_in_tray, activate_filters, activate_feeds;
 
 namespace Ui {
 class settings;

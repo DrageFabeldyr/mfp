@@ -7,7 +7,7 @@
 #include <QBuffer>
 #include <QXmlStreamReader>
 #include <QUrl>
-#include <QStatusBar>
+#include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QSignalMapper>
@@ -67,11 +67,12 @@ private:
     QTreeWidget *treeWidget;
     QPushButton *fetchButton;
     // dm -->
-    QStatusBar *statusbar;
-    QMenu *trayIconMenu, *settings_menu;
+    QLabel *hint;
+    QMenu *trayIconMenu, *main_menu;
     QMenuBar *mainmenubar;
     QSystemTrayIcon *trayIcon;
-    QAction *quitAction, *nocover, *noclose, *open_settings, *open_feeds, *open_filters;
+    QAction *menu_settings, *menu_feeds, *menu_filters, *menu_quit;
+    QAction *tray_quit;
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);
