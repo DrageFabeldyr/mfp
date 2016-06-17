@@ -75,7 +75,6 @@ private:
 
     bool need_a_name; // для проверки необходимости обновления имени окна
     bool win_max; // переменная для хранения размеров окна
-    //QString feed_name;
     int request_period = 5*60*1000; // запрос новостей раз в 5 минут
     int show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
     int counter = 0;
