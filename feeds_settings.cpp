@@ -9,8 +9,8 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "settings.h"
-extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
+#include "dfrssfilter.h"
+
 
 QList<feeds_struct> feeds;
 
@@ -85,8 +85,9 @@ void get_feed_name()
 
 }
 
-feeds_settings::feeds_settings(QWidget *parent) : QDialog(parent), ui(new Ui::feeds_settings)
+feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_settings)
 {
+    sett = static_cast<DFRSSFilter*>(parent)->sett;
     lineEdit = new QLineEdit(this);
     lineEdit->setPlaceholderText("Введите адрес ленты...");
 

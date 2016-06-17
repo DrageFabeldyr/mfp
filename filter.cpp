@@ -3,7 +3,7 @@
 
 #include <QDir>
 
-#include "settings.h"
+#include "dfrssfilter.h"
 extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
 
 QList<filters_struct> filters;
@@ -104,8 +104,9 @@ void save_checked(QTreeWidget *treewidget)
     write_filters();
 }
 
-filter::filter(QDialog *parent) : QDialog(parent), ui(new Ui::filter)
+filter::filter(QWidget *parent) : QDialog(), ui(new Ui::filter)
 {
+    sett = static_cast<DFRSSFilter*>(parent)->sett;
     lineEdit = new QLineEdit(this);
     lineEdit->setPlaceholderText("Введите фильтр...");
 

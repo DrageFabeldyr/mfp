@@ -7,6 +7,8 @@
 #include <QListWidget>
 #include <QStatusBar>
 
+#include "settings.h"
+
 struct feeds_struct
 {
     QString title;
@@ -41,6 +43,7 @@ private:
     QLineEdit *lineEdit;
     QLabel *feed_hint, *choice_hint;
     QListWidget *feeds_list;
+    settings *sett;
 
 private slots:
     void closeEvent(QCloseEvent *);
