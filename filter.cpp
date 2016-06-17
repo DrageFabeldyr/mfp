@@ -4,7 +4,6 @@
 #include <QDir>
 
 #include "dfrssfilter.h"
-extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
 
 QList<filters_struct> filters;
 
@@ -164,6 +163,10 @@ filter::filter(QWidget *parent) : QDialog(), ui(new Ui::filter)
 filter::~filter()
 {
     delete ui;
+    delete lineEdit;
+    delete filter_hint;
+    delete choice_hint;
+    delete filers_list;
 }
 
 void filter::add_filter()

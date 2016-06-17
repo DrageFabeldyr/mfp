@@ -11,7 +11,6 @@
 #include "feeds_settings.h"
 
 
-
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
 {
@@ -297,15 +296,6 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         hint->setText("Двойной клик по новости откроет её в браузере");
         fetchButton->setEnabled(true);
     }
-//    if (feed_item->childCount() > 0)
-//    {
-//        QString temp = feed_item->text(0);
-//        treeWidget->addTopLevelItem(feed_item);
-//    }
-    /*
-    if (num_of_results == 0)
-        delete treeWidget->takeTopLevelItem(treeWidget->topLevelItemCount() - 1);
-        */
 }
 
 // Парсит данные XML и создаёт соответственно элементы treeWidget.
@@ -354,7 +344,7 @@ void DFRSSFilter::parseXml()
                             item->setText(1, doc.toPlainText());
 
                             feed_item->addChild(item);
-                            feed_item->setHidden(false);
+                            feed_item->setHidden(false); // если находится хоть один результат - делаем "ветку" видимой
 
                             //treeWidget->addTopLevelItem(item);
                             titleString.clear();
@@ -376,7 +366,8 @@ void DFRSSFilter::parseXml()
                     doc.setHtml(linkString);
                     item->setText(1, doc.toPlainText());
 
-                    //feed_item->addChild(item);
+                    feed_item->addChild(item);
+                    feed_item->setHidden(false); // если находится хоть один результат - делаем "ветку" видимой
                     //treeWidget->addTopLevelItem(item);
 
                     titleString.clear();
@@ -398,16 +389,11 @@ void DFRSSFilter::parseXml()
                 titleString += xml.text().toString();
                 if (need_a_name)
                 {
-                    /*
-                    feed_name.clear();
-                    feed_name = titleString;
-*/
                     QTextDocument doc;
                     doc.setHtml(titleString);
                     feed_item->setText(0, doc.toPlainText());
                     treeWidget->addTopLevelItem(feed_item);
-                    feed_item->setHidden(true);
-                    //setWindowTitle(titleString);
+                    feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
                     need_a_name = false;
                 }
             }

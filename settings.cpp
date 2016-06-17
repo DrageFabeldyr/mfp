@@ -38,6 +38,11 @@ settings::settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
 settings::~settings()
 {
     delete ui;
+    delete min_to_tray;
+    delete close_to_tray;
+    delete run_in_tray;
+    delete activate_filters;
+    delete activate_feeds;
 }
 
 // чтение сохранённых настроек

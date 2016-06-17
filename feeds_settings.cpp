@@ -79,12 +79,6 @@ void save_checked(QListWidget *listwidget)
     write_feeds();
 }
 
-// функция получения имени ленты
-void get_feed_name()
-{
-
-}
-
 feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_settings)
 {
     sett = static_cast<DFRSSFilter*>(parent)->sett;
@@ -142,6 +136,10 @@ feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_se
 feeds_settings::~feeds_settings()
 {
     delete ui;
+    delete lineEdit;
+    delete feed_hint;
+    delete choice_hint;
+    delete feeds_list;
 }
 
 void feeds_settings::add_feed()
