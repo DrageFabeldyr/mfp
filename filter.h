@@ -15,6 +15,8 @@
 #include <QTreeWidgetItemIterator>
 #include <QStatusBar>
 
+#include "settings.h"
+
 struct filters_struct
 {
     QString title;
@@ -37,7 +39,7 @@ class filter : public QDialog
     Q_OBJECT
 
 public:
-    explicit filter(QDialog *parent = 0);
+    explicit filter(QWidget *parent = 0);
     ~filter();
 
 public slots:
@@ -52,6 +54,7 @@ private:
     QLineEdit *lineEdit;
     QLabel *filter_hint, *choice_hint;
     QTreeWidget *filers_list;
+    settings *sett;
 
 private slots:
     void closeEvent(QCloseEvent *);

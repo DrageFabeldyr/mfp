@@ -12,25 +12,23 @@
 #include <QMenuBar>
 #include <QSignalMapper>
 #include <QSystemTrayIcon>
-
-
-extern QString prog_name_ver;
-
-//class QLineEdit;
-/*
-class QTreeWidget;
-class QTreeWidgetItem;
-class QPushButton;
-*/
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QPushButton>
+#include "settings.h"
+
+extern QString prog_name_ver;
+
+
 
 class DFRSSFilter : public QWidget
 {
     Q_OBJECT
 public:
     DFRSSFilter(QWidget *widget = 0);
+    ~DFRSSFilter();
+
+    settings *sett = nullptr;
 
 public slots:
     void fetch();
@@ -73,6 +71,16 @@ private:
     QSystemTrayIcon *trayIcon;
     QAction *menu_settings, *menu_feeds, *menu_filters, *menu_quit;
     QAction *tray_quit;
+
+
+    bool need_a_name; // для проверки необходимости обновления имени окна
+    bool win_max; // переменная для хранения размеров окна
+    //QString feed_name;
+    int request_period = 5*60*1000; // запрос новостей раз в 5 минут
+    int show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
+    int counter = 0;
+    bool have_news; // переменная для вывода уведомления о наличии новостей
+    int num_of_results; // переменная для подсчёта интересующих новостей в ленте
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);

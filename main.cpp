@@ -4,7 +4,7 @@
 #include "settings.h"
 
 QString prog_name_ver;
-extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
+//extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
 
 
 /* Создаёт приложение и главный виджет. Открывает главный виджет для
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     DFRSSFilter *dfrssfilter = new DFRSSFilter;
 
-    if (!sett->run_in_tray->isChecked()) // если нет галочки "запускать свёрнутым в трей"
+    if (!dfrssfilter->sett->run_in_tray->isChecked()) // если нет галочки "запускать свёрнутым в трей"
         dfrssfilter->show(); // рисуем
 
     return app.exec();

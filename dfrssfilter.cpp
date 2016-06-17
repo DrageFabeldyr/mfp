@@ -54,6 +54,26 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
+DFRSSFilter::~DFRSSFilter()
+{
+    delete sett;
+
+    delete currentReply;
+
+    delete treeWidget;
+    delete fetchButton;
+    delete hint;
+    delete trayIconMenu,
+    delete main_menu;
+    delete mainmenubar;
+    delete trayIcon;
+    delete menu_settings,
+    delete menu_feeds;
+    delete menu_filters;
+    delete menu_quit;
+    delete tray_quit;
+}
+
 
 // обработчик нажатия на иконку в трее
 void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
@@ -285,6 +305,11 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         hint->setText("Двойной клик по новости откроет её в браузере");
         fetchButton->setEnabled(true);
     }
+//    if (feed_item->childCount() > 0)
+//    {
+//        QString temp = feed_item->text(0);
+//        treeWidget->addTopLevelItem(feed_item);
+//    }
     /*
     if (num_of_results == 0)
         delete treeWidget->takeTopLevelItem(treeWidget->topLevelItemCount() - 1);
@@ -297,7 +322,7 @@ void DFRSSFilter::parseXml()
     QString str;
     int num_of_active_filters = 0;
 
-    QTreeWidgetItem *feed_item = new QTreeWidgetItem;
+    QTreeWidgetItem *feed_item = new QTreeWidgetItem();
 
     while (!xml.atEnd())
     {
@@ -329,7 +354,7 @@ void DFRSSFilter::parseXml()
                         if ((str.contains(filters.at(i).title.simplified(), Qt::CaseInsensitive)) && filters.at(i).is_on)
                             // simplified - чтобы убрать символ переноса строки из сравнения
                         {
-                            QTreeWidgetItem *item = new QTreeWidgetItem;
+                            QTreeWidgetItem *item = new QTreeWidgetItem();
 
                             item->setText(0, doc.toPlainText());
 
@@ -337,6 +362,7 @@ void DFRSSFilter::parseXml()
                             item->setText(1, doc.toPlainText());
 
                             feed_item->addChild(item);
+                            feed_item->setHidden(false);
 
                             //treeWidget->addTopLevelItem(item);
                             titleString.clear();
@@ -358,7 +384,7 @@ void DFRSSFilter::parseXml()
                     doc.setHtml(linkString);
                     item->setText(1, doc.toPlainText());
 
-                    feed_item->addChild(item);
+                    //feed_item->addChild(item);
                     //treeWidget->addTopLevelItem(item);
 
                     titleString.clear();
@@ -388,6 +414,7 @@ void DFRSSFilter::parseXml()
                     doc.setHtml(titleString);
                     feed_item->setText(0, doc.toPlainText());
                     treeWidget->addTopLevelItem(feed_item);
+                    feed_item->setHidden(true);
                     //setWindowTitle(titleString);
                     need_a_name = false;
                 }
@@ -421,7 +448,7 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 // открытие окна работы с фильтрами
 void DFRSSFilter::edit_filters()
 {
-    filter *new_filter = new filter();
+    filter *new_filter = new filter(this);
     new_filter->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
@@ -443,7 +470,7 @@ void DFRSSFilter::edit_settings()
 // открытие окна работы с лентами
 void DFRSSFilter::edit_feeds()
 {
-    feeds_settings *f_sett = new feeds_settings;
+    feeds_settings *f_sett = new feeds_settings(this);
     f_sett->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
