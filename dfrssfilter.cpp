@@ -106,6 +106,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     win_max = false; // окно не развёрнуто
 
     fetchButton = new QPushButton(tr("Поиск"), this);
+    fetchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
 
     treeWidget = new QTreeWidget(this);
     connect(treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*)));
@@ -149,14 +150,14 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     QHBoxLayout *hboxLayout = new QHBoxLayout;
     hint = new QLabel(this);
-    hint->setText("Добро пожаловать =))");
+    hint->setText("Дождитесь обновления результатов или нажмите кнопку \"Поиск\", чтобы обновить результаты прямо сейчас");
 
+    hboxLayout->addWidget(hint);
     hboxLayout->addWidget(fetchButton);
 
     layout->setMenuBar(mainmenubar);
     layout->addLayout(hboxLayout);
     layout->addWidget(treeWidget);
-    layout->addWidget(hint);
     setLayout(layout);
 
     setWindowTitle(prog_name_ver);

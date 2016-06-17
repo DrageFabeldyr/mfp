@@ -1,1 +1,5 @@
-2
+min_to_tray=1
+close_to_tray=0
+run_in_tray=0
+activate_filters=1
+activate_feeds=1

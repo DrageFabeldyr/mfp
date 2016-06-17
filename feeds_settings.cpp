@@ -128,7 +128,7 @@ feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_se
     connect(del_button, SIGNAL(clicked()), this, SLOT(del_feed()));  //
     connect(check_all_button, SIGNAL(clicked()), this, SLOT(check_all()));  //
     connect(uncheck_all_button, SIGNAL(clicked()), this, SLOT(uncheck_all()));  //
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_feed())); // добавление по нажатию клавиши ENTER
+    //connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_feed())); // добавление по нажатию клавиши ENTER
 
     this->setWindowIcon(QIcon(":/rss.ico"));
 }
@@ -178,6 +178,7 @@ void feeds_settings::add_feed()
             set_feeds_header_label();
             /**/
         }
+        lineEdit->setText("");
     }
     else
         feed_hint->setText("Bведён неверный адрес");

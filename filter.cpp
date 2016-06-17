@@ -155,7 +155,7 @@ filter::filter(QWidget *parent) : QDialog(), ui(new Ui::filter)
     connect(del_button, SIGNAL(clicked()), this, SLOT(del_filter()));  //
     connect(check_all_button, SIGNAL(clicked()), this, SLOT(check_all()));  //
     connect(uncheck_all_button, SIGNAL(clicked()), this, SLOT(uncheck_all()));  //
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_filter())); // добавление по нажатию клавиши ENTER
+    //connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_filter())); // добавление по нажатию клавиши ENTER
 
     this->setWindowIcon(QIcon(":/filter.ico"));
 }
