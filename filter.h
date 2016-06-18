@@ -1,7 +1,7 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-#include <QDialog>
+#include <QWidget>
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -14,33 +14,28 @@
 #include <QTreeWidgetItem> // для вывода списка фильтров
 #include <QTreeWidgetItemIterator>
 #include <QStatusBar>
+#include <QCloseEvent>
 
 #include "settings.h"
-
-struct filters_struct
-{
-    QString title;
-    QString feed;
-    bool is_on;
-};
-
-extern QList<filters_struct> filters;
-
-void read_filters();     // чтение фильтров из файла
-void write_filters();    // запись фильтров в файл
-
+#include "filters_struct.h"
 
 namespace Ui {
 class filter;
 }
 
-class filter : public QDialog
+class filter : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit filter(QWidget *parent = 0);
     ~filter();
+    void read_filters();
+    void write_filters();
+    void show_filters(QTreeWidget *treewidget, QList<filters_struct> values);
+    void save_checked(QTreeWidget *treewidget);
+    QList<filters_struct> filters;
+    int GetNumActiveFilter(void);
 
 public slots:
     void add_filter();
@@ -56,8 +51,10 @@ private:
     QTreeWidget *filers_list;
     settings *sett;
 
-private slots:
-    void closeEvent(QCloseEvent *);
+
+protected:
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent * event) Q_DECL_OVERRIDE ;
 };
 
 #endif // FILTER_H

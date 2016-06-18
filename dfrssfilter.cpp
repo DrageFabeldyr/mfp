@@ -48,6 +48,7 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
 DFRSSFilter::~DFRSSFilter()
 {
     delete sett;
+    delete new_filter;
 
     delete currentReply;
 
@@ -99,7 +100,8 @@ void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
  *  источников; кнопка начинает процесс чтения новостей. */
 DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
-    read_filters(); // считываем фильтры
+    new_filter = new filter(this);
+    new_filter->read_filters(); // считываем фильтры
     read_feeds(); // считываем ленты
     sett = new settings;
     sett->read_settings();
@@ -320,21 +322,19 @@ void DFRSSFilter::parseXml()
         {
             if (xml.name() == "item")
             {
-                if (filters.size() > 0)
-                    for (int i = 0; i < filters.size(); i++)
-                        if (filters.at(i).is_on)
-                            num_of_active_filters++;
+                num_of_active_filters = new_filter->GetNumActiveFilter();
 
                 if (num_of_active_filters > 0)
                 {
-                    for (int i = 0; i < filters.size(); i++)
+                    for (int i = 0; i < new_filter->filters.size(); i++)
                     {
                         // добавим обработку разных языковых символов
                         QTextDocument doc;
                         doc.setHtml(titleString);
                         str = doc.toPlainText();
 
-                        if ((str.contains(filters.at(i).title.simplified(), Qt::CaseInsensitive)) && filters.at(i).is_on)
+                        if ((str.contains(new_filter->filters.at(i).title.simplified(), Qt::CaseInsensitive)) &&
+                                new_filter->filters.at(i).is_on)
                             // simplified - чтобы убрать символ переноса строки из сравнения
                         {
                             QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -427,7 +427,7 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 // открытие окна работы с фильтрами
 void DFRSSFilter::edit_filters()
 {
-    filter *new_filter = new filter(this);
+
     new_filter->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает

@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         dfrssfilter.cpp \
     filter.cpp \
     settings.cpp \
-    feeds_settings.cpp
+    feeds_settings.cpp \
+    filters_struct.cpp
 
 HEADERS  += dfrssfilter.h \
     filter.h \
     settings.h \
-    feeds_settings.h
+    feeds_settings.h \
+    filters_struct.h
 
 FORMS    += dfrssfilter.ui \
     filter.ui \
