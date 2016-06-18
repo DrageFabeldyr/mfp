@@ -6,30 +6,32 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QStatusBar>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QListView>
+#include <QList>
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QEvent>
 
 #include "settings.h"
-
-struct feeds_struct
-{
-    QString title;
-    QString link;
-    bool is_on;
-};
-
-extern QList<feeds_struct> feeds;
-void read_feeds();
+#include "feeds_struct.h"
 
 namespace Ui {
 class feeds_settings;
 }
 
-class feeds_settings : public QDialog
+class feeds_settings : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit feeds_settings(QWidget *parent = 0);
     ~feeds_settings();
+    QList<feeds_struct> feeds;
+
+    void read_feeds();
 
 public slots:
     void add_feed();
@@ -45,8 +47,13 @@ private:
     QListWidget *feeds_list;
     settings *sett;
 
+    void show_feeds(QListWidget *listwidget, QList<feeds_struct> values);
+    void write_feeds();
+    void save_checked(QListWidget *listwidget);
+
 private slots:
-    void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent * event) Q_DECL_OVERRIDE ;
 
 };
 

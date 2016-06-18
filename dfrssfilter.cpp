@@ -49,6 +49,7 @@ DFRSSFilter::~DFRSSFilter()
 {
     delete sett;
     delete new_filter;
+    delete f_sett;
 
     delete currentReply;
 
@@ -102,7 +103,8 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
     new_filter = new filter(this);
     new_filter->read_filters(); // считываем фильтры
-    read_feeds(); // считываем ленты
+    f_sett = new feeds_settings(this);
+    f_sett->read_feeds(); // считываем ленты
     sett = new settings;
     sett->read_settings();
     win_max = false; // окно не развёрнуто
@@ -228,15 +230,15 @@ void DFRSSFilter::fetch()
      * поэтому после первого совпадения выходим из цикла, а продолжим по событию finished */
     counter = 0;
     have_news = false;
-    for (; counter < feeds.size(); counter++)
+    for (; counter < f_sett->feeds.size(); counter++)
     {
-        if (feeds.at(counter).is_on)
+        if (f_sett->feeds.at(counter).is_on)
         {
             num_of_results = 0; // обнуляем значение количества выводимых новостей
             fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
             need_a_name = true;
             xml.clear();
-            QUrl url(feeds.at(counter).link);
+            QUrl url(f_sett->feeds.at(counter).link);
             get(url);
             counter++;
             break;
@@ -278,18 +280,18 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     currentReply = nullptr;
 
     // продолжаем проход по выбранным лентам
-    for (; counter < feeds.size(); counter++)
-        if (feeds.at(counter).is_on)
+    for (; counter < f_sett->feeds.size(); counter++)
+        if (f_sett->feeds.at(counter).is_on)
         {
             num_of_results = 0; // обнуляем значение количества выводимых новостей
             need_a_name = true;
             xml.clear();
-            QUrl url(feeds.at(counter).link);
+            QUrl url(f_sett->feeds.at(counter).link);
             get(url);
             counter++;
             break;
         }
-    if (counter >= feeds.size()) // если пробежали всё
+    if (counter >= f_sett->feeds.size()) // если пробежали всё
     {
         if ((!this->isVisible() || this->isMinimized()) && have_news)
         {
@@ -449,7 +451,6 @@ void DFRSSFilter::edit_settings()
 // открытие окна работы с лентами
 void DFRSSFilter::edit_feeds()
 {
-    feeds_settings *f_sett = new feeds_settings(this);
     f_sett->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает

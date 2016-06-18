@@ -1,21 +1,10 @@
 #include "feeds_settings.h"
 #include "ui_feeds_settings.h"
-
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QListView>
-#include <QList>
-#include <QDir>
-#include <QFile>
-#include <QTextStream>
-
 #include "dfrssfilter.h"
 
 
-QList<feeds_struct> feeds;
-
 // функция вывода лент в таблицу
-void show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
+void feeds_settings::show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
 {
     listwidget->clear();
     for (int i = 0; i < values.size(); i++)
@@ -32,7 +21,7 @@ void show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
     }
 }
 
-void read_feeds()
+void feeds_settings::read_feeds()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "feeds.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -52,7 +41,7 @@ void read_feeds()
     }
 }
 
-void write_feeds()
+void feeds_settings::write_feeds()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "feeds.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -67,7 +56,7 @@ void write_feeds()
 }
 
 // функция запоминания расставленных галочек
-void save_checked(QListWidget *listwidget)
+void feeds_settings::save_checked(QListWidget *listwidget)
 {
     for (int i = 0; i < feeds.size(); i++)
     {
@@ -79,8 +68,9 @@ void save_checked(QListWidget *listwidget)
     write_feeds();
 }
 
-feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_settings)
+feeds_settings::feeds_settings(QWidget *parent) : QWidget(), ui(new Ui::feeds_settings)
 {
+    feeds.clear();
     sett = static_cast<DFRSSFilter*>(parent)->sett;
     lineEdit = new QLineEdit(this);
     lineEdit->setPlaceholderText("Введите адрес ленты...");
@@ -133,8 +123,16 @@ feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_se
     this->setWindowIcon(QIcon(":/rss.ico"));
 }
 
+void feeds_settings::showEvent(QShowEvent * event)
+{
+    Q_UNUSED(event);
+    show_feeds(feeds_list, feeds);
+    set_feeds_header_label();
+}
+
 feeds_settings::~feeds_settings()
 {
+    write_feeds();
     delete ui;
     delete lineEdit;
     delete feed_hint;
@@ -204,9 +202,11 @@ void feeds_settings::set_feeds_header_label()
 }
 
 // сохраняем галочки
-void feeds_settings::closeEvent(QCloseEvent *)
+void feeds_settings::closeEvent(QCloseEvent *event)
 {
     save_checked(feeds_list);
+    hide();
+    event->ignore();
 }
 
 void feeds_settings::check_all()
