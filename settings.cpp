@@ -1,16 +1,16 @@
 #include "settings.h"
 #include "ui_settings.h"
 
-#include <QVBoxLayout>
 #include <QDir>
-#include <QFile>
 #include <QSettings>
-#include <QTextStream>
 
 
-Settings::Settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
+
+Settings::Settings(QWidget *parent) : QWidget(), ui(new Ui::settings)
 {
+    parentW = parent;
     setWindowTitle("Настройки");
+
 
     min_to_tray = new QCheckBox(this);
     min_to_tray->setText("Сворачивать в трей");
@@ -24,7 +24,7 @@ Settings::Settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
     activate_feeds->setText("Активировать ленты при добавлении");
 
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    layout = new QVBoxLayout;
     layout->addWidget(min_to_tray);
     layout->addWidget(close_to_tray);
     layout->addWidget(run_in_tray);
@@ -39,6 +39,7 @@ Settings::Settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
 Settings::~Settings()
 {
     delete ui;
+    delete layout;
     delete min_to_tray;
     delete close_to_tray;
     delete run_in_tray;
@@ -76,7 +77,18 @@ void Settings::write_settings()
     }
 }
 
-void Settings::closeEvent(QCloseEvent *)
+void Settings::closeEvent(QCloseEvent *event)
 {
     write_settings();
+    hide();
+    event->ignore();
+}
+
+void Settings::showEvent(QShowEvent * event)
+{
+    Q_UNUSED(event);
+    read_settings();
+    //всегда в центре родителя
+    move(parentW->window()->frameGeometry().topLeft() +
+         parentW->window()->rect().center() - rect().center());
 }

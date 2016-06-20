@@ -1,15 +1,17 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QDialog>
+#include <QWidget>
 #include <QCheckBox>
+#include <QVBoxLayout>
+#include <QCloseEvent>
 
 
 namespace Ui {
 class settings;
 }
 
-class Settings : public QDialog
+class Settings : public QWidget
 {
     Q_OBJECT
 
@@ -25,10 +27,13 @@ public slots:
 
 private:
     Ui::settings *ui;
+    QVBoxLayout *layout;
     QString settingFile = "Setting.ini";
+    QWidget *parentW;
 
 private slots:
-    void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;
 };
 
 #endif // SETTINGS_H

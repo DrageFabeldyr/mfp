@@ -105,7 +105,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     filter->read_filters(); // считываем фильтры
     feeds_settings = new Feeds_Settings(this);
     feeds_settings->read_feeds(); // считываем ленты
-    settings = new Settings;
+    settings = new Settings(this);
     settings->read_settings();
     win_max = false; // окно не развёрнуто
 
