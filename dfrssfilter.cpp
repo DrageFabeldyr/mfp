@@ -48,6 +48,8 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
 DFRSSFilter::~DFRSSFilter()
 {
     delete sett;
+    delete new_filter;
+    delete f_sett;
 
     delete currentReply;
 
@@ -99,8 +101,10 @@ void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
  *  источников; кнопка начинает процесс чтения новостей. */
 DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
-    read_filters(); // считываем фильтры
-    read_feeds(); // считываем ленты
+    new_filter = new filter(this);
+    new_filter->read_filters(); // считываем фильтры
+    f_sett = new feeds_settings(this);
+    f_sett->read_feeds(); // считываем ленты
     sett = new settings;
     sett->read_settings();
     win_max = false; // окно не развёрнуто
@@ -226,15 +230,15 @@ void DFRSSFilter::fetch()
      * поэтому после первого совпадения выходим из цикла, а продолжим по событию finished */
     counter = 0;
     have_news = false;
-    for (; counter < feeds.size(); counter++)
+    for (; counter < f_sett->feeds.size(); counter++)
     {
-        if (feeds.at(counter).is_on)
+        if (f_sett->feeds.at(counter).is_on)
         {
             num_of_results = 0; // обнуляем значение количества выводимых новостей
             fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
             need_a_name = true;
             xml.clear();
-            QUrl url(feeds.at(counter).link);
+            QUrl url(f_sett->feeds.at(counter).link);
             get(url);
             counter++;
             break;
@@ -276,18 +280,18 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     currentReply = nullptr;
 
     // продолжаем проход по выбранным лентам
-    for (; counter < feeds.size(); counter++)
-        if (feeds.at(counter).is_on)
+    for (; counter < f_sett->feeds.size(); counter++)
+        if (f_sett->feeds.at(counter).is_on)
         {
             num_of_results = 0; // обнуляем значение количества выводимых новостей
             need_a_name = true;
             xml.clear();
-            QUrl url(feeds.at(counter).link);
+            QUrl url(f_sett->feeds.at(counter).link);
             get(url);
             counter++;
             break;
         }
-    if (counter >= feeds.size()) // если пробежали всё
+    if (counter >= f_sett->feeds.size()) // если пробежали всё
     {
         if ((!this->isVisible() || this->isMinimized()) && have_news)
         {
@@ -320,21 +324,19 @@ void DFRSSFilter::parseXml()
         {
             if (xml.name() == "item")
             {
-                if (filters.size() > 0)
-                    for (int i = 0; i < filters.size(); i++)
-                        if (filters.at(i).is_on)
-                            num_of_active_filters++;
+                num_of_active_filters = new_filter->GetNumActiveFilter();
 
                 if (num_of_active_filters > 0)
                 {
-                    for (int i = 0; i < filters.size(); i++)
+                    for (int i = 0; i < new_filter->filters.size(); i++)
                     {
                         // добавим обработку разных языковых символов
                         QTextDocument doc;
                         doc.setHtml(titleString);
                         str = doc.toPlainText();
 
-                        if ((str.contains(filters.at(i).title.simplified(), Qt::CaseInsensitive)) && filters.at(i).is_on)
+                        if ((str.contains(new_filter->filters.at(i).title.simplified(), Qt::CaseInsensitive)) &&
+                                new_filter->filters.at(i).is_on)
                             // simplified - чтобы убрать символ переноса строки из сравнения
                         {
                             QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -427,7 +429,7 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 // открытие окна работы с фильтрами
 void DFRSSFilter::edit_filters()
 {
-    filter *new_filter = new filter(this);
+
     new_filter->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
@@ -449,7 +451,6 @@ void DFRSSFilter::edit_settings()
 // открытие окна работы с лентами
 void DFRSSFilter::edit_feeds()
 {
-    feeds_settings *f_sett = new feeds_settings(this);
     f_sett->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает

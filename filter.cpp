@@ -2,40 +2,12 @@
 #include "ui_filter.h"
 
 #include <QDir>
+#include <QEvent>
 
 #include "dfrssfilter.h"
 
-QList<filters_struct> filters;
 
-
-/* функция преобразования нестандартных символов к виду &#xxx;
- * взята отсюда:
- * http://stackoverflow.com/questions/7696159/how-can-i-convert-entity-characterescape-character-to-html-in-qt
- * автор http://stackoverflow.com/users/1455977/immortalpc
- */
-QString encodeEntities(const QString& src, const QString& force=QString())
-{
-    QString tmp(src);
-    uint len = tmp.length();
-    uint i = 0;
-    while(i < len)
-    {
-        if(tmp[i].unicode() > 128 || force.contains(tmp[i]))
-        {
-            QString rp = "&#"+QString::number(tmp[i].unicode())+";";
-            tmp.replace(i,1,rp);
-            len += rp.length()-1;
-            i += rp.length();
-        }
-        else
-        {
-            ++i;
-        }
-    }
-    return tmp;
-}
-
-void read_filters()
+void filter::read_filters()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "filters.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -57,7 +29,7 @@ void read_filters()
     }
 }
 
-void write_filters()
+void filter::write_filters()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "filters.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -67,13 +39,13 @@ void write_filters()
         QTextDocument doc;
 
         for (int i = 0; i < filters.size(); i++)
-            outStream << QString("%1").arg(encodeEntities(filters.at(i).title.trimmed())) << endl;
+            outStream << filters.at(i).GetEncodedTitle() << endl;
         file.close(); // записали и закрыли
     }
 }
 
 // функция вывода фильтров в таблицу
-void show_filters(QTreeWidget *treewidget, QList<filters_struct> values)
+void filter::show_filters(QTreeWidget *treewidget, QList<filters_struct> values)
 {
     treewidget->clear();
     for (int i = 0; i < values.size(); i++)
@@ -89,9 +61,17 @@ void show_filters(QTreeWidget *treewidget, QList<filters_struct> values)
         treewidget->addTopLevelItem(item);
     }
 }
+int filter::GetNumActiveFilter(void)
+{
+    int num_of_active_filters = 0;
+    for (int i = 0; i < filters.size(); i++)
+        if (filters.at(i).is_on)
+            num_of_active_filters++;
+    return num_of_active_filters;
+}
 
 // функция запоминания расставленных галочек
-void save_checked(QTreeWidget *treewidget)
+void filter::save_checked(QTreeWidget *treewidget)
 {
     for (int i = 0; i < filters.size(); i++)
     {
@@ -103,10 +83,11 @@ void save_checked(QTreeWidget *treewidget)
     write_filters();
 }
 
-filter::filter(QWidget *parent) : QDialog(), ui(new Ui::filter)
+filter::filter(QWidget *parent) : QWidget(), ui(new Ui::filter)
 {
     sett = static_cast<DFRSSFilter*>(parent)->sett;
     lineEdit = new QLineEdit(this);
+    filters.clear();
     lineEdit->setPlaceholderText("Введите фильтр...");
 
     QPushButton *add_button = new QPushButton;       // добавить фильтр
@@ -158,6 +139,13 @@ filter::filter(QWidget *parent) : QDialog(), ui(new Ui::filter)
     //connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(add_filter())); // добавление по нажатию клавиши ENTER
 
     this->setWindowIcon(QIcon(":/filter.ico"));
+}
+
+void filter::showEvent(QShowEvent * event)
+{
+    Q_UNUSED(event);
+    filers_list->clear();
+    show_filters(filers_list, filters);
 }
 
 filter::~filter()
@@ -230,9 +218,11 @@ void filter::set_filters_header_label()
     this->setWindowTitle(QString("Фильтры: (Всего: %1)").arg(filters.size()));
 }
 
-void filter::closeEvent(QCloseEvent *)
+void filter::closeEvent(QCloseEvent *event)
 {
     save_checked(filers_list);
+    hide();
+    event->ignore();
 }
 
 void filter::check_all()

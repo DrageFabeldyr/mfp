@@ -15,7 +15,10 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QPushButton>
+
 #include "settings.h"
+#include "filter.h"
+#include "feeds_settings.h"
 
 extern QString prog_name_ver;
 
@@ -29,6 +32,10 @@ public:
     ~DFRSSFilter();
 
     settings *sett = nullptr;
+    filter *new_filter = nullptr;
+    feeds_settings *f_sett = nullptr;
+
+    void GetNumActiveFilters(int num_of_active_filters);
 
 public slots:
     void fetch();
