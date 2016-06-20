@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QDir>
 #include <QFile>
+#include <QSettings>
 #include <QTextStream>
 
 
@@ -50,79 +51,28 @@ void Settings::read_settings()
 {
     QString str;
 
-    QString name = qApp->applicationDirPath() + QDir::separator() + "setts.gsd";
-    QFile file(name); // создаем объект класса QFile
-    if(file.open(QIODevice::ReadOnly |QIODevice::Text)) // если файл открылся и там текст
-    {
-        while(!file.atEnd()) // пока не упрёмся в конец файла
-        {
-            str = file.readLine(); // читаем строку
 
-            if (str.contains("min_to_tray=1"))
-                min_to_tray->setChecked(true);
-            if (str.contains("min_to_tray=0"))
-                min_to_tray->setChecked(false);
-
-            if (str.contains("close_to_tray=1"))
-                close_to_tray->setChecked(true);
-            if (str.contains("close_to_tray=0"))
-                close_to_tray->setChecked(false);
-
-            if (str.contains("run_in_tray=1"))
-                run_in_tray->setChecked(true);
-            if (str.contains("run_in_tray=0"))
-                run_in_tray->setChecked(false);
-
-            if (str.contains("activate_filters=1"))
-                activate_filters->setChecked(true);
-            if (str.contains("activate_filters=0"))
-                activate_filters->setChecked(false);
-
-            if (str.contains("activate_feeds=1"))
-                activate_feeds->setChecked(true);
-            if (str.contains("activate_feeds=0"))
-                activate_feeds->setChecked(false);
-        }
-
-        file.close(); // прочли и закрыли
-    }
+    QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
+    QSettings setting_file(name, QSettings::IniFormat);
+    min_to_tray->setChecked(setting_file.value("min_to_tray", false).toBool());
+    close_to_tray->setChecked(setting_file.value("close_to_tray", false).toBool());
+    run_in_tray->setChecked(setting_file.value("run_in_tray", false).toBool());
+    activate_filters->setChecked(setting_file.value("activate_filters", false).toBool());
+    activate_feeds->setChecked(setting_file.value("activate_feeds", false).toBool());
 }
 
 // сохранение настроек и выход
 void Settings::write_settings()
 {
-    QString name = qApp->applicationDirPath() + QDir::separator() + "setts.gsd";
-    QFile file(name); // создаем объект класса QFile
-    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
+    QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
+    QSettings setting_file(name, QSettings::IniFormat);
+    if (setting_file.isWritable())
     {
-        QTextStream outStream(&file);
-
-        if (min_to_tray->isChecked())
-            outStream << "min_to_tray=1" << endl;
-        else
-            outStream << "min_to_tray=0" << endl;
-
-        if (close_to_tray->isChecked())
-            outStream << "close_to_tray=1" << endl;
-        else
-            outStream << "close_to_tray=0" << endl;
-
-        if (run_in_tray->isChecked())
-            outStream << "run_in_tray=1" << endl;
-        else
-            outStream << "run_in_tray=0" << endl;
-
-        if (activate_filters->isChecked())
-            outStream << "activate_filters=1" << endl;
-        else
-            outStream << "activate_filters=0" << endl;
-
-        if (activate_feeds->isChecked())
-            outStream << "activate_feeds=1" << endl;
-        else
-            outStream << "activate_feeds=0" << endl;
-
-        file.close(); // записали и закрыли
+        setting_file.setValue("min_to_tray", min_to_tray->isChecked());
+        setting_file.setValue("close_to_tray", close_to_tray->isChecked());
+        setting_file.setValue("run_in_tray", run_in_tray->isChecked());
+        setting_file.setValue("activate_filters", activate_filters->isChecked());
+        setting_file.setValue("activate_feeds", activate_feeds->isChecked());
     }
 }
 

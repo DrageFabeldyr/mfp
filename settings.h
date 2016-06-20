@@ -25,6 +25,7 @@ public slots:
 
 private:
     Ui::settings *ui;
+    QString settingFile = "Setting.ini";
 
 private slots:
     void closeEvent(QCloseEvent *);
