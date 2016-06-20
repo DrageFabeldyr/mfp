@@ -4,7 +4,7 @@
 
 
 // функция вывода лент в таблицу
-void feeds_settings::show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
+void Feeds_Settings::show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
 {
     listwidget->clear();
     for (int i = 0; i < values.size(); i++)
@@ -21,7 +21,7 @@ void feeds_settings::show_feeds(QListWidget *listwidget, QList<feeds_struct> val
     }
 }
 
-void feeds_settings::read_feeds()
+void Feeds_Settings::read_feeds()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "feeds.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -41,7 +41,7 @@ void feeds_settings::read_feeds()
     }
 }
 
-void feeds_settings::write_feeds()
+void Feeds_Settings::write_feeds()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "feeds.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -56,7 +56,7 @@ void feeds_settings::write_feeds()
 }
 
 // функция запоминания расставленных галочек
-void feeds_settings::save_checked(QListWidget *listwidget)
+void Feeds_Settings::save_checked(QListWidget *listwidget)
 {
     for (int i = 0; i < feeds.size(); i++)
     {
@@ -68,10 +68,10 @@ void feeds_settings::save_checked(QListWidget *listwidget)
     write_feeds();
 }
 
-feeds_settings::feeds_settings(QWidget *parent) : QWidget(), ui(new Ui::feeds_settings)
+Feeds_Settings::Feeds_Settings(QWidget *parent) : QWidget(), ui(new Ui::feeds_settings)
 {
     feeds.clear();
-    sett = static_cast<DFRSSFilter*>(parent)->sett;
+    settings = static_cast<DFRSSFilter*>(parent)->settings;
     lineEdit = new QLineEdit(this);
     lineEdit->setPlaceholderText("Введите адрес ленты...");
 
@@ -123,14 +123,14 @@ feeds_settings::feeds_settings(QWidget *parent) : QWidget(), ui(new Ui::feeds_se
     this->setWindowIcon(QIcon(":/rss.ico"));
 }
 
-void feeds_settings::showEvent(QShowEvent * event)
+void Feeds_Settings::showEvent(QShowEvent * event)
 {
     Q_UNUSED(event);
     show_feeds(feeds_list, feeds);
     set_feeds_header_label();
 }
 
-feeds_settings::~feeds_settings()
+Feeds_Settings::~Feeds_Settings()
 {
     write_feeds();
     delete ui;
@@ -140,7 +140,7 @@ feeds_settings::~feeds_settings()
     delete feeds_list;
 }
 
-void feeds_settings::add_feed()
+void Feeds_Settings::add_feed()
 {
     QString help_str;
     bool add_this = true;
@@ -163,7 +163,7 @@ void feeds_settings::add_feed()
         {
             feeds_struct temp;  // создаём элемент типа
             temp.link = QString("%1").arg(lineEdit->text());    // заносим в него данные
-            if (sett->activate_feeds->isChecked())
+            if (settings->activate_feeds->isChecked())
                 temp.is_on = true;
             else
                 temp.is_on = false;
@@ -182,7 +182,7 @@ void feeds_settings::add_feed()
         feed_hint->setText("Bведён неверный адрес");
 }
 
-void feeds_settings::del_feed()
+void Feeds_Settings::del_feed()
 {
     save_checked(feeds_list); // сохраним галочки
     for (int i = feeds.size() - 1; i >= 0; i--) // идём от конца к началу, т.к. при удалении элемента размер списка уменьшается
@@ -196,27 +196,27 @@ void feeds_settings::del_feed()
 }
 
 // устанавливаем заголовок окна
-void feeds_settings::set_feeds_header_label()
+void Feeds_Settings::set_feeds_header_label()
 {
     this->setWindowTitle(QString("RSS-ленты: (Всего: %1)").arg(feeds.size()));
 }
 
 // сохраняем галочки
-void feeds_settings::closeEvent(QCloseEvent *event)
+void Feeds_Settings::closeEvent(QCloseEvent *event)
 {
     save_checked(feeds_list);
     hide();
     event->ignore();
 }
 
-void feeds_settings::check_all()
+void Feeds_Settings::check_all()
 {
     for (int i = 0; i < feeds.size(); i++)
         feeds[i].is_on = true;
     show_feeds(feeds_list, feeds);
 }
 
-void feeds_settings::uncheck_all()
+void Feeds_Settings::uncheck_all()
 {
     for (int i = 0; i < feeds.size(); i++)
         feeds[i].is_on = false;

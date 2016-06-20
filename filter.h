@@ -23,13 +23,13 @@ namespace Ui {
 class filter;
 }
 
-class filter : public QWidget
+class Filter : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit filter(QWidget *parent = 0);
-    ~filter();
+    explicit Filter(QWidget *parent = 0);
+    ~Filter();
     void read_filters();
     void write_filters();
     void show_filters(QTreeWidget *treewidget, QList<filters_struct> values);
@@ -49,7 +49,7 @@ private:
     QLineEdit *lineEdit;
     QLabel *filter_hint, *choice_hint;
     QTreeWidget *filers_list;
-    settings *sett;
+    Settings *settings;
 
 
 protected:

@@ -7,7 +7,7 @@
 #include <QTextStream>
 
 
-settings::settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
+Settings::Settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
 {
     setWindowTitle("Настройки");
 
@@ -35,7 +35,7 @@ settings::settings(QWidget *parent) : QDialog(parent), ui(new Ui::settings)
     this->setWindowIcon(QIcon(":/settings.ico"));
 }
 
-settings::~settings()
+Settings::~Settings()
 {
     delete ui;
     delete min_to_tray;
@@ -46,7 +46,7 @@ settings::~settings()
 }
 
 // чтение сохранённых настроек
-void settings::read_settings()
+void Settings::read_settings()
 {
     QString str;
 
@@ -89,7 +89,7 @@ void settings::read_settings()
 }
 
 // сохранение настроек и выход
-void settings::write_settings()
+void Settings::write_settings()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "setts.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -126,7 +126,7 @@ void settings::write_settings()
     }
 }
 
-void settings::closeEvent(QCloseEvent *)
+void Settings::closeEvent(QCloseEvent *)
 {
     write_settings();
 }

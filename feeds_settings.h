@@ -22,13 +22,13 @@ namespace Ui {
 class feeds_settings;
 }
 
-class feeds_settings : public QWidget
+class Feeds_Settings : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit feeds_settings(QWidget *parent = 0);
-    ~feeds_settings();
+    explicit Feeds_Settings(QWidget *parent = 0);
+    ~Feeds_Settings();
     QList<feeds_struct> feeds;
 
     void read_feeds();
@@ -45,7 +45,7 @@ private:
     QLineEdit *lineEdit;
     QLabel *feed_hint, *choice_hint;
     QListWidget *feeds_list;
-    settings *sett;
+    Settings *settings;
 
     void show_feeds(QListWidget *listwidget, QList<feeds_struct> values);
     void write_feeds();

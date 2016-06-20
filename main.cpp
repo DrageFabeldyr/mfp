@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     DFRSSFilter *dfrssfilter = new DFRSSFilter;
 
-    if (!dfrssfilter->sett->run_in_tray->isChecked()) // если нет галочки "запускать свёрнутым в трей"
+    if (!dfrssfilter->settings->run_in_tray->isChecked()) // если нет галочки "запускать свёрнутым в трей"
         dfrssfilter->show(); // рисуем
 
     return app.exec();

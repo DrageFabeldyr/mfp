@@ -7,7 +7,7 @@
 #include "dfrssfilter.h"
 
 
-void filter::read_filters()
+void Filter::read_filters()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "filters.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -29,7 +29,7 @@ void filter::read_filters()
     }
 }
 
-void filter::write_filters()
+void Filter::write_filters()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "filters.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -45,7 +45,7 @@ void filter::write_filters()
 }
 
 // функция вывода фильтров в таблицу
-void filter::show_filters(QTreeWidget *treewidget, QList<filters_struct> values)
+void Filter::show_filters(QTreeWidget *treewidget, QList<filters_struct> values)
 {
     treewidget->clear();
     for (int i = 0; i < values.size(); i++)
@@ -61,7 +61,7 @@ void filter::show_filters(QTreeWidget *treewidget, QList<filters_struct> values)
         treewidget->addTopLevelItem(item);
     }
 }
-int filter::GetNumActiveFilter(void)
+int Filter::GetNumActiveFilter(void)
 {
     int num_of_active_filters = 0;
     for (int i = 0; i < filters.size(); i++)
@@ -71,7 +71,7 @@ int filter::GetNumActiveFilter(void)
 }
 
 // функция запоминания расставленных галочек
-void filter::save_checked(QTreeWidget *treewidget)
+void Filter::save_checked(QTreeWidget *treewidget)
 {
     for (int i = 0; i < filters.size(); i++)
     {
@@ -83,9 +83,9 @@ void filter::save_checked(QTreeWidget *treewidget)
     write_filters();
 }
 
-filter::filter(QWidget *parent) : QWidget(), ui(new Ui::filter)
+Filter::Filter(QWidget *parent) : QWidget(), ui(new Ui::filter)
 {
-    sett = static_cast<DFRSSFilter*>(parent)->sett;
+    settings = static_cast<DFRSSFilter*>(parent)->settings;
     lineEdit = new QLineEdit(this);
     filters.clear();
     lineEdit->setPlaceholderText("Введите фильтр...");
@@ -141,14 +141,14 @@ filter::filter(QWidget *parent) : QWidget(), ui(new Ui::filter)
     this->setWindowIcon(QIcon(":/filter.ico"));
 }
 
-void filter::showEvent(QShowEvent * event)
+void Filter::showEvent(QShowEvent * event)
 {
     Q_UNUSED(event);
     filers_list->clear();
     show_filters(filers_list, filters);
 }
 
-filter::~filter()
+Filter::~Filter()
 {
     delete ui;
     delete lineEdit;
@@ -157,7 +157,7 @@ filter::~filter()
     delete filers_list;
 }
 
-void filter::add_filter()
+void Filter::add_filter()
 {
     QString help_str;
     bool add_this = true;
@@ -180,7 +180,7 @@ void filter::add_filter()
         {
             filters_struct temp;  // создаём элемент типа
             temp.title = QString("%1").arg(lineEdit->text());    // заносим в него данные
-            if (sett->activate_filters->isChecked())
+            if (settings->activate_filters->isChecked())
                 temp.is_on = true;
             else
                 temp.is_on = false;
@@ -199,7 +199,7 @@ void filter::add_filter()
 }
 
 // удаление фильтра
-void filter::del_filter()
+void Filter::del_filter()
 {
     save_checked(filers_list); // сохраним галочки
     for (int i = filters.size() - 1; i >= 0; i--) // идём от конца к началу, т.к. при удалении элемента размер списка уменьшается
@@ -213,26 +213,26 @@ void filter::del_filter()
 }
 
 // устанавливаем заголовок окна
-void filter::set_filters_header_label()
+void Filter::set_filters_header_label()
 {
     this->setWindowTitle(QString("Фильтры: (Всего: %1)").arg(filters.size()));
 }
 
-void filter::closeEvent(QCloseEvent *event)
+void Filter::closeEvent(QCloseEvent *event)
 {
     save_checked(filers_list);
     hide();
     event->ignore();
 }
 
-void filter::check_all()
+void Filter::check_all()
 {
     for (int i = 0; i < filters.size(); i++)
         filters[i].is_on = true;
     show_filters(filers_list, filters);
 }
 
-void filter::uncheck_all()
+void Filter::uncheck_all()
 {
     for (int i = 0; i < filters.size(); i++)
         filters[i].is_on = false;

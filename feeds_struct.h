@@ -6,7 +6,7 @@
 class feeds_struct
 {
 public:
-    feeds_struct();
+    //feeds_struct();
 
     QString title;
     QString link;

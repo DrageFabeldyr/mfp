@@ -9,13 +9,13 @@ namespace Ui {
 class settings;
 }
 
-class settings : public QDialog
+class Settings : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit settings(QWidget *parent = 0);
-    ~settings();
+    explicit Settings(QWidget *parent = 0);
+    ~Settings();
     QCheckBox *min_to_tray, *close_to_tray, *run_in_tray;
     QCheckBox *activate_filters, *activate_feeds;
 

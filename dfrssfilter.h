@@ -31,9 +31,9 @@ public:
     DFRSSFilter(QWidget *widget = 0);
     ~DFRSSFilter();
 
-    settings *sett = nullptr;
-    filter *new_filter = nullptr;
-    feeds_settings *f_sett = nullptr;
+    Settings *settings = nullptr;
+    Filter *filter = nullptr;
+    Feeds_Settings *feeds_settings = nullptr;
 
     void GetNumActiveFilters(int num_of_active_filters);
 

@@ -47,7 +47,8 @@ SOURCES       = main.cpp \
 		dfrssfilter.cpp \
 		filter.cpp \
 		settings.cpp \
-		feeds_settings.cpp debug\qrc_res.cpp \
+		feeds_settings.cpp \
+		filters_struct.cpp debug\qrc_res.cpp \
 		debug\moc_dfrssfilter.cpp \
 		debug\moc_filter.cpp \
 		debug\moc_settings.cpp \
@@ -57,6 +58,7 @@ OBJECTS       = debug/main.o \
 		debug/filter.o \
 		debug/settings.o \
 		debug/feeds_settings.o \
+		debug/filters_struct.o \
 		debug/qrc_res.o \
 		debug/moc_dfrssfilter.o \
 		debug/moc_filter.o \
@@ -66,11 +68,13 @@ OBJECTS       = debug/main.o \
 DIST          =  dfrssfilter.h \
 		filter.h \
 		settings.h \
-		feeds_settings.h main.cpp \
+		feeds_settings.h \
+		filters_struct.h main.cpp \
 		dfrssfilter.cpp \
 		filter.cpp \
 		settings.cpp \
-		feeds_settings.cpp
+		feeds_settings.cpp \
+		filters_struct.cpp
 QMAKE_TARGET  = DF-RSS-filter
 DESTDIR        = debug\ #avoid trailing-slash linebreak
 TARGET         = DF-RSS-filter.exe
@@ -109,7 +113,7 @@ dist:
 	$(ZIP) DF-RSS-filter.zip $(SOURCES) $(DIST) DF-RSS-filter.pro C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\spec_pre.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\qdevice.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\device_config.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\common\shell-win32.conf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\qconfig.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_clucene_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_declarative.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_declarative_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_enginio.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_enginio_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_platformsupport_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webkit.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webkit_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webkitwidgets.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webkitwidgets_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webview.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_webview_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\qt_functions.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\qt_config.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\win32\qt_config.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\win32-g++\qmake.conf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\spec_post.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\default_pre.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\resolve_config.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\default_post.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\build_pass.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\c++11.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\qml_debug.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\win32\rtti.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\precompile_header.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\warn_on.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\qt.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\resources.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\moc.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\uic.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\win32\windows.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\exceptions.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\yacc.prf C:\Qt\Qt5.4.1\5.4\mingw491_32\mkspecs\features\lex.prf DF-RSS-filter.pro res.qrc C:/Qt/Qt5.4.1/5.4/mingw491_32/lib/qtmaind.prl C:/Qt/Qt5.4.1/5.4/mingw491_32/lib/Qt5Cored.prl C:/Qt/Qt5.4.1/5.4/mingw491_32/lib/Qt5Widgetsd.prl C:/Qt/Qt5.4.1/5.4/mingw491_32/lib/Qt5Guid.prl C:/Qt/Qt5.4.1/5.4/mingw491_32/lib/Qt5Networkd.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug\main.o debug\dfrssfilter.o debug\filter.o debug\settings.o debug\feeds_settings.o debug\qrc_res.o debug\moc_dfrssfilter.o debug\moc_filter.o debug\moc_settings.o debug\moc_feeds_settings.o
+	-$(DEL_FILE) debug\main.o debug\dfrssfilter.o debug\filter.o debug\settings.o debug\feeds_settings.o debug\filters_struct.o debug\qrc_res.o debug\moc_dfrssfilter.o debug\moc_filter.o debug\moc_settings.o debug\moc_feeds_settings.o
 
 distclean: clean 
 	-$(DEL_FILE) $(DESTDIR_TARGET)
@@ -308,11 +312,46 @@ debug/moc_dfrssfilter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetw
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
+		filter.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextcursor.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextformat.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpen.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextoption.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		filters_struct.h \
+		feeds_settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListWidget \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistwidget.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
+		feeds_struct.h \
 		dfrssfilter.h
 	C:\Qt\Qt5.4.1\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/Qt5.4.1/5.4/mingw491_32/mkspecs/win32-g++ -ID:/qtprojects/dfrssfilter -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore dfrssfilter.h -o debug\moc_dfrssfilter.cpp
 
-debug/moc_filter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QDialog \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
+debug/moc_filter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qwidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qwindowdefs.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qglobal.h \
@@ -462,9 +501,14 @@ debug/moc_filter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
 		settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QDialog \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
+		filters_struct.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
 		filter.h
 	C:\Qt\Qt5.4.1\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/Qt5.4.1/5.4/mingw491_32/mkspecs/win32-g++ -ID:/qtprojects/dfrssfilter -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore filter.h -o debug\moc_filter.cpp
 
@@ -711,10 +755,27 @@ debug/moc_feeds_settings.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QD
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qrubberband.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		feeds_struct.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
 		feeds_settings.h
 	C:\Qt\Qt5.4.1\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/Qt5.4.1/5.4/mingw491_32/mkspecs/win32-g++ -ID:/qtprojects/dfrssfilter -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore feeds_settings.h -o debug\moc_feeds_settings.cpp
 
@@ -919,6 +980,42 @@ debug/main.o: main.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
+		filter.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextcursor.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextformat.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpen.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextoption.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		filters_struct.h \
+		feeds_settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListWidget \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistwidget.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
+		feeds_struct.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QApplication \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qapplication.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qcoreapplication.h \
@@ -1100,6 +1197,42 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
+		filter.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextcursor.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextformat.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpen.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextoption.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		filters_struct.h \
+		feeds_settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListWidget \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistwidget.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
+		feeds_struct.h \
 		ui_dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QAction \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QApplication \
@@ -1115,8 +1248,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qheaderview.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QMainWindow \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qmainwindow.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QToolBar \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtoolbar.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QtCore \
@@ -1132,11 +1263,8 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtextcodec.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qendian.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qlibraryinfo.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdiriterator.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileselector.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfilesystemwatcher.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qlockfile.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qloggingcategory.h \
@@ -1159,7 +1287,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qjsonobject.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qabstracteventdispatcher.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qabstractnativeeventfilter.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qmath.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qmetaobject.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qmimedata.h \
@@ -1168,7 +1295,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qsharedmemory.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qsocketnotifier.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qsystemsemaphore.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtranslator.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qwineventnotifier.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qmimedatabase.h \
@@ -1255,7 +1381,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpaintdevicewindow.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QWindow \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qwindow.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QMargins \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QRect \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QPaintDevice \
@@ -1263,7 +1388,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QImage \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qrasterwindow.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qscreen.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QSize \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QSizeF \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTransform \
@@ -1290,17 +1414,12 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpagesize.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpaintengine.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpainter.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextoption.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpen.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qpdfwriter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qabstracttextdocumentlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextlayout.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextformat.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qglyphrun.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qrawfont.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qfontdatabase.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextcursor.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qstatictext.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qsyntaxhighlighter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextobject.h \
@@ -1325,7 +1444,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qfilesystemmodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qfontdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qinputdialog.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qmessagebox.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qprogressdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qwizard.h \
@@ -1352,15 +1470,9 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qfileiconprovider.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qitemdelegate.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qitemeditorfactory.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistview.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistwidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstyleditemdelegate.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtableview.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtablewidget.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qformlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLayout \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgesture.h \
@@ -1442,22 +1554,11 @@ debug/dfrssfilter.o: dfrssfilter.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qsslcertificateextension.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qsslcipher.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qsslkey.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qtnetworkversion.h \
-		filter.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
-		feeds_settings.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListWidget
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qtnetworkversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\dfrssfilter.o dfrssfilter.cpp
 
 debug/filter.o: filter.cpp filter.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QDialog \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qwidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qwindowdefs.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qglobal.h \
@@ -1607,9 +1708,14 @@ debug/filter.o: filter.cpp filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
 		settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QDialog \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
+		filters_struct.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
 		ui_filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QVariant \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QAction \
@@ -1626,10 +1732,10 @@ debug/filter.o: filter.cpp filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qbuttongroup.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHeaderView \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qheaderview.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
 		dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetworkAccessManager \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qnetworkaccessmanager.h \
@@ -1648,7 +1754,6 @@ debug/filter.o: filter.cpp filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetworkReply \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qnetworkreply.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QIODevice \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetworkRequest \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qnetworkrequest.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QSharedDataPointer \
@@ -1665,7 +1770,14 @@ debug/filter.o: filter.cpp filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qsignalmapper.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QSystemTrayIcon \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qsystemtrayicon.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidget
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidget \
+		feeds_settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListWidget \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistwidget.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlistview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
+		feeds_struct.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\filter.o filter.cpp
 
 debug/settings.o: settings.cpp settings.h \
@@ -1955,10 +2067,27 @@ debug/feeds_settings.o: feeds_settings.cpp feeds_settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qrubberband.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		feeds_struct.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
 		ui_feeds_settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QVariant \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QAction \
@@ -1975,20 +2104,6 @@ debug/feeds_settings.o: feeds_settings.cpp feeds_settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qbuttongroup.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHeaderView \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qheaderview.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayout.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QListView \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetworkAccessManager \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qnetworkaccessmanager.h \
@@ -2007,7 +2122,6 @@ debug/feeds_settings.o: feeds_settings.cpp feeds_settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetworkReply \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qnetworkreply.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QIODevice \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetworkRequest \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/qnetworkrequest.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QSharedDataPointer \
@@ -2029,8 +2143,57 @@ debug/feeds_settings.o: feeds_settings.cpp feeds_settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreeview.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidgetitemiterator.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItem
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItem \
+		filter.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		filters_struct.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\feeds_settings.o feeds_settings.cpp
+
+debug/filters_struct.o: filters_struct.cpp filters_struct.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QString \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfeatures.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtypetraits.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_armv7.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_armv6.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_armv5.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_ia64.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_mips.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_x86.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_gcc.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qatomic_unix.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qstringbuilder.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\filters_struct.o filters_struct.cpp
 
 debug/qrc_res.o: debug/qrc_res.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\qrc_res.o debug\qrc_res.cpp
