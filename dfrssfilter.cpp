@@ -1,11 +1,8 @@
+#include <QtNetwork>
+#include <QDesktopServices>
+
 #include "dfrssfilter.h"
 #include "ui_dfrssfilter.h"
-
-#include <QtCore>
-#include <QtWidgets>
-#include <QtNetwork>
-#include <QString>
-
 #include "filter.h"
 #include "settings.h"
 #include "feeds_settings.h"
@@ -52,6 +49,9 @@ DFRSSFilter::~DFRSSFilter()
     delete feeds_settings;
 
     delete currentReply;
+    delete layout;
+    delete hboxLayout;
+    delete timer;
 
     delete treeWidget;
     delete fetchButton;
@@ -150,9 +150,9 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     mainmenubar->addMenu(main_menu);
     mainmenubar->show();
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    layout = new QVBoxLayout;
 
-    QHBoxLayout *hboxLayout = new QHBoxLayout;
+    hboxLayout = new QHBoxLayout;
     hint = new QLabel(this);
     hint->setText("Дождитесь обновления результатов или нажмите кнопку \"Поиск\", чтобы обновить результаты прямо сейчас");
 
@@ -187,13 +187,12 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     installEventFilter(this);
 
 
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(fetch()));
     timer->start(request_period); // обновление по таймеру
 
     this->setWindowIcon(QIcon(":/trell.ico"));
 }
-
 
 // Начинает сетевой запрос и соединяет необходимые сигналы
 void DFRSSFilter::get(const QUrl &url)
@@ -424,7 +423,6 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
     currentReply = 0;
 }
 
-
 // dm -->
 // открытие окна работы с фильтрами
 void DFRSSFilter::edit_filters()
@@ -440,7 +438,6 @@ void DFRSSFilter::edit_filters()
 // открытие окна работы с настройками
 void DFRSSFilter::edit_settings()
 {
-    //settings *sett = new settings;
     settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает

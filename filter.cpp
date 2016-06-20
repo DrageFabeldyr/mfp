@@ -2,7 +2,6 @@
 #include "ui_filter.h"
 
 #include <QDir>
-#include <QEvent>
 
 #include "dfrssfilter.h"
 

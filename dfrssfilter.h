@@ -68,6 +68,9 @@ private:
 
     QNetworkAccessManager manager;
     QNetworkReply *currentReply;
+    QVBoxLayout *layout;
+    QHBoxLayout *hboxLayout;
+    QTimer *timer;
 
     QTreeWidget *treeWidget;
     QPushButton *fetchButton;

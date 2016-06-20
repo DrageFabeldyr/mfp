@@ -23,7 +23,6 @@ Settings::Settings(QWidget *parent) : QWidget(), ui(new Ui::settings)
     activate_feeds = new QCheckBox(this);
     activate_feeds->setText("Активировать ленты при добавлении");
 
-
     layout = new QVBoxLayout;
     layout->addWidget(min_to_tray);
     layout->addWidget(close_to_tray);
@@ -51,7 +50,6 @@ Settings::~Settings()
 void Settings::read_settings()
 {
     QString str;
-
 
     QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
     QSettings setting_file(name, QSettings::IniFormat);
