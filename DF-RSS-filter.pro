@@ -34,3 +34,9 @@ CONFIG += c++11
 
 RESOURCES += \
     res.qrc
+
+
+win32: LIBS += -L$$PWD/ -llibtag
+
+INCLUDEPATH += $$PWD/
+DEPENDPATH += $$PWD/

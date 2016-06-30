@@ -1,5 +1,7 @@
 #include <QtNetwork>
 #include <QDesktopServices>
+#include <QDir>
+#include <QFileInfo>
 
 #include "dfrssfilter.h"
 #include "ui_dfrssfilter.h"
@@ -7,6 +9,9 @@
 #include "settings.h"
 #include "feeds_settings.h"
 
+#include "taglib/fileref.h"
+#include "taglib/taglib.h"
+#include "taglib/tag.h"
 
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
@@ -101,16 +106,24 @@ void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
  *  источников; кнопка начинает процесс чтения новостей. */
 DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
+    settings = new Settings(this);
+    settings->read_settings();
     filter = new Filter(this);
     filter->read_filters(); // считываем фильтры
     feeds_settings = new Feeds_Settings(this);
     feeds_settings->read_feeds(); // считываем ленты
-    settings = new Settings(this);
-    settings->read_settings();
     win_max = false; // окно не развёрнуто
+
+    start_folder = new QLineEdit(this);
+    start_folder->setPlaceholderText("Введите папку...");
 
     fetchButton = new QPushButton(tr("Поиск"), this);
     fetchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
+    connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
+
+    searchButton = new QPushButton(tr("Поиск исполнителей"), this);
+    searchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
+    connect(searchButton, SIGNAL(clicked()), this, SLOT(search_artists())); // запуск по нажатию кнопки
 
     treeWidget = new QTreeWidget(this);
     connect(treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*)));
@@ -122,7 +135,6 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     treeWidget->setColumnHidden(1, true); // скроем столбец со ссылками - удалять его нельзя - ссылки берутся из него для открытия
 
     connect(&manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
-    connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
 
     // создание основного меню программы
     mainmenubar = new QMenuBar(this);
@@ -151,16 +163,23 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     mainmenubar->show();
 
     layout = new QVBoxLayout;
+    vboxLayout = new QVBoxLayout;
 
     hboxLayout = new QHBoxLayout;
     hint = new QLabel(this);
     hint->setText("Дождитесь обновления результатов или нажмите кнопку \"Поиск\", чтобы обновить результаты прямо сейчас");
-
     hboxLayout->addWidget(hint);
     hboxLayout->addWidget(fetchButton);
 
+    hboxLayout2 = new QHBoxLayout;
+    hboxLayout2->addWidget(start_folder);
+    hboxLayout2->addWidget(searchButton);
+
+    vboxLayout->addLayout(hboxLayout);
+    vboxLayout->addLayout(hboxLayout2);
+
     layout->setMenuBar(mainmenubar);
-    layout->addLayout(hboxLayout);
+    layout->addLayout(vboxLayout);
     layout->addWidget(treeWidget);
     setLayout(layout);
 
@@ -459,3 +478,96 @@ void DFRSSFilter::quit()
 {
     exit(0);
 }
+
+void DFRSSFilter::search_artists()
+{
+    QString str = start_folder->text();
+    file_counter = 0;
+    artists.clear();
+    searching(str);
+
+    QString name = qApp->applicationDirPath() + QDir::separator() + "artists.gsd";
+    QFile file(name); // создаем объект класса QFile
+    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
+    {
+        QTextStream outStream(&file);
+
+        for (int i = 0; i < artists.size(); i++)
+            outStream << artists.at(i)/*.GetEncodedTitle()*/ << endl;
+        file.close(); // записали и закрыли
+    }
+
+}
+
+void DFRSSFilter::searching(QString path)
+{
+    bool new_artist;
+    // http://www.cyberforum.ru/qt/thread644532.html
+    // там есть пример и без рекурсии, но так как-то понятнее
+
+    QDir currentFolder(path);
+
+    currentFolder.setFilter(QDir::Dirs | QDir::Files);
+    currentFolder.setSorting(QDir::Name);
+
+    QFileInfoList folderitems(currentFolder.entryInfoList());
+
+    foreach (QFileInfo i_file, folderitems)
+    {
+        QString i_filename(i_file.fileName());
+        if (i_filename == "." || i_filename == ".." || i_filename.isEmpty())
+            continue;
+
+        if (i_file.isDir())
+            searching(path + "/" + i_filename);
+        else
+        {
+            file_counter++;
+            QString full_filename = path + "/" + i_filename;
+
+            TagLib::FileRef ref(full_filename.toStdWString().c_str());
+            if (!ref.isNull() && ref.tag() != NULL)
+            {
+                QString data = QString("%1").arg(ref.tag()->artist().toCString(true));
+                /***********************************/
+                QString temp_artist = encodeEntities(data);
+                /***********************************/
+                new_artist = true;
+                for (int i = 0; i < artists.size(); i++)
+                    if (temp_artist == artists.at(i))
+                        new_artist = false;
+                if (new_artist)
+                    artists.push_back(temp_artist);
+            }
+        }
+    }
+    start_folder->setText(QString("%1").arg(file_counter));
+}
+
+/* функция преобразования нестандартных символов к виду &#xxx;
+* взята отсюда:
+* http://stackoverflow.com/questions/7696159/how-can-i-convert-entity-characterescape-character-to-html-in-qt
+* автор http://stackoverflow.com/users/1455977/immortalpc
+*/
+QString DFRSSFilter::encodeEntities( QString& src, const QString& force)
+{
+    QString tmp(src);
+    uint len = tmp.length();
+    uint i = 0;
+    while(i < len)
+    {
+        if(tmp[i].unicode() > 128 || force.contains(tmp[i]))
+        {
+            QString rp = "&#"+QString::number(tmp[i].unicode())+";";
+            tmp.replace(i,1,rp);
+            len += rp.length()-1;
+            i += rp.length();
+        }
+        else
+        {
+            ++i;
+        }
+    }
+    return tmp;
+}
+

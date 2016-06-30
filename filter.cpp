@@ -35,7 +35,6 @@ void Filter::write_filters()
     if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
     {
         QTextStream outStream(&file);
-        QTextDocument doc;
 
         for (int i = 0; i < filters.size(); i++)
             outStream << filters.at(i).GetEncodedTitle() << endl;
