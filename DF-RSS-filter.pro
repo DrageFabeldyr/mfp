@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,27 +14,32 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         dfrssfilter.cpp \
-    filter.cpp \
     settings.cpp \
-    feeds_settings.cpp \
-    filters_struct.cpp
+    filters_struct.cpp \
+    feed.cpp \
+    feeds.cpp \
+    feedsandfilters.cpp \
+    feedmodel.cpp \
+    filtermodel.cpp \
+    editwindow.cpp
 
 HEADERS  += dfrssfilter.h \
-    filter.h \
     settings.h \
-    feeds_settings.h \
-    filters_struct.h
+    filters_struct.h \
+    feed.h \
+    feeds.h \
+    feedsandfilters.h \
+    feedmodel.h \
+    filtermodel.h \
+    editwindow.h
 
 FORMS    += dfrssfilter.ui \
-    filter.ui \
-    settings.ui \
-    feeds_settings.ui
+    settings.ui
 
 CONFIG += c++11
 
 RESOURCES += \
     res.qrc
-
 
 win32: LIBS += -L$$PWD/ -llibtag
 

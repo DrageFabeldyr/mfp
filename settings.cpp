@@ -56,13 +56,19 @@ void Settings::read_settings()
     min_to_tray->setChecked(setting_file.value("min_to_tray", false).toBool());
     close_to_tray->setChecked(setting_file.value("close_to_tray", false).toBool());
     run_in_tray->setChecked(setting_file.value("run_in_tray", false).toBool());
+    //bool tyt = setting_file.value("activate_filters", false).toBool();
     activate_filters->setChecked(setting_file.value("activate_filters", false).toBool());
     activate_feeds->setChecked(setting_file.value("activate_feeds", false).toBool());
+
+    activateFilters = setting_file.value("activate_filters", false).toBool();
+    activateFeeds = setting_file.value("activate_feeds", false).toBool();
 }
 
 // сохранение настроек и выход
 void Settings::write_settings()
 {
+    activateFilters = activate_filters->isChecked();
+    activateFeeds = activate_feeds->isChecked();
     QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
     QSettings setting_file(name, QSettings::IniFormat);
     if (setting_file.isWritable())

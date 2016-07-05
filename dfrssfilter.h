@@ -15,16 +15,12 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QPushButton>
-#include <QLineEdit>
-#include <QString>
 
 #include "settings.h"
 #include "filter.h"
-#include "feeds_settings.h"
+#include "feeds.h"
 
 extern QString prog_name_ver;
-
-
 
 class DFRSSFilter : public QWidget
 {
@@ -34,38 +30,40 @@ public:
     ~DFRSSFilter();
 
     Settings *settings = nullptr;
-    Filter *filter = nullptr;
-    Feeds_Settings *feeds_settings = nullptr;
+    //Filter *filter = nullptr;
+    //Feeds_Settings *feeds_settings = nullptr;
+
+    Feeds *pFeeds;
 
     void GetNumActiveFilters(int num_of_active_filters);
 
 public slots:
     void fetch();
+    void finished();
     void finished(QNetworkReply *reply);
     void readyRead();
     void metaDataChanged();
     void itemActivated(QTreeWidgetItem * item);
     void error(QNetworkReply::NetworkError);
     // dm -->
-    void edit_filters();
+    //void edit_filters();
     void edit_settings();
-    void edit_feeds();
+    //void edit_feeds();
+    void edit_feeds_and_filters();
     //void read_feeds();
     //int read_settings();
     //void write_settings_and_quit();
     void quit();
-    void search_artists();
-    void searching(QString path);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     // <-- dm
 
 private:
-    QString static encodeEntities( QString& src, const QString& force=QString()) ;
-
     void parseXml();
     void get(const QUrl &url);
+
+    Feed activeFeed;
 
     QXmlStreamReader xml;
     QString currentTag;
@@ -75,23 +73,18 @@ private:
     QNetworkAccessManager manager;
     QNetworkReply *currentReply;
     QVBoxLayout *layout;
-    QVBoxLayout *vboxLayout;
     QHBoxLayout *hboxLayout;
-    QHBoxLayout *hboxLayout2;
     QTimer *timer;
 
     QTreeWidget *treeWidget;
     QPushButton *fetchButton;
     // dm -->
-    QPushButton *searchButton;
     QLabel *hint;
     QMenu *trayIconMenu, *main_menu;
     QMenuBar *mainmenubar;
     QSystemTrayIcon *trayIcon;
-    QAction *menu_settings, *menu_feeds, *menu_filters, *menu_quit;
+    QAction *menu_settings, *menu_feeds_and_filters, *menu_quit;
     QAction *tray_quit;
-    QLineEdit *start_folder;
-    QStringList artists;
 
 
     bool need_a_name; // для проверки необходимости обновления имени окна
@@ -101,7 +94,6 @@ private:
     int counter = 0;
     bool have_news; // переменная для вывода уведомления о наличии новостей
     int num_of_results; // переменная для подсчёта интересующих новостей в ленте
-    int file_counter = 0;
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);

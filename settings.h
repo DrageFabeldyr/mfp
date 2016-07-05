@@ -20,6 +20,8 @@ public:
     ~Settings();
     QCheckBox *min_to_tray, *close_to_tray, *run_in_tray;
     QCheckBox *activate_filters, *activate_feeds;
+    bool activateFilters ;
+    bool activateFeeds;
 
 public slots:
     void read_settings();     // чтение фильтров из файла

@@ -1,17 +1,14 @@
 #include <QtNetwork>
 #include <QDesktopServices>
-#include <QDir>
-#include <QFileInfo>
+#include <QTextDocument>
 
 #include "dfrssfilter.h"
 #include "ui_dfrssfilter.h"
-#include "filter.h"
 #include "settings.h"
-#include "feeds_settings.h"
+#include "feedsandfilters.h"
 
-#include "taglib/fileref.h"
-#include "taglib/taglib.h"
-#include "taglib/tag.h"
+QMutex mutex;
+
 
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
@@ -50,8 +47,8 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
 DFRSSFilter::~DFRSSFilter()
 {
     delete settings;
-    delete filter;
-    delete feeds_settings;
+    //delete filter;
+    //delete feeds_settings;
 
     delete currentReply;
     delete layout;
@@ -66,8 +63,8 @@ DFRSSFilter::~DFRSSFilter()
     delete mainmenubar;
     delete trayIcon;
     delete menu_settings,
-    delete menu_feeds;
-    delete menu_filters;
+    delete menu_feeds_and_filters;
+    //delete menu_filters;
     delete menu_quit;
     delete tray_quit;
 }
@@ -107,23 +104,18 @@ void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
 DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
     settings = new Settings(this);
+    pFeeds = new Feeds();
     settings->read_settings();
-    filter = new Filter(this);
-    filter->read_filters(); // считываем фильтры
-    feeds_settings = new Feeds_Settings(this);
-    feeds_settings->read_feeds(); // считываем ленты
-    win_max = false; // окно не развёрнуто
+//filter
+    //filter = new Filter(this);
+    //filter->read_filters(); // считываем фильтры
+    //feeds_settings = new Feeds_Settings(this);
+    //feeds_settings->read_feeds(); // считываем ленты
 
-    start_folder = new QLineEdit(this);
-    start_folder->setPlaceholderText("Введите папку...");
+    win_max = false; // окно не развёрнуто
 
     fetchButton = new QPushButton(tr("Поиск"), this);
     fetchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
-    connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
-
-    searchButton = new QPushButton(tr("Поиск исполнителей"), this);
-    searchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
-    connect(searchButton, SIGNAL(clicked()), this, SLOT(search_artists())); // запуск по нажатию кнопки
 
     treeWidget = new QTreeWidget(this);
     connect(treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*)));
@@ -135,6 +127,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     treeWidget->setColumnHidden(1, true); // скроем столбец со ссылками - удалять его нельзя - ссылки берутся из него для открытия
 
     connect(&manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+    connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
 
     // создание основного меню программы
     mainmenubar = new QMenuBar(this);
@@ -146,14 +139,16 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     main_menu->addAction(menu_settings);
     menu_settings->setIcon(QIcon(":/settings.ico"));
     connect(menu_settings, SIGNAL(triggered()), this, SLOT(edit_settings()));
-    menu_feeds = new QAction(tr("RSS-ленты"), this);
-    main_menu->addAction(menu_feeds);
-    menu_feeds->setIcon(QIcon(":/rss.ico"));
-    connect(menu_feeds, SIGNAL(triggered()), this, SLOT(edit_feeds()));
+    menu_feeds_and_filters = new QAction(tr("RSS-ленты"), this);
+    main_menu->addAction(menu_feeds_and_filters);
+    menu_feeds_and_filters->setIcon(QIcon(":/rss.ico"));
+    connect(menu_feeds_and_filters, SIGNAL(triggered()), this, SLOT(edit_feeds_and_filters()));
+    /*
     menu_filters = new QAction(tr("Фильтры"), this);
     main_menu->addAction(menu_filters);
     menu_filters->setIcon(QIcon(":/filter.ico"));
     connect(menu_filters, SIGNAL(triggered()), this, SLOT(edit_filters()));
+    */
     menu_quit = new QAction("Выход", this);
     main_menu->addAction(menu_quit);
     menu_quit->setIcon(QIcon(":/exit.ico"));
@@ -163,23 +158,16 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     mainmenubar->show();
 
     layout = new QVBoxLayout;
-    vboxLayout = new QVBoxLayout;
 
     hboxLayout = new QHBoxLayout;
     hint = new QLabel(this);
     hint->setText("Дождитесь обновления результатов или нажмите кнопку \"Поиск\", чтобы обновить результаты прямо сейчас");
+
     hboxLayout->addWidget(hint);
     hboxLayout->addWidget(fetchButton);
 
-    hboxLayout2 = new QHBoxLayout;
-    hboxLayout2->addWidget(start_folder);
-    hboxLayout2->addWidget(searchButton);
-
-    vboxLayout->addLayout(hboxLayout);
-    vboxLayout->addLayout(hboxLayout2);
-
     layout->setMenuBar(mainmenubar);
-    layout->addLayout(vboxLayout);
+    layout->addLayout(hboxLayout);
     layout->addWidget(treeWidget);
     setLayout(layout);
 
@@ -226,6 +214,9 @@ void DFRSSFilter::get(const QUrl &url)
     connect(currentReply, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(currentReply, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(error(QNetworkReply::NetworkError)));
+    connect(currentReply, SIGNAL(finished()), this, SLOT(finished()));
+
+
 }
 
 /*
@@ -248,6 +239,23 @@ void DFRSSFilter::fetch()
      * поэтому после первого совпадения выходим из цикла, а продолжим по событию finished */
     counter = 0;
     have_news = false;
+    QList <Feed> feeds;
+    pFeeds->GetActiveFeedsList(feeds);
+
+    if (feeds.size()==0)
+        return;
+
+    num_of_results = 0; // обнуляем значение количества выводимых новостей
+    fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
+    need_a_name = true;
+    xml.clear();
+    QUrl url(feeds.at(0).link);
+    activeFeed = feeds.at(0);
+    get(url);
+
+    counter=1;
+
+    /*
     for (; counter < feeds_settings->feeds.size(); counter++)
     {
         if (feeds_settings->feeds.at(counter).is_on)
@@ -262,6 +270,7 @@ void DFRSSFilter::fetch()
             break;
         }
     }
+    */
 }
 
 void DFRSSFilter::metaDataChanged()
@@ -291,13 +300,48 @@ void DFRSSFilter::readyRead()
  *  Если запрос получения HTTP завершается, мы делаем интерфейс пользователя доступным для дальнейшего ввода. */
 void DFRSSFilter::finished(QNetworkReply *reply)
 {
-    Q_UNUSED(reply);
+    //Q_UNUSED(reply);
     qWarning() << "Feed finished: "  << QString(reply->url().toString());
-    currentReply->disconnect(this);
-    currentReply->deleteLater();
-    currentReply = nullptr;
+    reply->disconnect(this);
+    reply->deleteLater();
+    reply = nullptr;
+    if (currentReply)
+    {
+        currentReply->disconnect(this);
+        currentReply->deleteLater();
+        currentReply = nullptr;
+    }
+
+
+    QList <Feed> feeds;
+    pFeeds->GetActiveFeedsList(feeds);
+
+    if (counter<feeds.size() )
+    {
+        num_of_results = 0; // обнуляем значение количества выводимых новостей
+        fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
+        need_a_name = true;
+        xml.clear();
+        QUrl url(feeds.at(counter).link);
+        activeFeed = feeds.at(counter);
+        get(url);
+        ++counter;
+    }
+    else
+    {
+        if ((!this->isVisible() || this->isMinimized()) && have_news)
+        {
+            // если окно свёрнуто или убрано - выведем уведомление
+            trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, show_period);
+        }
+        hint->setText("Двойной клик по новости откроет её в браузере");
+        fetchButton->setEnabled(true);
+    }
+
+
 
     // продолжаем проход по выбранным лентам
+    /*
     for (; counter < feeds_settings->feeds.size(); counter++)
         if (feeds_settings->feeds.at(counter).is_on)
         {
@@ -309,6 +353,8 @@ void DFRSSFilter::finished(QNetworkReply *reply)
             counter++;
             break;
         }
+        */
+    /*
     if (counter >= feeds_settings->feeds.size()) // если пробежали всё
     {
         if ((!this->isVisible() || this->isMinimized()) && have_news)
@@ -319,13 +365,76 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         hint->setText("Двойной клик по новости откроет её в браузере");
         fetchButton->setEnabled(true);
     }
+    */
+}
+void DFRSSFilter::finished()
+{
+    //Q_UNUSED(reply);
+    qWarning() << "Feed finished: "  << QString(currentReply->url().toString());
+    currentReply->disconnect(this);
+    currentReply->deleteLater();
+    currentReply = nullptr;
+
+    QList <Feed> feeds;
+    pFeeds->GetActiveFeedsList(feeds);
+
+    if (counter<feeds.size() )
+    {
+        num_of_results = 0; // обнуляем значение количества выводимых новостей
+        fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
+        need_a_name = true;
+        xml.clear();
+        QUrl url(feeds.at(counter).link);
+        activeFeed = feeds.at(counter);
+        get(url);
+        ++counter;
+    }
+    else
+    {
+        if ((!this->isVisible() || this->isMinimized()) && have_news)
+        {
+            // если окно свёрнуто или убрано - выведем уведомление
+            trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, show_period);
+        }
+        hint->setText("Двойной клик по новости откроет её в браузере");
+        fetchButton->setEnabled(true);
+    }
+
+
+
+    // продолжаем проход по выбранным лентам
+    /*
+    for (; counter < feeds_settings->feeds.size(); counter++)
+        if (feeds_settings->feeds.at(counter).is_on)
+        {
+            num_of_results = 0; // обнуляем значение количества выводимых новостей
+            need_a_name = true;
+            xml.clear();
+            QUrl url(feeds_settings->feeds.at(counter).link);
+            get(url);
+            counter++;
+            break;
+        }
+        */
+    /*
+    if (counter >= feeds_settings->feeds.size()) // если пробежали всё
+    {
+        if ((!this->isVisible() || this->isMinimized()) && have_news)
+        {
+            // если окно свёрнуто или убрано - выведем уведомление
+            trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, show_period);
+        }
+        hint->setText("Двойной клик по новости откроет её в браузере");
+        fetchButton->setEnabled(true);
+    }
+    */
 }
 
 // Парсит данные XML и создаёт соответственно элементы treeWidget.
 void DFRSSFilter::parseXml()
 {
     QString str;
-    int num_of_active_filters = 0;
+    //int num_of_active_filters = 0;
 
     QTreeWidgetItem *feed_item = new QTreeWidgetItem();
 
@@ -342,7 +451,64 @@ void DFRSSFilter::parseXml()
         {
             if (xml.name() == "item")
             {
-                num_of_active_filters = filter->GetNumActiveFilter();
+                //num_of_active_filters = filter->GetNumActiveFilter();
+                QList<filters_struct> filters;
+                pFeeds->GetActiveFiltersList(filters, activeFeed.id);
+                if (filters.size() != 0) // если есть фильтры - ищем
+                {
+
+                    foreach (filters_struct filter, filters)
+                    {
+                        // добавим обработку разных языковых символов
+                        QTextDocument doc;
+                        doc.setHtml(titleString);
+                        str = doc.toPlainText();
+
+                        if ( (str.contains(filter.title.simplified(), Qt::CaseInsensitive)) )
+                            // simplified - чтобы убрать символ переноса строки из сравнения
+                        {
+                            QTreeWidgetItem *item = new QTreeWidgetItem();
+
+                            item->setText(0, doc.toPlainText());
+
+                            doc.setHtml(linkString);
+                            item->setText(1, doc.toPlainText());
+
+                            feed_item->addChild(item);
+                            feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+
+                            //treeWidget->addTopLevelItem(item);
+                            titleString.clear();
+                            linkString.clear();
+
+                            num_of_results++; // считаем количество отфильтрованных новостей
+                            have_news = true; // если есть хоть один результат - нужно вывести уведомление
+                        }
+
+                    }
+                }
+                else // если фильтров нет - выводим всё
+                {
+                    QTreeWidgetItem *item = new QTreeWidgetItem;
+                    QTextDocument doc;
+
+                    doc.setHtml(titleString);
+                    item->setText(0, doc.toPlainText());
+
+                    doc.setHtml(linkString);
+                    item->setText(1, doc.toPlainText());
+
+                    feed_item->addChild(item);
+                    feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+                    //treeWidget->addTopLevelItem(item);
+
+                    titleString.clear();
+                    linkString.clear();
+
+                    num_of_results++; // считаем количество отфильтрованных новостей
+                    have_news = true; // если есть хоть один результат - нужно вывести уведомление
+                }
+                /*
 
                 if (num_of_active_filters > 0)
                 {
@@ -394,6 +560,7 @@ void DFRSSFilter::parseXml()
                     titleString.clear();
                     linkString.clear();
                 }
+                */
             }
         }
         else if (xml.isCharacters() && !xml.isWhitespace())
@@ -408,11 +575,14 @@ void DFRSSFilter::parseXml()
                  */
                 // <--dm
                 titleString += xml.text().toString();
-                if (need_a_name)
+                if (need_a_name) // если это первый проход и мы должны задать имя ленте
                 {
                     QTextDocument doc;
                     doc.setHtml(titleString);
-                    feed_item->setText(0, doc.toPlainText());
+                    if (activeFeed.title == "")
+                        feed_item->setText(0, doc.toPlainText()); // если у ленты нет имени - берём из ленты
+                    else
+                        feed_item->setText(0, activeFeed.title); // если есть - берём то, которое задано
                     treeWidget->addTopLevelItem(feed_item);
                     feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
                     need_a_name = false;
@@ -443,16 +613,18 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 }
 
 // dm -->
+/*
 // открытие окна работы с фильтрами
 void DFRSSFilter::edit_filters()
 {
 
-    filter->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+    //filter->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
-    filter->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
-    filter->show();                                      // и рисуем его
+    //filter->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
+    //filter->show();                                      // и рисуем его
 }
+*/
 
 // открытие окна работы с настройками
 void DFRSSFilter::edit_settings()
@@ -464,110 +636,24 @@ void DFRSSFilter::edit_settings()
     settings->show();                                       // и рисуем его
 }
 
-// открытие окна работы с лентами
-void DFRSSFilter::edit_feeds()
+// открытие окна работы с лентами и фильтрами
+void DFRSSFilter::edit_feeds_and_filters()
 {
-    feeds_settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+    FeedsAndFilters * win = new FeedsAndFilters(this);
+    win->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
-    feeds_settings->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
-    feeds_settings->show();                                       // и рисуем его
+    win->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
+    win->show();
+
+    //feeds_settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+    // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
+    // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
+    //feeds_settings->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
+    //feeds_settings->show();                                       // и рисуем его
 }
 
 void DFRSSFilter::quit()
 {
     exit(0);
 }
-
-void DFRSSFilter::search_artists()
-{
-    QString str = start_folder->text();
-    file_counter = 0;
-    artists.clear();
-    searching(str);
-
-    QString name = qApp->applicationDirPath() + QDir::separator() + "artists.gsd";
-    QFile file(name); // создаем объект класса QFile
-    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) // открываем для записи и предварительно полностью обнуляем файл
-    {
-        QTextStream outStream(&file);
-
-        for (int i = 0; i < artists.size(); i++)
-            outStream << artists.at(i)/*.GetEncodedTitle()*/ << endl;
-        file.close(); // записали и закрыли
-    }
-
-}
-
-void DFRSSFilter::searching(QString path)
-{
-    bool new_artist;
-    // http://www.cyberforum.ru/qt/thread644532.html
-    // там есть пример и без рекурсии, но так как-то понятнее
-
-    QDir currentFolder(path);
-
-    currentFolder.setFilter(QDir::Dirs | QDir::Files);
-    currentFolder.setSorting(QDir::Name);
-
-    QFileInfoList folderitems(currentFolder.entryInfoList());
-
-    foreach (QFileInfo i_file, folderitems)
-    {
-        QString i_filename(i_file.fileName());
-        if (i_filename == "." || i_filename == ".." || i_filename.isEmpty())
-            continue;
-
-        if (i_file.isDir())
-            searching(path + "/" + i_filename);
-        else
-        {
-            file_counter++;
-            QString full_filename = path + "/" + i_filename;
-
-            TagLib::FileRef ref(full_filename.toStdWString().c_str());
-            if (!ref.isNull() && ref.tag() != NULL)
-            {
-                QString data = QString("%1").arg(ref.tag()->artist().toCString(true));
-                /***********************************/
-                QString temp_artist = encodeEntities(data);
-                /***********************************/
-                new_artist = true;
-                for (int i = 0; i < artists.size(); i++)
-                    if (temp_artist == artists.at(i))
-                        new_artist = false;
-                if (new_artist)
-                    artists.push_back(temp_artist);
-            }
-        }
-    }
-    start_folder->setText(QString("%1").arg(file_counter));
-}
-
-/* функция преобразования нестандартных символов к виду &#xxx;
-* взята отсюда:
-* http://stackoverflow.com/questions/7696159/how-can-i-convert-entity-characterescape-character-to-html-in-qt
-* автор http://stackoverflow.com/users/1455977/immortalpc
-*/
-QString DFRSSFilter::encodeEntities( QString& src, const QString& force)
-{
-    QString tmp(src);
-    uint len = tmp.length();
-    uint i = 0;
-    while(i < len)
-    {
-        if(tmp[i].unicode() > 128 || force.contains(tmp[i]))
-        {
-            QString rp = "&#"+QString::number(tmp[i].unicode())+";";
-            tmp.replace(i,1,rp);
-            len += rp.length()-1;
-            i += rp.length();
-        }
-        else
-        {
-            ++i;
-        }
-    }
-    return tmp;
-}
-
