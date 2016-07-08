@@ -237,7 +237,7 @@ void DFRSSFilter::get(const QUrl &url)
 */
 void DFRSSFilter::fetch()
 {
-    treeWidget->clear();
+    //treeWidget->clear();
     /* пробег по списку лент происходит быстрее, чем чтение лент
      * поэтому после первого совпадения выходим из цикла, а продолжим по событию finished */
     counter = 0;
@@ -381,7 +381,7 @@ void DFRSSFilter::finished()
     QList <Feed> feeds;
     pFeeds->GetActiveFeedsList(feeds);
 
-    if (counter<feeds.size() )
+    if (counter<feeds.size())
     {
         num_of_results = 0; // обнуляем значение количества выводимых новостей
         fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
@@ -481,15 +481,26 @@ void DFRSSFilter::parseXml()
                             doc.setHtml(linkString);
                             item->setText(1, doc.toPlainText());
 
-                            feed_item->addChild(item);
-                            feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+                            bool new_new = true; // новая новость
+                            for (int i = 0; i < feed_item->childCount(); i++)
+                                if (feed_item->child(i)->text(0).trimmed() == item->text(0).trimmed())
+                                {
+                                    new_new = false;
+                                    break;
+                                }
 
-                            //treeWidget->addTopLevelItem(item);
-                            titleString.clear();
-                            linkString.clear();
+                            if (new_new)
+                            {
+                                feed_item->addChild(item);
+                                feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
 
-                            num_of_results++; // считаем количество отфильтрованных новостей
-                            have_news = true; // если есть хоть один результат - нужно вывести уведомление
+                                //treeWidget->addTopLevelItem(item);
+                                titleString.clear();
+                                linkString.clear();
+
+                                num_of_results++; // считаем количество отфильтрованных новостей
+                                have_news = true; // если есть хоть один результат - нужно вывести уведомление
+                            }
                         }
 
                     }
@@ -505,15 +516,26 @@ void DFRSSFilter::parseXml()
                     doc.setHtml(linkString);
                     item->setText(1, doc.toPlainText());
 
-                    feed_item->addChild(item);
-                    feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
-                    //treeWidget->addTopLevelItem(item);
+                    bool new_new = true; // новая новость
+                    for (int i = 0; i < feed_item->childCount(); i++)
+                        if (feed_item->child(i)->text(0).trimmed() == item->text(0).trimmed())
+                        {
+                            new_new = false;
+                            break;
+                        }
 
-                    titleString.clear();
-                    linkString.clear();
+                    if (new_new)
+                    {
+                        feed_item->addChild(item);
+                        feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+                        //treeWidget->addTopLevelItem(item);
 
-                    num_of_results++; // считаем количество отфильтрованных новостей
-                    have_news = true; // если есть хоть один результат - нужно вывести уведомление
+                        titleString.clear();
+                        linkString.clear();
+
+                        num_of_results++; // считаем количество отфильтрованных новостей
+                        have_news = true; // если есть хоть один результат - нужно вывести уведомление
+                    }
                 }
                 /*
 
@@ -576,22 +598,37 @@ void DFRSSFilter::parseXml()
             {
                 // dm-->
                 titleString.clear();
-                /* это нужно для того, чтобы убрать лишний текст из первой новости,
-                 * т.к. все новости чередуют название - ссылка,
-                 * а два названия подряд быть не может
+                /* это нужно для того, чтобы убрать лишний текст из первой новости (т.е. заголовка),
+                 * т.к. все новости чередуют название - ссылка, а два названия подряд быть не может
                  */
                 // <--dm
                 titleString += xml.text().toString();
                 if (need_a_name) // если это первый проход и мы должны задать имя ленте
                 {
+                    bool new_feed = true;
                     QTextDocument doc;
                     doc.setHtml(titleString);
                     if (activeFeed.title == "")
                         feed_item->setText(0, doc.toPlainText()); // если у ленты нет имени - берём из ленты
                     else
                         feed_item->setText(0, activeFeed.title); // если есть - берём то, которое задано
-                    treeWidget->addTopLevelItem(feed_item);
-                    feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
+
+                    // ищем текущую ленту среди уже выведенных
+                    for (int i = 0; i < treeWidget->topLevelItemCount(); i++)
+                        if (treeWidget->topLevelItem(i)->text(0).trimmed() == feed_item->text(0))
+                        {
+                            treeWidget->setCurrentItem(treeWidget->topLevelItem(i));
+                            feed_item = treeWidget->currentItem(); // чтобы новости добавлялись в ту ленту, что уже есть
+                            new_feed = false;
+                            break;
+                        }
+
+                    // если не нашли - добавляем
+                    if (new_feed)
+                    {
+                        treeWidget->addTopLevelItem(feed_item);
+                        feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
+                    }
                     need_a_name = false;
                 }
             }
