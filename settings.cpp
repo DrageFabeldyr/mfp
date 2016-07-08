@@ -32,6 +32,8 @@ Settings::Settings(QWidget *parent) : QWidget(), ui(new Ui::settings)
     layout->setMargin(0); // убирает промежуток между layout и границами окна
     setLayout(layout);
 
+    timer = new QTimer(this);
+
     this->setWindowIcon(QIcon(":/settings.ico"));
 }
 
@@ -44,6 +46,7 @@ Settings::~Settings()
     delete run_in_tray;
     delete activate_filters;
     delete activate_feeds;
+    delete timer;
 }
 
 // чтение сохранённых настроек
@@ -56,12 +59,13 @@ void Settings::read_settings()
     min_to_tray->setChecked(setting_file.value("min_to_tray", false).toBool());
     close_to_tray->setChecked(setting_file.value("close_to_tray", false).toBool());
     run_in_tray->setChecked(setting_file.value("run_in_tray", false).toBool());
-    //bool tyt = setting_file.value("activate_filters", false).toBool();
     activate_filters->setChecked(setting_file.value("activate_filters", false).toBool());
     activate_feeds->setChecked(setting_file.value("activate_feeds", false).toBool());
 
     activateFilters = setting_file.value("activate_filters", false).toBool();
     activateFeeds = setting_file.value("activate_feeds", false).toBool();
+
+    request_period = 5*60*1000; // запрос новостей раз в 5 минут (потом будет чтение из файла)
 }
 
 // сохранение настроек и выход
@@ -86,6 +90,7 @@ void Settings::closeEvent(QCloseEvent *event)
     write_settings();
     hide();
     event->ignore();
+    timer->start(request_period); // закрыли окно - запустили таймер с новым периодом
 }
 
 void Settings::showEvent(QShowEvent * event)
@@ -95,4 +100,5 @@ void Settings::showEvent(QShowEvent * event)
     //всегда в центре родителя
     move(parentW->window()->frameGeometry().topLeft() +
          parentW->window()->rect().center() - rect().center());
+    timer->stop(); // останавливаем таймер на время работы с окном
 }

@@ -2,7 +2,6 @@
 #include "editwindow.h"
 
 #include "taglib/fileref.h"
-//#include "taglib/taglib.h"
 #include "taglib/tag.h"
 
 EditWindow::EditWindow(QWidget *parent) : QWidget(parent)
@@ -87,16 +86,9 @@ EditWindow::EditWindow(const EditWindow::Type type, const int id, QWidget *paren
             setWindowTitle("Добавление фильтра");
             enableCheck->setChecked(select); // если добавление - из настроек
         }
-        /*
-        nameLable->setText(tr("Комментарий:"));
-        valueLabel->setText(tr("Фильтр:"));
-        nameEdit->setText(filter.title);
-        valueEdit->setText(filter.feed);
-        */
         nameLabel->setText(tr("Фильтр: (регистр не имеет значения)"));
         valueLabel->setText(tr("Комментарий:"));
         nameEdit->setText(filter.title);
-        //valueEdit->setText(filter.feed);
         valueEdit->setText(filter.comment);
     }
     else
@@ -121,6 +113,7 @@ EditWindow::EditWindow(const EditWindow::Type type, const int id, QWidget *paren
         valueEdit->setText(feed.link);
     }
 }
+
 EditWindow::~EditWindow()
 {
     delete nameLabel;
@@ -167,7 +160,6 @@ void EditWindow::SaveData()
             return; // сразу выходит из функции
         }
         filters_struct filter(id);
-        //filter.feed = valueEdit->text().trimmed();
         filter.comment = valueEdit->text().trimmed();
         filter.title = nameEdit->text().trimmed();
         filter.is_on = enableCheck->checkState();
@@ -220,13 +212,6 @@ void EditWindow::search_artists()
         hint->setText(QString("Найдено исполнителей: %1").arg(artists.size()));
         artistsButton->setEnabled(false);
         cancelButton->setText("ОК");
-        /*
-        nameLabel->setText("Фильтр:");
-        nameEdit->setText("");
-        nameEdit->setPlaceholderText("");
-        valueLabel->setText("Комментарий:");
-        valueEdit->setText("");
-        */
     }
 }
 
@@ -263,7 +248,7 @@ void EditWindow::searching(QString path)
                 for (int i = 0; i < artists.size(); i++)
                     if (data.trimmed() == artists.at(i).trimmed())
                         new_artist = false;
-                if (new_artist)
+                if (new_artist && data != "") // на случай, если в поле "исполнитель" ничего нет
                     artists.push_back(data);
             }
         }

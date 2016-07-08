@@ -11,13 +11,9 @@ public:
     int id;
     int idFeed;
     QString title;
-    //QString feed;
     QString comment;
     bool is_on;
-    //QString GetEncodedTitle( void ) const;
     void Clear();
-private:
-    // QString static encodeEntities( QString& src, const QString& force=QString()) ;
 };
 
 #endif // FILTERS_STRUCT_H

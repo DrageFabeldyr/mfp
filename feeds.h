@@ -33,7 +33,8 @@ public:
     void GetActiveFeedsList(QList<Feed> &feeds);
     void GetActiveFiltersList(QList<filters_struct> &filters, const int id);
 
-    void ChengeStatusFilter(const int id, const int status);
+    void ChangeStatusFilter(const int id, const int status);
+    void ChangeStatusFeed(const int id, const int status);
 
 
 private:

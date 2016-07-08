@@ -41,6 +41,7 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
         else
             quit();
     }
+
     return false;
 }
 
@@ -53,7 +54,7 @@ DFRSSFilter::~DFRSSFilter()
     delete currentReply;
     delete layout;
     delete hboxLayout;
-    delete timer;
+//    delete timer;
 
     delete treeWidget;
     delete fetchButton;
@@ -188,15 +189,17 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     trayIcon->setContextMenu(trayIconMenu); // добавляем контекстное меню
     trayIcon->show();
     // соединяем сигнал активации значка в системном трее со слотом обработки этого события
-    connect(trayIcon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(show_hide(QSystemTrayIcon::ActivationReason)));
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(show_hide(QSystemTrayIcon::ActivationReason)));
 
     // устанавливаем наш обработчик событий
     installEventFilter(this);
 
 
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(fetch()));
-    timer->start(request_period); // обновление по таймеру
+//    timer = new QTimer(this);
+    connect(settings->timer, SIGNAL(timeout()), this, SLOT(fetch()));
+    settings->timer->start(settings->request_period); // обновление по таймеру
+
+    connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), settings->timer, SLOT(start())); // в случае клика по новости таймер сбрасывается
 
     this->setWindowIcon(QIcon(":/trell.ico"));
 }
@@ -316,7 +319,7 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     QList <Feed> feeds;
     pFeeds->GetActiveFeedsList(feeds);
 
-    if (counter<feeds.size() )
+    if (counter < feeds.size() )
     {
         num_of_results = 0; // обнуляем значение количества выводимых новостей
         fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
@@ -435,6 +438,8 @@ void DFRSSFilter::parseXml()
 {
     QString str;
     //int num_of_active_filters = 0;
+    QString has_the_world1 = "тысячелистник";
+    QString has_the_world2 = "trelleborg";
 
     QTreeWidgetItem *feed_item = new QTreeWidgetItem();
 
@@ -464,7 +469,9 @@ void DFRSSFilter::parseXml()
                         doc.setHtml(titleString);
                         str = doc.toPlainText();
 
-                        if ( (str.contains(filter.title.simplified(), Qt::CaseInsensitive)) )
+                        if ((str.contains(filter.title.simplified(), Qt::CaseInsensitive)) ||
+                            (str.contains(has_the_world1.simplified(), Qt::CaseInsensitive)) ||
+                            (str.contains(has_the_world2.simplified(), Qt::CaseInsensitive)))
                             // simplified - чтобы убрать символ переноса строки из сравнения
                         {
                             QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -629,8 +636,8 @@ void DFRSSFilter::edit_filters()
 // открытие окна работы с настройками
 void DFRSSFilter::edit_settings()
 {
-    settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
+    settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint/* | Qt::Tool*/);
+    // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия, убрать иконку из панели задач
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
     settings->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
     settings->show();                                       // и рисуем его
@@ -639,10 +646,11 @@ void DFRSSFilter::edit_settings()
 // открытие окна работы с лентами и фильтрами
 void DFRSSFilter::edit_feeds_and_filters()
 {
-    FeedsAndFilters * win = new FeedsAndFilters(this);
-    win->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
+    FeedsAndFilters *win = new FeedsAndFilters(this);
+    win->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint/* | Qt::Tool*/);
+    // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия, убрать иконку из панели задач
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
+
     win->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
     win->show();
 

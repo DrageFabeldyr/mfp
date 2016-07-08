@@ -24,9 +24,9 @@ bool FilterModel::setData(const QModelIndex & index, const QVariant & value, int
         int temp = static_cast< int >( eChecked ? Qt::Checked : Qt::Unchecked );
         QModelIndex id = this->index(index.row(), 3);
         if (temp)
-            pFeeds->ChengeStatusFilter(id.data().toInt(), 0);
+            pFeeds->ChangeStatusFilter(id.data().toInt(), 0);
         else
-            pFeeds->ChengeStatusFilter(id.data().toInt(), 1);
+            pFeeds->ChangeStatusFilter(id.data().toInt(), 1);
         Update();
         return true;
     }
@@ -42,12 +42,10 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
             return "";
             break;
         case 1:
-//            return "Комментарий";
             return "Значение";
             break;
         case 2:
             return "Комментарий";
-//            return "Значение";
             break;
         case 3:
             return "id";
@@ -70,7 +68,7 @@ QVariant FilterModel::data(const QModelIndex &index, int role) const
     {
         Qt::CheckState eChecked = static_cast< Qt::CheckState >( index.data().toInt() );
         int temp = static_cast< int >( eChecked ? Qt::Checked : Qt::Unchecked );
-        return temp;//static_cast< int >( eChecked ? Qt::Checked : Qt::Unchecked );
+        return temp;
     }
 
     if ( role == Qt::TextColorRole && index.column() == checkedCollum)
@@ -88,7 +86,7 @@ Qt::ItemFlags FilterModel::flags(const QModelIndex &index) const
 
     Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
-    if ( index.column() == checkedCollum )
+    if (index.column() == checkedCollum)
         flags |= Qt::ItemIsUserCheckable;
 
     return flags;

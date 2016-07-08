@@ -327,6 +327,7 @@ debug/moc_dfrssfilter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetw
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -336,6 +337,9 @@ debug/moc_dfrssfilter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetw
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -347,9 +351,6 @@ debug/moc_dfrssfilter.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork/QNetw
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -494,6 +495,9 @@ debug/moc_settings.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QWidget 
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		settings.h
 	C:\Qt\Qt5.4.1\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/Qt5.4.1/5.4/mingw491_32/mkspecs/win32-g++ -ID:/qtprojects/dfrssfilter -ID:/qtprojects/dfrssfilter -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNetwork -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql -IC:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore settings.h -o debug\moc_settings.cpp
 
@@ -676,10 +680,14 @@ debug/moc_feedsandfilters.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QObj
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidgetitemiterator.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItem \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -691,9 +699,6 @@ debug/moc_feedsandfilters.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QObj
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -898,6 +903,7 @@ debug/moc_feedmodel.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQueryMo
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -907,6 +913,9 @@ debug/moc_feedmodel.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQueryMo
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -918,9 +927,6 @@ debug/moc_feedmodel.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQueryMo
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -1122,6 +1128,7 @@ debug/moc_filtermodel.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQuery
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -1131,6 +1138,9 @@ debug/moc_filtermodel.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQuery
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -1142,9 +1152,6 @@ debug/moc_filtermodel.cpp: C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQuery
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -1507,6 +1514,7 @@ debug/main.o: main.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -1516,6 +1524,9 @@ debug/main.o: main.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -1527,9 +1538,6 @@ debug/main.o: main.cpp dfrssfilter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -1859,6 +1867,7 @@ debug/dfrssfilter.o: dfrssfilter.cpp C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNet
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -1868,6 +1877,7 @@ debug/dfrssfilter.o: dfrssfilter.cpp C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNet
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -1878,7 +1888,6 @@ debug/dfrssfilter.o: dfrssfilter.cpp C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNet
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QStatusBar \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstatusbar.h \
@@ -1902,6 +1911,15 @@ debug/dfrssfilter.o: dfrssfilter.cpp C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtNet
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdialog.h \
 		feed.h \
 		ui_dfrssfilter.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QAction \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QButtonGroup \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qbuttongroup.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHeaderView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qheaderview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QMainWindow \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qmainwindow.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QToolBar \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtoolbar.h \
 		feedsandfilters.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/QSqlQueryModel \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtSql/qsqlquerymodel.h \
@@ -2026,7 +2044,41 @@ debug/settings.o: settings.cpp settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		ui_settings.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QVariant \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QAction \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qaction.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qactiongroup.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QApplication \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qapplication.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qcoreapplication.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qeventloop.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qdesktopwidget.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qguiapplication.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qinputmethod.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QButtonGroup \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qbuttongroup.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QHeaderView \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qheaderview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractitemview.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractscrollarea.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qframe.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qabstractitemmodel.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qitemselectionmodel.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractitemdelegate.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstyleoption.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractspinbox.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qvalidator.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qregularexpression.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qslider.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractslider.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qstyle.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtabbar.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtabwidget.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qrubberband.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QDir \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qdir.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qfileinfo.h \
@@ -2426,10 +2478,14 @@ debug/feedsandfilters.o: feedsandfilters.cpp feedsandfilters.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidgetitemiterator.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItem \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -2441,9 +2497,6 @@ debug/feedsandfilters.o: feedsandfilters.cpp feedsandfilters.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -2648,6 +2701,7 @@ debug/feedmodel.o: feedmodel.cpp feedmodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -2657,6 +2711,9 @@ debug/feedmodel.o: feedmodel.cpp feedmodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -2668,9 +2725,6 @@ debug/feedmodel.o: feedmodel.cpp feedmodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -2872,6 +2926,7 @@ debug/filtermodel.o: filtermodel.cpp filtermodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QPushButton \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
@@ -2881,6 +2936,9 @@ debug/filtermodel.o: filtermodel.cpp filtermodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -2892,9 +2950,6 @@ debug/filtermodel.o: filtermodel.cpp filtermodel.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \
@@ -3104,10 +3159,14 @@ debug/editwindow.o: editwindow.cpp feedsandfilters.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidget.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qtreewidgetitemiterator.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItem \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		settings.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QCheckBox \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qcheckbox.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		filter.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QLineEdit \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
@@ -3119,9 +3178,6 @@ debug/editwindow.o: editwindow.cpp feedsandfilters.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QFile \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTextStream \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/QTextDocument \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtGui/qtextdocument.h \
 		C:/Qt/Qt5.4.1/5.4/mingw491_32/include/QtWidgets/QTreeWidgetItemIterator \

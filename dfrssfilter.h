@@ -15,6 +15,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QPushButton>
+#include <QMouseEvent>
 
 #include "settings.h"
 #include "filter.h"
@@ -30,11 +31,8 @@ public:
     ~DFRSSFilter();
 
     Settings *settings = nullptr;
-    //Filter *filter = nullptr;
-    //Feeds_Settings *feeds_settings = nullptr;
 
     Feeds *pFeeds;
-
     void GetNumActiveFilters(int num_of_active_filters);
 
 public slots:
@@ -46,13 +44,8 @@ public slots:
     void itemActivated(QTreeWidgetItem * item);
     void error(QNetworkReply::NetworkError);
     // dm -->
-    //void edit_filters();
     void edit_settings();
-    //void edit_feeds();
     void edit_feeds_and_filters();
-    //void read_feeds();
-    //int read_settings();
-    //void write_settings_and_quit();
     void quit();
 
 protected:
@@ -74,7 +67,6 @@ private:
     QNetworkReply *currentReply;
     QVBoxLayout *layout;
     QHBoxLayout *hboxLayout;
-    QTimer *timer;
 
     QTreeWidget *treeWidget;
     QPushButton *fetchButton;
@@ -89,9 +81,8 @@ private:
 
     bool need_a_name; // для проверки необходимости обновления имени окна
     bool win_max; // переменная для хранения размеров окна
-    int request_period = 5*60*1000; // запрос новостей раз в 5 минут
     int show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
-    int counter = 0;
+    int counter = 0; // счётчик количества выводимых лент
     bool have_news; // переменная для вывода уведомления о наличии новостей
     int num_of_results; // переменная для подсчёта интересующих новостей в ленте
 

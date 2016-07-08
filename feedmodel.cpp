@@ -70,13 +70,19 @@ bool FeedModel::setData(const QModelIndex &index, const QVariant &value, int rol
 
     if (role == Qt::CheckStateRole && index.column() == checkedColumn)
     {
-        //Qt::CheckState eChecked = static_cast< Qt::CheckState >( index.data().toInt() );
-        //bool bNewValue = ~eChecked ;
-        result = true;//item->setData( index.column(), bNewValue ); // запись в базу
+        Qt::CheckState eChecked = static_cast< Qt::CheckState >( index.data().toInt() );
+        int temp = static_cast< int >( eChecked ? Qt::Checked : Qt::Unchecked );
+        QModelIndex id = this->index(index.row(), 3);
+        if (temp)
+            pFeeds->ChangeStatusFeed(id.data().toInt(), 0);
+        else
+            pFeeds->ChangeStatusFeed(id.data().toInt(), 1);
+        Update();
+        result = true; // запись в базу
     }
     else
     {
-        result = true;//result = item->setData(index.column(), value);
+        result = true;
     }
     if (result)
         emit dataChanged(index, index);

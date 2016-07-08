@@ -88,7 +88,7 @@ void FeedsAndFilters::updateFilters()
 
 void FeedsAndFilters::UpdateFilter(QModelIndex indexx)
 {
-    QModelIndex mindex =  feedModel->index(indexx.row(),3);
+    QModelIndex mindex =  feedModel->index(indexx.row(), 3);
     QVariant value = feedModel->data(mindex, Qt::DisplayRole);
     filterModel->idFeed = QString::number(value.toInt());
     updateFilters();
@@ -177,3 +177,12 @@ void FeedsAndFilters::FilterDel()
     updateFilters();
 }
 
+void FeedsAndFilters::closeEvent(QCloseEvent *event)
+{
+    settings->timer->start(); // закрыли окно - запустили таймер
+}
+
+void FeedsAndFilters::showEvent(QShowEvent * event)
+{
+    settings->timer->stop(); // останавливаем таймер на время работы с окном
+}

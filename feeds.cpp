@@ -33,7 +33,6 @@ void Feeds::GetFilters(QList<filters_struct> &filters, const Feed *feed)
         filters_struct filter;
         filter.id = query.value(0).toInt();
         filter.title = query.value(2).toString();
-        //filter.feed = query.value(3).toString();
         filter.comment = query.value(3).toString();
         filter.is_on = query.value(4).toBool();
         filters.push_back(filter);
@@ -93,7 +92,6 @@ void Feeds::GetFilterById(filters_struct * filter)
     query.first();
 
     filter->title = query.value(2).toString();
-    //filter->feed = query.value(3).toString();
     filter->comment = query.value(3).toString();
     filter->is_on = query.value(4).toBool();
 }
@@ -185,7 +183,6 @@ void Feeds::UpdateFilter(filters_struct *filter)
     QString prepQuery = "UPDATE FILTER SET title = :title, value=:value, status=:status WHERE id=:id ";
     query.prepare(prepQuery);
     query.bindValue(":title", filter->title);
-    //query.bindValue(":value", filter->feed);
     query.bindValue(":value", filter->comment);
     query.bindValue(":status", filter->is_on);
     query.bindValue(":id", filter->id);
@@ -253,7 +250,6 @@ void Feeds::GetActiveFiltersList(QList<filters_struct> &filters, const int id)
         filter.id = query.value(0).toInt();
         filter.idFeed = query.value(1).toInt();
         filter.title = query.value(2).toString();
-        //filter.feed = query.value(3).toString();
         filter.comment = query.value(3).toString();
         filter.is_on = query.value(4).toBool();
         filters.push_back(filter);
@@ -261,10 +257,25 @@ void Feeds::GetActiveFiltersList(QList<filters_struct> &filters, const int id)
     }
 }
 
-void Feeds::ChengeStatusFilter(const int id, const int status)
+// чтобы по клику менялись галочки фильтров
+void Feeds::ChangeStatusFilter(const int id, const int status)
 {
     QSqlQuery query;
     QString prepQuery = "UPDATE FILTER SET status=:status WHERE id=:id ";
+    query.prepare(prepQuery);
+    query.bindValue(":id", id);
+    query.bindValue(":status", status);
+    if(!query.exec())
+    {
+        return;
+    }
+}
+
+// чтобы по клику менялись галочки лент
+void Feeds::ChangeStatusFeed(const int id, const int status)
+{
+    QSqlQuery query;
+    QString prepQuery = "UPDATE FEEDS SET status=:status WHERE id=:id ";
     query.prepare(prepQuery);
     query.bindValue(":id", id);
     query.bindValue(":status", status);

@@ -4,7 +4,6 @@
 #include "settings.h"
 
 QString prog_name_ver;
-//extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
 
 
 /* Создаёт приложение и главный виджет. Открывает главный виджет для

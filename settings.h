@@ -5,6 +5,7 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QCloseEvent>
+#include <QTimer>
 
 
 namespace Ui {
@@ -22,6 +23,8 @@ public:
     QCheckBox *activate_filters, *activate_feeds;
     bool activateFilters ;
     bool activateFeeds;
+    int request_period; // период, через который запрашиваются новости в миллисекундах
+    QTimer *timer;
 
 public slots:
     void read_settings();     // чтение фильтров из файла

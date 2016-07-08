@@ -10,9 +10,6 @@
 #include <QPushButton>
 
 #include "dfrssfilter.h"
-/*
-#include "feeds.h"
-*/
 #include "feedmodel.h"
 #include "filtermodel.h"
 #include "settings.h"
@@ -23,7 +20,7 @@ class FeedsAndFilters : public QWidget
 {
     Q_OBJECT
 public:
-    FeedsAndFilters(QWidget * parent);
+    FeedsAndFilters(QWidget *parent);
     Feeds *pFeeds;
     int parentFeedId;
     Settings *settings = nullptr;
@@ -60,6 +57,10 @@ private:
     EditWindow *editW;
     QLabel *hint1;
     QLabel *hint2;
+
+private slots:
+    void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;
 };
 
 #endif // FEEDSANDFILTERS_H
