@@ -28,8 +28,8 @@ public:
     QTimer *timer;
 
 public slots:
-    void read_settings();     // чтение фильтров из файла
-    void write_settings();    // запись фильтров в файл
+    void read_settings();     // чтение настроек из файла
+    void write_settings();    // запись настроек в файл
 
 private:
     Ui::settings *ui;

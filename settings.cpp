@@ -69,7 +69,7 @@ void Settings::read_settings()
     show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
 }
 
-// сохранение настроек и выход
+// сохранение настроек
 void Settings::write_settings()
 {
     activateFilters = activate_filters->isChecked();
