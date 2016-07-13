@@ -37,7 +37,7 @@ public:
 
 public slots:
     void fetch();
-    void finished();
+    //void finished();
     void finished(QNetworkReply *reply);
     void readyRead();
     void metaDataChanged();
@@ -81,8 +81,8 @@ private:
 
     bool need_a_name; // для проверки необходимости обновления имени окна
     bool win_max; // переменная для хранения размеров окна
-    int show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
     int counter = 0; // счётчик количества выводимых лент
+
     bool have_news; // переменная для вывода уведомления о наличии новостей
     int num_of_results; // переменная для подсчёта интересующих новостей в ленте
 

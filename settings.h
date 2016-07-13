@@ -24,6 +24,7 @@ public:
     bool activateFilters ;
     bool activateFeeds;
     int request_period; // период, через который запрашиваются новости в миллисекундах
+    int show_period; // время, которое висит уведомление в трее
     QTimer *timer;
 
 public slots:
