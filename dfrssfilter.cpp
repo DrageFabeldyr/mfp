@@ -107,6 +107,9 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     fetchButton = new QPushButton(tr("Поиск"), this);
     fetchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
 
+    clearButton = new QPushButton(tr("Очистить"), this);
+    clearButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
+
     treeWidget = new QTreeWidget(this);
     connect(treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*)));
 
@@ -118,6 +121,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     connect(&manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
     connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(clear_results())); // запуск по нажатию кнопки
 
     // создание основного меню программы
     mainmenubar = new QMenuBar(this);
@@ -146,9 +150,10 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     hboxLayout = new QHBoxLayout;
     hint = new QLabel(this);
-    hint->setText("Дождитесь обновления результатов или нажмите кнопку \"Поиск\", чтобы обновить результаты прямо сейчас");
+    hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
 
     hboxLayout->addWidget(hint);
+    hboxLayout->addWidget(clearButton);
     hboxLayout->addWidget(fetchButton);
 
     layout->setMenuBar(mainmenubar);
@@ -550,4 +555,9 @@ void DFRSSFilter::edit_feeds_and_filters()
 void DFRSSFilter::quit()
 {
     exit(0);
+}
+
+void DFRSSFilter::clear_results()
+{
+    treeWidget->clear();
 }

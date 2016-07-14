@@ -71,6 +71,7 @@ private:
     QTreeWidget *treeWidget;
     QPushButton *fetchButton;
     // dm -->
+    QPushButton *clearButton;
     QLabel *hint;
     QMenu *trayIconMenu, *main_menu;
     QMenuBar *mainmenubar;
@@ -88,6 +89,7 @@ private:
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);
+    void clear_results();
     // <-- dm
 };
 
