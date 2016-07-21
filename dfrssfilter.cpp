@@ -394,7 +394,8 @@ void DFRSSFilter::parseXml()
                         doc.setHtml(titleString);
                         str = doc.toPlainText();
 
-                        if ((str.contains(filter.title.simplified(), Qt::CaseInsensitive)) ||
+                        if ((filter.comment.simplified() == "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseSensitive)) ||
+                            (filter.comment.simplified() != "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseInsensitive)) ||
                             (str.contains(has_the_world1.simplified(), Qt::CaseInsensitive)) ||
                             (str.contains(has_the_world2.simplified(), Qt::CaseInsensitive)))
                             // simplified - чтобы убрать символ переноса строки из сравнения
