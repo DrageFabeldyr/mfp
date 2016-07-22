@@ -18,5 +18,5 @@ Last build: https://github.com/DrageFabeldyr/mfp/blob/master/bin/release.zip
 
 ![Screenshot 01](https://github.com/DrageFabeldyr/mfp/blob/master/img/pic1.PNG)
 
-![Screenshot 02](https://github.com/DrageFabeldyr/mfp/blob/master/img/pic2.PNG)
+![Screenshot 02](https://github.com/DrageFabeldyr/mfp/blob/master/img/pic2.png)
 
