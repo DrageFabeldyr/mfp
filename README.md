@@ -14,7 +14,7 @@ Last build: https://github.com/DrageFabeldyr/mfp/blob/master/bin/release.zip
 - автоматический опрос новостных лент в фоновом режиме;
 
 Окно приложения:
-https://github.com/DrageFabeldyr/mfp/blob/master/img/pic1.png
+https://github.com/DrageFabeldyr/mfp/blob/master/img/pic1.PNG
 
-https://github.com/DrageFabeldyr/mfp/blob/master/img/pic2.png
+https://github.com/DrageFabeldyr/mfp/blob/master/img/pic2.PNG
 
