@@ -179,10 +179,12 @@ void FeedsAndFilters::FilterDel()
 
 void FeedsAndFilters::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     settings->timer->start(); // закрыли окно - запустили таймер
 }
 
 void FeedsAndFilters::showEvent(QShowEvent * event)
 {
+    Q_UNUSED(event);
     settings->timer->stop(); // останавливаем таймер на время работы с окном
 }
