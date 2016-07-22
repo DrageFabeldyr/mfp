@@ -171,6 +171,7 @@ void EditWindow::SaveData()
 
 void EditWindow::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     this->deleteLater();
 }
 

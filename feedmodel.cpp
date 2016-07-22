@@ -62,6 +62,7 @@ QVariant FeedModel::data(const QModelIndex &index, int role) const
 
 bool FeedModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    Q_UNUSED(value);
 
     if (role != Qt::EditRole && role != Qt::CheckStateRole )
         return false;
