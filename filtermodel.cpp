@@ -4,14 +4,16 @@
 FilterModel::FilterModel(QObject *parent) : QSqlQueryModel(parent)
 {
     pFeeds = static_cast<DFRSSFilter*>(parent)->pFeeds;
-    prepQuery = "select status, title, value, id from FILTER WHERE idFeed = " + idFeed;
+    // в алфавитном порядке по названию
+    prepQuery = "select status, title, value, id from FILTER WHERE idFeed = " + idFeed + " ORDER BY title";
     setQuery(prepQuery, pFeeds->db);
     checkedCollum = 0; // колонка в которой CheckBox
 }
 
 void FilterModel::Update()
 {
-    prepQuery = "select status, title, value, id from FILTER WHERE idFeed = " + idFeed;
+    // в алфавитном порядке по названию
+    prepQuery = "select status, title, value, id from FILTER WHERE idFeed = " + idFeed + " ORDER BY title";
     setQuery(prepQuery, pFeeds->db);
 }
 

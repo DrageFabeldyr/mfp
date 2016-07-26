@@ -11,12 +11,11 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     feedList->setModel(feedModel);
     feedList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
     feedList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
-    //feedList->setSelectionMode(QAbstractItemView::ExtendedSelection); // чтобы можно было выделять несколько элементов с помощью Ctrl и Shift
 
     filterModel = new FilterModel(parent);
+
     filterList = new QTreeView (this);
     filterList->setModel(filterModel);
-    //filterList->setSelectionMode(QAbstractItemView::ExtendedSelection); // чтобы можно было выделять несколько элементов с помощью Ctrl и Shift
 
     h1_layout = new QHBoxLayout;
     feedAdd = new QPushButton;

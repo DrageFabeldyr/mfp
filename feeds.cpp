@@ -1,7 +1,5 @@
 #include "feeds.h"
 
-
-
 Feeds::Feeds()
 {
     OpenDB();
@@ -142,7 +140,7 @@ void Feeds::AddFeed(Feed *feed)
 void Feeds::UpdateFeed(Feed *feed)
 {
     QSqlQuery query;
-    QString prepQuery = "UPDATE FEEDS SET link = :link, title=:title, status=:status WHERE id=:id ";
+    QString prepQuery = "UPDATE FEEDS SET link = :link, title = :title, status = :status WHERE id = :id ";
     query.prepare(prepQuery);
     query.bindValue(":link", feed->link);
     query.bindValue(":title", feed->title);
@@ -171,7 +169,6 @@ void Feeds::AddFilter(filters_struct *filter)
     query.prepare(prepQuery);
     query.bindValue(":idFeed", filter->idFeed);
     query.bindValue(":title", filter->title);
-    //query.bindValue(":value", filter->feed);
     query.bindValue(":value", filter->comment);
     query.bindValue(":status", filter->is_on);
     query.exec();
@@ -180,7 +177,7 @@ void Feeds::AddFilter(filters_struct *filter)
 void Feeds::UpdateFilter(filters_struct *filter)
 {
     QSqlQuery query;
-    QString prepQuery = "UPDATE FILTER SET title = :title, value=:value, status=:status WHERE id=:id ";
+    QString prepQuery = "UPDATE FILTER SET title = :title, value = :value, status = :status WHERE id = :id ";
     query.prepare(prepQuery);
     query.bindValue(":title", filter->title);
     query.bindValue(":value", filter->comment);
@@ -192,12 +189,12 @@ void Feeds::UpdateFilter(filters_struct *filter)
 void Feeds::DeleteFeedById(int id)
 {
     QSqlQuery query;
-    QString prepQuery = "DELETE FROM FEEDS  WHERE id=:id ";
+    QString prepQuery = "DELETE FROM FEEDS  WHERE id = :id ";
     query.prepare(prepQuery);
     query.bindValue(":id", id);
     query.exec();
     query.clear();
-    prepQuery = "DELETE FROM FILTER  WHERE idFeed=:id ";
+    prepQuery = "DELETE FROM FILTER  WHERE idFeed = :id ";
     query.prepare(prepQuery);
     query.bindValue(":id", id);
     query.exec();
@@ -206,7 +203,7 @@ void Feeds::DeleteFeedById(int id)
 void Feeds::DeleteFilterById(int id)
 {
     QSqlQuery query;
-    QString prepQuery = "DELETE FROM FILTER  WHERE id=:id ";
+    QString prepQuery = "DELETE FROM FILTER  WHERE id = :id ";
     query.prepare(prepQuery);
     query.bindValue(":id", id);
     query.exec();
@@ -261,7 +258,7 @@ void Feeds::GetActiveFiltersList(QList<filters_struct> &filters, const int id)
 void Feeds::ChangeStatusFilter(const int id, const int status)
 {
     QSqlQuery query;
-    QString prepQuery = "UPDATE FILTER SET status=:status WHERE id=:id ";
+    QString prepQuery = "UPDATE FILTER SET status=:status WHERE id = :id ";
     query.prepare(prepQuery);
     query.bindValue(":id", id);
     query.bindValue(":status", status);
@@ -275,7 +272,7 @@ void Feeds::ChangeStatusFilter(const int id, const int status)
 void Feeds::ChangeStatusFeed(const int id, const int status)
 {
     QSqlQuery query;
-    QString prepQuery = "UPDATE FEEDS SET status=:status WHERE id=:id ";
+    QString prepQuery = "UPDATE FEEDS SET status = :status WHERE id = :id ";
     query.prepare(prepQuery);
     query.bindValue(":id", id);
     query.bindValue(":status", status);

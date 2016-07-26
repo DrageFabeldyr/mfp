@@ -4,7 +4,7 @@
 FeedModel::FeedModel(QObject *parent) : QSqlQueryModel(parent)
 {
     pFeeds = static_cast<DFRSSFilter*>(parent)->pFeeds;
-    prepQuery = "select status, title, link, id from FEEDS";
+    prepQuery = "select status, title, link, id from FEEDS ORDER BY title"; // в алфавитном порядке по названию
     setQuery(prepQuery, pFeeds->db);
     checkedColumn = 0; // колонка в которой CheckBox
 }
@@ -23,7 +23,7 @@ QVariant FeedModel::headerData(int section, Qt::Orientation orientation, int rol
             return "";
             break;
         case 1:
-            return "Заголовок";
+            return "Имя ленты";
             break;
         case 2:
             return "Ссылка";

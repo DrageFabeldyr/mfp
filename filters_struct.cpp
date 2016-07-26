@@ -23,6 +23,6 @@ void filters_struct::Clear()
     id = -1;
     idFeed = -1;
     title = "";
-     comment = "";
+    comment = "";
     is_on = false;
 }
