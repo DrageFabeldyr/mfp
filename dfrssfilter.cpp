@@ -7,6 +7,8 @@
 #include "settings.h"
 #include "feedsandfilters.h"
 
+//#include <QColor>
+
 QMutex mutex;
 
 // обработчик событий
@@ -110,6 +112,9 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     clearButton = new QPushButton(tr("Очистить"), this);
     clearButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
 
+    readButton = new QPushButton(tr("Прочитано"), this);
+    readButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // чтобы кнопка не растягивалась при изменении надписи рядом с ней
+
     treeWidget = new QTreeWidget(this);
     connect(treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*)));
 
@@ -122,6 +127,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     connect(&manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
     connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
     connect(clearButton, SIGNAL(clicked()), this, SLOT(clear_results())); // запуск по нажатию кнопки
+    connect(readButton, SIGNAL(clicked()), this, SLOT(unlight())); // запуск по нажатию кнопки
 
     // создание основного меню программы
     mainmenubar = new QMenuBar(this);
@@ -129,15 +135,17 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     main_menu = new QMenu(this);
     main_menu->setTitle("Меню");
     // нужно обязательно создавать action, потому что menu при нажатии не отрабатывает, а раскрывается
+    // пункт работы с настройками
     menu_settings = new QAction(tr("Настройки"), this);
     main_menu->addAction(menu_settings);
     menu_settings->setIcon(QIcon(":/settings.ico"));
     connect(menu_settings, SIGNAL(triggered()), this, SLOT(edit_settings()));
+    // пункт работы с лентами и фильтрами
     menu_feeds_and_filters = new QAction(tr("RSS-ленты"), this);
     main_menu->addAction(menu_feeds_and_filters);
     menu_feeds_and_filters->setIcon(QIcon(":/rss.ico"));
     connect(menu_feeds_and_filters, SIGNAL(triggered()), this, SLOT(edit_feeds_and_filters()));
-
+    // пункт выхода из программы
     menu_quit = new QAction("Выход", this);
     main_menu->addAction(menu_quit);
     menu_quit->setIcon(QIcon(":/exit.ico"));
@@ -155,6 +163,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     hboxLayout->addWidget(hint);
     hboxLayout->addWidget(clearButton);
     hboxLayout->addWidget(fetchButton);
+    hboxLayout->addWidget(readButton);
 
     layout->setMenuBar(mainmenubar);
     layout->addLayout(hboxLayout);
@@ -189,6 +198,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), settings->timer, SLOT(start())); // в случае клика по новости таймер сбрасывается
 
     this->setWindowIcon(QIcon(":/trell.ico"));
+
 }
 
 // Начинает сетевой запрос и соединяет необходимые сигналы
@@ -292,21 +302,23 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     else
     {
         int new_num_of_results = 0;
-        for (int i = 0; i < treeWidget->topLevelItemCount(); i++)
+        for (int i = 0; i < treeWidget->topLevelItemCount(); i++) // пробегаем по всем раскрывающимся записям
         {
             QTreeWidgetItem *test = treeWidget->topLevelItem(i);
-            new_num_of_results += test->childCount();
+            new_num_of_results += test->childCount(); // и считаем общее число дочерних записей
         }
-        if (new_num_of_results > num_of_results)
+        if (new_num_of_results > num_of_results) // если их стало больше, чем было
         {
-            have_news = true;
-            num_of_results = new_num_of_results;
+            have_news = true; // значит есть новые
+            num_of_new_news += new_num_of_results - num_of_results; // считаем кол-во новых новостей
+            num_of_results = new_num_of_results; // запомним новое значение для следующей проверки
+            readButton->setStyleSheet("color: red;");
         }
 
+        // если окно свёрнуто или убрано и есть новости - выведем уведомление
         if ((!this->isVisible() || this->isMinimized()) && have_news)
         {
-            // если окно свёрнуто или убрано - выведем уведомление
-            trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, settings->show_period);
+            trayIcon->showMessage("", QString("Есть новости (%1)").arg(num_of_new_news), QSystemTrayIcon::Information, settings->show_period);
         }
         hint->setText("Двойной клик по новости откроет её в браузере");
         fetchButton->setEnabled(true);
@@ -394,8 +406,8 @@ void DFRSSFilter::parseXml()
                         doc.setHtml(titleString);
                         str = doc.toPlainText();
 
-                        if ((filter.comment.simplified() == "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseSensitive)) ||
-                            (filter.comment.simplified() != "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseInsensitive)) ||
+                        if ((filter.comment.simplified() == "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseSensitive)) || // найденных исполнителей проверяем по высоте букв
+                            (filter.comment.simplified() != "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseInsensitive)) || // всё остальное - без разницы
                             (str.contains(has_the_world1.simplified(), Qt::CaseInsensitive)) ||
                             (str.contains(has_the_world2.simplified(), Qt::CaseInsensitive)))
                             // simplified - чтобы убрать символ переноса строки из сравнения
@@ -410,9 +422,12 @@ void DFRSSFilter::parseXml()
                             bool new_new = true; // новая новость
                             for (int i = 0; i < feed_item->childCount(); i++)
                             {
+                                // проверим на совпадение
                                 //if (feed_item->child(i)->text(0).trimmed() == item->text(0).trimmed())
-                                int x = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive);
                                 // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
+                                //int x = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive);
+                                // но лучше сравнивать ссылки - если просто переименовали новость она не будет выведена второй раз
+                                int x = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive);
                                 if (x == 0)
                                 {
                                     new_new = false;
@@ -425,11 +440,14 @@ void DFRSSFilter::parseXml()
                                 feed_item->addChild(item);
                                 feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
 
+                                // выделение новой строки
+                                feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+                                item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+
                                 titleString.clear();
                                 linkString.clear();
                             }
                         }
-
                     }
                 }
                 else // если фильтров нет - выводим всё
@@ -446,9 +464,10 @@ void DFRSSFilter::parseXml()
                     bool new_new = true; // новая новость
                     for (int i = 0; i < feed_item->childCount(); i++)
                     {
-                        //if (feed_item->child(i)->text(0).trimmed() == item->text(0).trimmed())
-                        int x = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive);
                         // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
+                        //int x = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive);
+                        // но лучше сравнивать ссылки - если просто переименовали новость она не будет выведена второй раз
+                        int x = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive);
                         if (x == 0)
                         {
                             new_new = false;
@@ -460,6 +479,10 @@ void DFRSSFilter::parseXml()
                     {
                         feed_item->addChild(item);
                         feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+
+                        // выделение новой строки
+                        feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+                        item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
 
                         titleString.clear();
                         linkString.clear();
@@ -520,7 +543,38 @@ void DFRSSFilter::parseXml()
 // Открывает ссылку в браузере
 void DFRSSFilter::itemActivated(QTreeWidgetItem * item)
 {
+    int red_lines; // кол-во выделенных новостей в ленте
+    int total_red_lines = 0; // общее кол-во выделенных новостей во всех лентах
+
     QDesktopServices::openUrl(QUrl(item->text(1)));
+    // если наша запись единственная новая в ленте, снимем выделение и с ленты тоже
+    for (int i = 0; i < treeWidget->topLevelItemCount(); i++)
+    {
+        red_lines = 0;
+        for (int j = 0; j < treeWidget->topLevelItem(i)->childCount(); j++)
+        {
+            // посчитаем количество выделенных строк
+            if (treeWidget->topLevelItem(i)->child(j)->foreground(0) == QBrush(Qt::red,Qt::Dense6Pattern))
+            {
+                red_lines++;
+                total_red_lines++;
+            }
+            // снимем выделение с новости, если она новая (это должно быть здесь, чтобы двойным кликом не снималось выделение с имени ленты)
+            if (treeWidget->topLevelItem(i)->child(j)->text(1) == item->text(1) && item->foreground(0) == QBrush(Qt::red,Qt::Dense6Pattern))
+            {
+                item->setForeground(0,*(new QBrush(Qt::black,Qt::Dense6Pattern)));
+                num_of_new_news -= 1;
+                red_lines--;
+                total_red_lines--;
+            }
+        }
+        // если новость была единственной новой в ленте - снимаем выделение с ленты
+        if (red_lines <= 0) // на всякий случай - мало ли уйдёт в минус
+            treeWidget->topLevelItem(i)->setForeground(0,*(new QBrush(Qt::black,Qt::Dense6Pattern)));
+    }
+    // если новость была единственной новой - снимем выделение с кнопки
+    if (total_red_lines <= 0) // на всякий случай - мало ли уйдёт в минус
+        readButton->setStyleSheet("color: black;");
 }
 
 void DFRSSFilter::error(QNetworkReply::NetworkError)
@@ -553,12 +607,29 @@ void DFRSSFilter::edit_feeds_and_filters()
     win->show();                                       // и рисуем его
 }
 
+// выход из программы
 void DFRSSFilter::quit()
 {
     exit(0);
 }
 
+// очистка окна программы
 void DFRSSFilter::clear_results()
 {
     treeWidget->clear();
+}
+
+// снятие выделения с новых новостей
+void DFRSSFilter::unlight()
+{
+    for (int i = 0; i < treeWidget->topLevelItemCount(); i++) // пробегаем по всем раскрывающимся записям
+    {
+        treeWidget->topLevelItem(i)->setForeground(0,*(new QBrush(Qt::black,Qt::Dense6Pattern)));
+        for (int j = 0; j < treeWidget->topLevelItem(i)->childCount(); j++)
+        {
+            treeWidget->topLevelItem(i)->child(j)->setForeground(0,*(new QBrush(Qt::black,Qt::Dense6Pattern)));
+        }
+    }
+    num_of_new_news = 0;
+    readButton->setStyleSheet("color: black;");
 }

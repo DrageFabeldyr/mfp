@@ -26,6 +26,7 @@ extern QString prog_name_ver;
 class DFRSSFilter : public QWidget
 {
     Q_OBJECT
+
 public:
     DFRSSFilter(QWidget *widget = 0);
     ~DFRSSFilter();
@@ -47,6 +48,7 @@ public slots:
     void edit_settings();
     void edit_feeds_and_filters();
     void quit();
+    void unlight();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -72,11 +74,14 @@ private:
     QPushButton *fetchButton;
     // dm -->
     QPushButton *clearButton;
+    QPushButton *readButton;
     QLabel *hint;
     QMenu *trayIconMenu, *main_menu;
     QMenuBar *mainmenubar;
     QSystemTrayIcon *trayIcon;
-    QAction *menu_settings, *menu_feeds_and_filters, *menu_quit;
+    QAction *menu_settings;
+    QAction *menu_feeds_and_filters;
+    QAction *menu_quit;
     QAction *tray_quit;
 
 
@@ -86,6 +91,7 @@ private:
 
     bool have_news; // переменная для вывода уведомления о наличии новостей
     int num_of_results; // переменная для подсчёта интересующих новостей в ленте
+    int num_of_new_news = 0; // количество новых новостей для вывода в уведомлении
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);

@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui network sql
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = DF-RSS-filter
@@ -45,3 +44,5 @@ win32: LIBS += -L$$PWD/ -llibtag
 
 INCLUDEPATH += $$PWD/
 DEPENDPATH += $$PWD/
+
+DISTFILES +=
