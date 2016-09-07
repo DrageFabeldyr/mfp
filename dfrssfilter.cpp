@@ -423,12 +423,14 @@ void DFRSSFilter::parseXml()
                             for (int i = 0; i < feed_item->childCount(); i++)
                             {
                                 // проверим на совпадение
-                                //if (feed_item->child(i)->text(0).trimmed() == item->text(0).trimmed())
                                 // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
-                                //int x = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive);
-                                // но лучше сравнивать ссылки - если просто переименовали новость она не будет выведена второй раз
-                                int x = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive);
-                                if (x == 0)
+                                int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                                // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
+                                int b = 1;
+                                if (feed_item->child(i)->text(1).trimmed().contains(item->text(1).trimmed(), Qt::CaseInsensitive) ||
+                                    item->text(1).trimmed().contains(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive))
+                                    b = 0;
+                                if (a == 0 || b == 0)
                                 {
                                     new_new = false;
                                     break;
@@ -464,11 +466,15 @@ void DFRSSFilter::parseXml()
                     bool new_new = true; // новая новость
                     for (int i = 0; i < feed_item->childCount(); i++)
                     {
+                        // проверим на совпадение
                         // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
-                        //int x = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive);
-                        // но лучше сравнивать ссылки - если просто переименовали новость она не будет выведена второй раз
-                        int x = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive);
-                        if (x == 0)
+                        int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                        // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
+                        int b = 1;
+                        if (feed_item->child(i)->text(1).trimmed().contains(item->text(1).trimmed(), Qt::CaseInsensitive) ||
+                            item->text(1).trimmed().contains(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive))
+                            b = 0;
+                        if (a == 0 || b == 0)
                         {
                             new_new = false;
                             break;
