@@ -7,8 +7,6 @@
 #include "settings.h"
 #include "feedsandfilters.h"
 
-//#include <QColor>
-
 QMutex mutex;
 
 // обработчик событий
@@ -320,7 +318,7 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         {
             trayIcon->showMessage("", QString("Есть новости (%1)").arg(num_of_new_news), QSystemTrayIcon::Information, settings->show_period);
         }
-        hint->setText("Двойной клик по новости откроет её в браузере");
+        hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
         fetchButton->setEnabled(true);
     }
 }
@@ -469,7 +467,7 @@ void DFRSSFilter::parseXml()
                         // проверим на совпадение
                         // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
                         int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
-                        // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
+                        // был случай, когда в адрес ссылки добавили "https:" и она вывелась второй раз
                         int b = 1;
                         if (feed_item->child(i)->text(1).trimmed().contains(item->text(1).trimmed(), Qt::CaseInsensitive) ||
                             item->text(1).trimmed().contains(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive))
@@ -623,6 +621,10 @@ void DFRSSFilter::quit()
 void DFRSSFilter::clear_results()
 {
     treeWidget->clear();
+    num_of_new_news = 0; // сбросим кол-во новых новостей
+    num_of_results = 0; // сбросим количество выведенных новостей
+    readButton->setStyleSheet("color: black;"); // снимем выделение с кнопки (если есть)
+    hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
 }
 
 // снятие выделения с новых новостей
@@ -638,4 +640,5 @@ void DFRSSFilter::unlight()
     }
     num_of_new_news = 0;
     readButton->setStyleSheet("color: black;");
+    hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
 }
