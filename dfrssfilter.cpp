@@ -7,9 +7,9 @@
 #include "settings.h"
 #include "feedsandfilters.h"
 
-QMutex mutex;
+//QMutex mutex;
 
-// обработчик событий
+// обработчик событий сворачивания/разворачивания
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::WindowStateChange && obj != NULL)
@@ -118,9 +118,10 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // здесь решается вопрос растяжения - нужно его решить
-    treeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //treeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     treeWidget->header()->hide(); // скроем заголовок таблицы - он нафиг не нужен
-    treeWidget->setColumnHidden(1, true); // скроем столбец со ссылками - удалять его нельзя - ссылки берутся из него для открытия
+    //treeWidget->setColumnCount(3);
+    //treeWidget->setColumnHidden(1, true); // скроем столбец со ссылками - удалять его нельзя - ссылки берутся из него для открытия
 
     connect(&manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
     connect(fetchButton, SIGNAL(clicked()), this, SLOT(fetch())); // запуск по нажатию кнопки
@@ -258,7 +259,8 @@ void DFRSSFilter::metaDataChanged()
 void DFRSSFilter::readyRead()
 {
     int statusCode = currentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (statusCode >= 200 && statusCode < 300) {
+    if (statusCode >= 200 && statusCode < 300)
+    {
         QByteArray data = currentReply->readAll();
         xml.addData(data);
         parseXml();
@@ -379,24 +381,25 @@ void DFRSSFilter::parseXml()
 
     QTreeWidgetItem *feed_item = new QTreeWidgetItem();
 
-    while (!xml.atEnd())
+    while (!xml.atEnd()) // пока XML не кончился
     {
         xml.readNext();
-        if (xml.isStartElement())
+        if (xml.isStartElement()) // если открывающий элемент - считываем его имя
         {
+            /*
             if (xml.name() == "item")
                 linkString = xml.attributes().value("rss:about").toString();
+                */
             currentTag = xml.name().toString();
         }
         else if (xml.isEndElement())
         {
-            if (xml.name() == "item")
+            if (xml.name() == "item") // если закрывающий элемент и это item - записываем
             {
                 QList<filters_struct> filters;
                 pFeeds->GetActiveFiltersList(filters, activeFeed.id);
                 if (filters.size() != 0) // если есть фильтры - ищем
                 {
-
                     foreach (filters_struct filter, filters)
                     {
                         // добавим обработку разных языковых символов
@@ -422,13 +425,17 @@ void DFRSSFilter::parseXml()
                             {
                                 // проверим на совпадение
                                 // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
+                                // если только изменился регистр - игнорируем
                                 int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
                                 // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
-                                int b = 1;
-                                if (feed_item->child(i)->text(1).trimmed().contains(item->text(1).trimmed(), Qt::CaseInsensitive) ||
-                                    item->text(1).trimmed().contains(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive))
-                                    b = 0;
-                                if (a == 0 || b == 0)
+                                // если изменился заголовок, но адрес тот же - игнорируем
+                                int b = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                                int c = 1;
+                                // если добавились символы впереди - игнорируем
+                                if (feed_item->child(i)->text(1).trimmed().indexOf(item->text(1).trimmed(), Qt::CaseInsensitive) > 0 ||
+                                    item->text(1).trimmed().indexOf(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive) > 0)
+                                    c = 0;
+                                if (a == 0 || b == 0 || c == 0)
                                 {
                                     new_new = false;
                                     break;
@@ -443,9 +450,10 @@ void DFRSSFilter::parseXml()
                                 // выделение новой строки
                                 feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
                                 item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
-
+/*
                                 titleString.clear();
                                 linkString.clear();
+                                */
                             }
                         }
                     }
@@ -466,13 +474,17 @@ void DFRSSFilter::parseXml()
                     {
                         // проверим на совпадение
                         // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
+                        // если только изменился регистр - игнорируем
                         int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
-                        // был случай, когда в адрес ссылки добавили "https:" и она вывелась второй раз
-                        int b = 1;
-                        if (feed_item->child(i)->text(1).trimmed().contains(item->text(1).trimmed(), Qt::CaseInsensitive) ||
-                            item->text(1).trimmed().contains(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive))
-                            b = 0;
-                        if (a == 0 || b == 0)
+                        // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
+                        // если изменился заголовок, но адрес тот же - игнорируем
+                        int b = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                        int c = 1;
+                        // если добавились символы впереди - игнорируем
+                        if (feed_item->child(i)->text(1).trimmed().indexOf(item->text(1).trimmed(), Qt::CaseInsensitive) > 0 ||
+                            item->text(1).trimmed().indexOf(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive) > 0)
+                            c = 0;
+                        if (a == 0 || b == 0 || c == 0)
                         {
                             new_new = false;
                             break;
@@ -488,22 +500,19 @@ void DFRSSFilter::parseXml()
                         feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
                         item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
 
+                        /*
                         titleString.clear();
                         linkString.clear();
+                        */
                     }
                 }
             }
         }
-        else if (xml.isCharacters() && !xml.isWhitespace())
+        else if (xml.isCharacters() && !xml.isWhitespace()) // если внутри тега есть какой-то текст
         {
             if (currentTag == "title")
             {
-                // dm-->
-                titleString.clear();
-                /* это нужно для того, чтобы убрать лишний текст из первой новости (т.е. заголовка),
-                 * т.к. все новости чередуют название - ссылка, а два названия подряд быть не может
-                 */
-                // <--dm
+                titleString.clear(); // очистим перед записью нового значения
                 titleString += xml.text().toString();
                 if (need_a_name) // если это первый проход и мы должны задать имя ленте
                 {
@@ -535,7 +544,10 @@ void DFRSSFilter::parseXml()
                 }
             }
             else if (currentTag == "link")
+            {
+                linkString.clear(); // очистим перед записью нового значения
                 linkString += xml.text().toString();
+            }
         }
     }
     if (xml.error() && xml.error() != QXmlStreamReader::PrematureEndOfDocumentError)
