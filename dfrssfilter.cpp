@@ -262,8 +262,21 @@ void DFRSSFilter::readyRead()
     if (statusCode >= 200 && statusCode < 300)
     {
         QByteArray data = currentReply->readAll();
-        xml.addData(data);
-        parseXml();
+        /* Парсинг бэндкампа обсерается, когда натыкается на джаваскриптовую запись типа
+         * for ( var i=0; i < libs.length; i++ )
+         * потому как воспринимает знак сравнения как открывающую скобку тега, а пробел после неё как пустой тег и ошибку
+         * нужно убрать все подобные пробелы
+        */
+        if (activeFeed.link.contains("bandcamp", Qt::CaseInsensitive) && !activeFeed.link.contains("feed", Qt::CaseInsensitive))
+        {
+            int test = data.size();
+            parsebandcamp(data);
+        }
+        else
+        {
+            xml.addData(data);
+            parseXml();
+        }
     }
 }
 
@@ -445,7 +458,7 @@ void DFRSSFilter::parseXml()
                             if (new_new)
                             {
                                 feed_item->addChild(item);
-                                feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+                                feed_item->setHidden(false); // если нашёлся хоть один результат - сделаем "ветку" видимой
 
                                 // выделение новой строки
                                 feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
@@ -494,7 +507,7 @@ void DFRSSFilter::parseXml()
                     if (new_new)
                     {
                         feed_item->addChild(item);
-                        feed_item->setHidden(false); // если потом найдётся хоть один результат - сделаем "ветку" видимой
+                        feed_item->setHidden(false); // если нашёлся хоть один результат - сделаем "ветку" видимой
 
                         // выделение новой строки
                         feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
@@ -538,7 +551,7 @@ void DFRSSFilter::parseXml()
                     if (new_feed)
                     {
                         treeWidget->addTopLevelItem(feed_item);
-                        feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
+                        //feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
                     }
                     need_a_name = false;
                 }
@@ -582,6 +595,7 @@ void DFRSSFilter::itemActivated(QTreeWidgetItem * item)
                 num_of_new_news -= 1;
                 red_lines--;
                 total_red_lines--;
+                hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
             }
         }
         // если новость была единственной новой в ленте - снимаем выделение с ленты
@@ -653,4 +667,184 @@ void DFRSSFilter::unlight()
     num_of_new_news = 0;
     readButton->setStyleSheet("color: black;");
     hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
+}
+
+// функция парсинга теговых страниц бэндкампа
+void DFRSSFilter::parsebandcamp(QByteArray bandcampdata)
+{
+    QString title, artist, album;
+    int i, start_position = 0, current_position = 0;
+    QString str, tempstr;
+    QString has_the_world1 = "тысячелистник";
+    QString has_the_world2 = "trelleborg";
+
+    QTreeWidgetItem *feed_item = new QTreeWidgetItem();
+
+    title.clear();
+    for (i = bandcampdata.indexOf("<title>", 0) + QString("<title>").length(); i < bandcampdata.indexOf("</title>", 0); i++)
+        title += bandcampdata[i]; // выцепляем имя ленты
+
+    if (need_a_name) // если это первый проход и мы должны задать имя ленте
+    {
+        bool new_feed = true;
+        QTextDocument doc;
+        doc.setHtml(QString(title));
+        if (activeFeed.title == "")
+            feed_item->setText(0, doc.toPlainText()); // если у ленты нет имени - берём из ленты
+        else
+            feed_item->setText(0, activeFeed.title); // если есть - берём то, которое задано
+
+        // ищем текущую ленту среди уже выведенных
+        for (int i = 0; i < treeWidget->topLevelItemCount(); i++)
+            if (treeWidget->topLevelItem(i)->text(0).trimmed() == feed_item->text(0))
+            {
+                treeWidget->setCurrentItem(treeWidget->topLevelItem(i));
+                feed_item = treeWidget->currentItem(); // чтобы новости добавлялись в ту ленту, что уже есть
+                new_feed = false;
+                break;
+            }
+
+        // если не нашли - добавляем
+        if (new_feed)
+        {
+            treeWidget->addTopLevelItem(feed_item);
+            //feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
+        }
+        need_a_name = false;
+    }
+    // загружаем фильтры
+    QList<filters_struct> filters;
+    pFeeds->GetActiveFiltersList(filters, activeFeed.id);
+    // отсекаем всё, что до релизов - всякие java-скрипты и прочее дерьмо
+    start_position = bandcampdata.indexOf("item_list", 0) + QString("item_list").length();
+    tempstr.clear();
+    for (i = start_position; i < bandcampdata.size(); i++)
+        tempstr += bandcampdata[i];
+    while (tempstr.indexOf("<li class=\"item ", 0) != -1) // пока есть элементы
+    {
+        titleString.clear();
+        linkString.clear();
+        current_position = tempstr.indexOf("href=\"", 0) + QString("href=\"").length();
+        for (i = current_position; i < tempstr.indexOf("\"", current_position); i++)
+            linkString += tempstr[i];
+        artist.clear();
+        current_position = tempstr.indexOf("itemsubtext\">", 0) + QString("itemsubtext\">").length();
+        for (i = current_position; i < tempstr.indexOf("<", current_position); i++)
+            artist += tempstr[i];
+        album.clear();
+        current_position = tempstr.indexOf("itemtext\">", 0) + QString("itemtext\">").length();
+        for (i = current_position; i < tempstr.indexOf("<", current_position); i++)
+            album += tempstr[i];
+        titleString = artist + " - " + album;
+
+        // вывод
+        if (filters.size() != 0) // если есть фильтры - ищем
+        {
+            foreach (filters_struct filter, filters)
+            {
+                // добавим обработку разных языковых символов
+                QTextDocument doc;
+                doc.setHtml(titleString);
+                str = doc.toPlainText();
+
+                if ((filter.comment.simplified() == "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseSensitive)) || // найденных исполнителей проверяем по высоте букв
+                    (filter.comment.simplified() != "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseInsensitive)) || // всё остальное - без разницы
+                    (str.contains(has_the_world1.simplified(), Qt::CaseInsensitive)) ||
+                    (str.contains(has_the_world2.simplified(), Qt::CaseInsensitive)))
+                    // simplified - чтобы убрать символ переноса строки из сравнения
+                {
+                    QTreeWidgetItem *item = new QTreeWidgetItem();
+
+                    item->setText(0, doc.toPlainText());
+
+                    doc.setHtml(linkString);
+                    item->setText(1, doc.toPlainText());
+
+                    bool new_new = true; // новая новость
+                    for (int i = 0; i < feed_item->childCount(); i++)
+                    {
+                        // проверим на совпадение
+                        // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
+                        // если только изменился регистр - игнорируем
+                        int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                        // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
+                        // если изменился заголовок, но адрес тот же - игнорируем
+                        int b = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                        int c = 1;
+                        // если добавились символы впереди - игнорируем
+                        if (feed_item->child(i)->text(1).trimmed().indexOf(item->text(1).trimmed(), Qt::CaseInsensitive) > 0 ||
+                            item->text(1).trimmed().indexOf(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive) > 0)
+                            c = 0;
+                        if (a == 0 || b == 0 || c == 0)
+                        {
+                            new_new = false;
+                            break;
+                        }
+                    }
+
+                    if (new_new)
+                    {
+                        feed_item->addChild(item);
+                        feed_item->setHidden(false); // если нашёлся хоть один результат - сделаем "ветку" видимой
+
+                        // выделение новой строки
+                        feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+                        item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+                    }
+                }
+            }
+        }
+        else // если фильтров нет - выводим всё
+        {
+            QTreeWidgetItem *item = new QTreeWidgetItem;
+            QTextDocument doc;
+
+            doc.setHtml(titleString);
+            item->setText(0, doc.toPlainText());
+
+            doc.setHtml(linkString);
+            item->setText(1, doc.toPlainText());
+
+            bool new_new = true; // новая новость
+            for (int i = 0; i < feed_item->childCount(); i++)
+            {
+                // проверим на совпадение
+                // был случай, когда в новости "Vs" заменили на "vs" и она вывелась второй раз
+                // если только изменился регистр - игнорируем
+                int a = QString::compare(feed_item->child(i)->text(0).trimmed(), item->text(0).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                // был случай, когда в ссылкe добавили "https:" и она вывелась второй раз
+                // если изменился заголовок, но адрес тот же - игнорируем
+                int b = QString::compare(feed_item->child(i)->text(1).trimmed(), item->text(1).trimmed(), Qt::CaseInsensitive); // 0 - если совпали
+                int c = 1;
+                // если добавились символы впереди - игнорируем
+                if (feed_item->child(i)->text(1).trimmed().indexOf(item->text(1).trimmed(), Qt::CaseInsensitive) > 0 ||
+                    item->text(1).trimmed().indexOf(feed_item->child(i)->text(1).trimmed(), Qt::CaseInsensitive) > 0)
+                    c = 0;
+                if (a == 0 || b == 0 || c == 0)
+                {
+                    new_new = false;
+                    break;
+                }
+            }
+
+            if (new_new)
+            {
+                feed_item->addChild(item);
+                feed_item->setHidden(false); // если нашёлся хоть один результат - сделаем "ветку" видимой
+
+                // выделение новой строки
+                feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+                item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
+
+            }
+        }
+
+        // отбрасываем обработанный элемент
+        current_position = tempstr.indexOf("</li>", 0) + QString("</li>").length(); // находим закрывающий элемент тег
+        start_position += current_position; // смещаем точку старта
+        tempstr.clear(); // очищаем рабочую строку
+        for (i = start_position; i < bandcampdata.size(); i++)
+            tempstr += bandcampdata[i]; // и переписываем её
+
+    }
 }

@@ -52,9 +52,10 @@ public slots:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
-    // <-- dm
 
 private:
+    void parsebandcamp(QByteArray bandcampdata);
+    // <-- dm
     void parseXml();
     void get(const QUrl &url);
 
