@@ -269,7 +269,6 @@ void DFRSSFilter::readyRead()
         */
         if (activeFeed.link.contains("bandcamp", Qt::CaseInsensitive) && !activeFeed.link.contains("feed", Qt::CaseInsensitive))
         {
-            int test = data.size();
             parsebandcamp(data);
         }
         else
@@ -338,53 +337,6 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     }
 }
 
-/*
-void DFRSSFilter::finished()
-{
-    //Q_UNUSED(reply);
-    qWarning() << "Feed finished: " << QString(currentReply->url().toString());
-    currentReply->disconnect(this);
-    currentReply->deleteLater();
-    currentReply = nullptr;
-
-    QList <Feed> feeds;
-    pFeeds->GetActiveFeedsList(feeds);
-
-    if (counter < feeds.size())
-    {
-        fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
-        need_a_name = true;
-        xml.clear();
-        QUrl url(feeds.at(counter).link);
-        activeFeed = feeds.at(counter);
-        get(url);
-        ++counter;
-    }
-    else
-    {
-        int new_num_of_results = 0;
-        for (int i = 0; i < treeWidget->topLevelItemCount(); i++)
-        {
-            QTreeWidgetItem *test = treeWidget->topLevelItem(i);
-            new_num_of_results += test->childCount();
-        }
-        if (new_num_of_results > num_of_results)
-        {
-            have_news = true;
-            num_of_results = new_num_of_results;
-        }
-
-        if ((!this->isVisible() || this->isMinimized()) && have_news)
-        {
-            // если окно свёрнуто или убрано - выведем уведомление
-            trayIcon->showMessage("", "Есть новости", QSystemTrayIcon::Information, settings->show_period);
-        }
-        hint->setText("Двойной клик по новости откроет её в браузере");
-        fetchButton->setEnabled(true);
-    }
-}
-*/
-
 // Парсит данные XML и создаёт соответственно элементы treeWidget.
 void DFRSSFilter::parseXml()
 {
@@ -399,10 +351,6 @@ void DFRSSFilter::parseXml()
         xml.readNext();
         if (xml.isStartElement()) // если открывающий элемент - считываем его имя
         {
-            /*
-            if (xml.name() == "item")
-                linkString = xml.attributes().value("rss:about").toString();
-                */
             currentTag = xml.name().toString();
         }
         else if (xml.isEndElement())
@@ -463,10 +411,6 @@ void DFRSSFilter::parseXml()
                                 // выделение новой строки
                                 feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
                                 item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
-/*
-                                titleString.clear();
-                                linkString.clear();
-                                */
                             }
                         }
                     }
@@ -512,11 +456,6 @@ void DFRSSFilter::parseXml()
                         // выделение новой строки
                         feed_item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
                         item->setForeground(0,*(new QBrush(Qt::red,Qt::Dense6Pattern)));
-
-                        /*
-                        titleString.clear();
-                        linkString.clear();
-                        */
                     }
                 }
             }
@@ -551,7 +490,7 @@ void DFRSSFilter::parseXml()
                     if (new_feed)
                     {
                         treeWidget->addTopLevelItem(feed_item);
-                        //feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
+                        feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
                     }
                     need_a_name = false;
                 }
@@ -684,7 +623,18 @@ void DFRSSFilter::parsebandcamp(QByteArray bandcampdata)
     for (i = bandcampdata.indexOf("<title>", 0) + QString("<title>").length(); i < bandcampdata.indexOf("</title>", 0); i++)
         title += bandcampdata[i]; // выцепляем имя ленты
 
-    if (need_a_name) // если это первый проход и мы должны задать имя ленте
+    // костыль (забавно, но случай с именованной лентой так тоже обработается)
+    if (title != "")
+    {
+        bandcamp_sucks.clear();
+        bandcamp_sucks += title;
+    }
+    else
+    {
+        title += bandcamp_sucks;
+    }
+
+    if (need_a_name || (title == bandcamp_sucks)) // если это первый проход и мы должны задать имя ленте + костыль
     {
         bool new_feed = true;
         QTextDocument doc;
@@ -708,7 +658,7 @@ void DFRSSFilter::parsebandcamp(QByteArray bandcampdata)
         if (new_feed)
         {
             treeWidget->addTopLevelItem(feed_item);
-            //feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
+            feed_item->setHidden(true); // делаем по умолчанию "ветку" невидимой
         }
         need_a_name = false;
     }

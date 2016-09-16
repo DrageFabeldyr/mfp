@@ -66,7 +66,7 @@ void Settings::read_settings()
     activateFeeds = setting_file.value("activate_feeds", false).toBool();
 
     request_period = 10*60*1000; // запрос новостей раз в 10 минут (потом будет чтение из файла)
-//    request_period = 1*60*1000; // запрос новостей раз в 10 минут (потом будет чтение из файла)
+    //request_period = 1*60*1000; // запрос новостей раз в 10 минут (потом будет чтение из файла)
     show_period = 20*1000; // уведомление в трее будет висеть 30 секунд
 }
 

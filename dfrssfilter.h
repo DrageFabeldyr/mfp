@@ -38,7 +38,6 @@ public:
 
 public slots:
     void fetch();
-    //void finished();
     void finished(QNetworkReply *reply);
     void readyRead();
     void metaDataChanged();
@@ -93,6 +92,8 @@ private:
     bool have_news; // переменная для вывода уведомления о наличии новостей
     int num_of_results; // переменная для подсчёта интересующих новостей в ленте
     int num_of_new_news = 0; // количество новых новостей для вывода в уведомлении
+
+    QString bandcamp_sucks;
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);
