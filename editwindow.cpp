@@ -185,9 +185,13 @@ void EditWindow::search_artists()
         nameLabel->setText("Папка с музыкой:");
         nameEdit->setText("");
         nameEdit->setPlaceholderText("Вставьте адрес папки с музыкой...");
+        /*
         valueLabel->setText("Добавочные символы");
         valueEdit->setText("");
         valueEdit->setPlaceholderText("Введите добавочные символы фильтров...");
+        */
+        valueEdit->setText("Автопоиск");
+        valueEdit->setEnabled(false);
         hint->setText("Если файлов много, поиск может занять пару минут");
     }
     else
@@ -204,7 +208,7 @@ void EditWindow::search_artists()
         {
             filters_struct filter(id);
             filter.comment = "Автопоиск";
-            filter.title = artists.at(i) + valueEdit->text();
+            filter.title = artists.at(i);// + valueEdit->text();
             filter.is_on = enableCheck->checkState();
             filter.idFeed = idFeed;
             pFeeds->SaveFilter(&filter);
@@ -254,5 +258,4 @@ void EditWindow::searching(QString path)
             }
         }
     }
-
 }

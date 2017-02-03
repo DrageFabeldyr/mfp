@@ -34,8 +34,8 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
             else
                 win_max = false;
             this->hide();
-            event->ignore();
-            return true; // чтобы событие сбросилось из очереди, иначе его обработает стандартный eventClose
+            event->ignore();        //
+            return true;            // чтобы событие сбросилось из очереди, иначе его обработает стандартный eventClose
         }
         else
             quit();
@@ -191,8 +191,10 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     // устанавливаем наш обработчик событий
     installEventFilter(this);
 
+    // первый запуск процедуры поиска через 5 секунд после обработки
     connect(settings->timer, SIGNAL(timeout()), this, SLOT(fetch()));
-    settings->timer->start(settings->request_period); // обновление по таймеру
+    settings->timer->start(3 * 1000);
+//    settings->timer->start(settings->request_period); // обновление по таймеру
 
     connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), settings->timer, SLOT(start())); // в случае клика по новости таймер сбрасывается
 
@@ -226,6 +228,7 @@ void DFRSSFilter::get(const QUrl &url)
     URL создаётся с сырым содержимым строки редактирования и получает инициализацию. */
 void DFRSSFilter::fetch()
 {
+    settings->timer->stop(); // остановим таймер на время чтения лент
     /* пробег по списку лент происходит быстрее, чем чтение лент
      * поэтому после первого совпадения выходим из цикла, а продолжим по событию finished */
     counter = 0;
@@ -233,7 +236,10 @@ void DFRSSFilter::fetch()
     pFeeds->GetActiveFeedsList(feeds);
 
     if (feeds.size() == 0)
+    {
+        settings->timer->start(settings->request_period); // после обновления списка результатов запускаем таймер на нормальный интервал
         return;
+    }
     have_news = false; // сбрасываем флаг информирования
     fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
     need_a_name = true;
@@ -334,6 +340,7 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         }
         hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
         fetchButton->setEnabled(true);
+        settings->timer->start(settings->request_period); // после обновления списка результатов запускаем таймер на нормальный интервал
     }
 }
 
@@ -368,8 +375,20 @@ void DFRSSFilter::parseXml()
                         doc.setHtml(titleString);
                         str = doc.toPlainText();
 
+                        /*
                         if ((filter.comment.simplified() == "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseSensitive)) || // найденных исполнителей проверяем по высоте букв
                             (filter.comment.simplified() != "Автопоиск" && str.contains(filter.title.simplified(), Qt::CaseInsensitive)) || // всё остальное - без разницы
+                            (str.contains(has_the_world1.simplified(), Qt::CaseInsensitive)) ||
+                            (str.contains(has_the_world2.simplified(), Qt::CaseInsensitive)))
+                        */
+                        QString temp_str1 = filter.title.simplified() + " -"; // единственный исполнитель
+                        QString temp_str2 = filter.title.simplified() + " &"; // первый в сплите
+                        QString temp_str3 = "& " + filter.title.simplified(); // не первый в сплите
+
+                        if ((activeFeed.link.indexOf("metalarea", 0, Qt::CaseInsensitive) >= 0 && ((str.indexOf(temp_str1, 0, Qt::CaseInsensitive) == 0) ||
+                                                                                                                                  (str.indexOf(temp_str2, 0, Qt::CaseInsensitive) == 0) ||
+                                                                                                                                  (str.indexOf(temp_str3, 0, Qt::CaseInsensitive) > 0))) ||
+                            (activeFeed.link.indexOf("metalarea", 0, Qt::CaseInsensitive) == -1 && str.contains(filter.title.simplified(), Qt::CaseInsensitive)) || // всё остальное - без разницы
                             (str.contains(has_the_world1.simplified(), Qt::CaseInsensitive)) ||
                             (str.contains(has_the_world2.simplified(), Qt::CaseInsensitive)))
                             // simplified - чтобы убрать символ переноса строки из сравнения
