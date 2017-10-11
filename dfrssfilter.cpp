@@ -34,8 +34,8 @@ bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
             else
                 win_max = false;
             this->hide();
-            event->ignore();        //
-            return true;            // чтобы событие сбросилось из очереди, иначе его обработает стандартный eventClose
+            event->ignore();
+            return true; // чтобы событие сбросилось из очереди, иначе его обработает стандартный eventClose
         }
         else
             quit();

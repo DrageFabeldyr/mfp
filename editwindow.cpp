@@ -4,6 +4,9 @@
 #include "taglib/fileref.h"
 #include "taglib/tag.h"
 
+int step = 0;
+
+
 EditWindow::EditWindow(QWidget *parent) : QWidget(parent)
 {
     pFeeds = static_cast<FeedsAndFilters*>(parent)->pFeeds;
@@ -222,13 +225,15 @@ void EditWindow::search_artists()
 
 void EditWindow::searching(QString path)
 {
-
+    qDebug() <<  "*********************************************************************************************************************";
+    qDebug() <<  path;
     bool new_artist;
 
     // http://www.cyberforum.ru/qt/thread644532.html   -   там есть пример и без рекурсии, но так как-то понятнее
     QDir currentFolder(path);
 
-    currentFolder.setFilter(QDir::Dirs | QDir::Files);
+    //currentFolder.setFilter(QDir::Dirs | QDir::Files);
+    currentFolder.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::QDir::NoSymLinks);
     currentFolder.setSorting(QDir::Name);
 
     QFileInfoList folderitems(currentFolder.entryInfoList());
@@ -236,7 +241,7 @@ void EditWindow::searching(QString path)
     foreach (QFileInfo i_file, folderitems)
     {
         QString i_filename(i_file.fileName());
-        if (i_filename == "." || i_filename == ".." || i_filename.isEmpty())
+        if (/*i_filename == "." || i_filename == ".." || */i_filename.isEmpty())
             continue;
 
         if (i_file.isDir())
@@ -244,17 +249,26 @@ void EditWindow::searching(QString path)
         else
         {
             QString full_filename = path + "/" + i_filename;
+            step++;
+            qDebug() <<  step << " - " << full_filename;
 
-            TagLib::FileRef ref(full_filename.toStdWString().c_str()); // только с таким преобразованием не игнорируются папки с нелатинскими буквами
-            if (!ref.isNull() && ref.tag() != NULL)
+            if (full_filename.contains(".mp3", Qt::CaseInsensitive) || full_filename.contains(".ogg", Qt::CaseInsensitive) ||
+                full_filename.contains(".flac", Qt::CaseInsensitive) || full_filename.contains(".wma", Qt::CaseInsensitive) || full_filename.contains(".wav", Qt::CaseInsensitive))
             {
-                QString data = QString("%1").arg(ref.tag()->artist().toCString(true));
-                new_artist = true;
-                for (int i = 0; i < artists.size(); i++)
-                    if (data.trimmed() == artists.at(i).trimmed())
-                        new_artist = false;
-                if (new_artist && data != "") // на случай, если в поле "исполнитель" ничего нет
-                    artists.push_back(data);
+                TagLib::FileRef ref(full_filename.toStdWString().c_str()); // только с таким преобразованием не игнорируются папки с нелатинскими буквами
+                if (!ref.isNull() && ref.tag() != NULL)
+                {
+                    //QString data = QString("%1").arg(ref.tag()->artist().toCString(true));
+                    //QString data = QString::fromStdString(ref.tag()->artist().toCString(true));
+                    //QString data = QString::fromStdWString(ref.tag()->artist().toWString());
+                    QString data = TStringToQString(ref.tag()->artist());
+                    new_artist = true;
+                    for (int i = 0; i < artists.size(); i++)
+                        if (data.trimmed() == artists.at(i).trimmed())
+                            new_artist = false;
+                    if (new_artist && data != "") // на случай, если в поле "исполнитель" ничего нет
+                        artists.push_back(data);
+                }
             }
         }
     }
