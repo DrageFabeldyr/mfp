@@ -2,9 +2,10 @@
 #include "editwindow.h"
 
 #include "taglib/fileref.h"
+#include "taglib/taglib.h"
 #include "taglib/tag.h"
 
-int step = 0;
+//int step = 0;
 
 
 EditWindow::EditWindow(QWidget *parent) : QWidget(parent)
@@ -203,6 +204,11 @@ void EditWindow::search_artists()
             return; // выходим
         search_init = !search_init;
         QString test = nameEdit->text().trimmed();
+        /* всё равно не работает, нужна многопоточность
+        artistsButton->setEnabled(false);
+        cancelButton->setEnabled(false);
+        hint->setText("Идёт поиск");
+        */
         artists.clear();
         searching(test);
 
@@ -225,8 +231,8 @@ void EditWindow::search_artists()
 
 void EditWindow::searching(QString path)
 {
-    qDebug() <<  "*********************************************************************************************************************";
-    qDebug() <<  path;
+    //qDebug() <<  "*********************************************************************************************************************";
+    //qDebug() <<  path;
     bool new_artist;
 
     // http://www.cyberforum.ru/qt/thread644532.html   -   там есть пример и без рекурсии, но так как-то понятнее
@@ -249,11 +255,11 @@ void EditWindow::searching(QString path)
         else
         {
             QString full_filename = path + "/" + i_filename;
-            step++;
-            qDebug() <<  step << " - " << full_filename;
+            //step++;
+            //qDebug() <<  step << " - " << full_filename;
 
-            if (full_filename.contains(".mp3", Qt::CaseInsensitive) || full_filename.contains(".ogg", Qt::CaseInsensitive) ||
-                full_filename.contains(".flac", Qt::CaseInsensitive) || full_filename.contains(".wma", Qt::CaseInsensitive) || full_filename.contains(".wav", Qt::CaseInsensitive))
+
+            if (full_filename.contains(".mp3", Qt::CaseInsensitive) || full_filename.contains(".flac", Qt::CaseInsensitive) || full_filename.contains(".wma", Qt::CaseInsensitive) || full_filename.contains(".wav", Qt::CaseInsensitive))
             {
                 TagLib::FileRef ref(full_filename.toStdWString().c_str()); // только с таким преобразованием не игнорируются папки с нелатинскими буквами
                 if (!ref.isNull() && ref.tag() != NULL)
@@ -269,7 +275,7 @@ void EditWindow::searching(QString path)
                     if (new_artist && data != "") // на случай, если в поле "исполнитель" ничего нет
                         artists.push_back(data);
                 }
-            }
+           }
         }
     }
 }

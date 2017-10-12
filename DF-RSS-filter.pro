@@ -12,9 +12,9 @@ TEMPLATE = app
 
 # remove possible other optimization flags
 #QMAKE_CXXFLAGS_RELEASE -= -O3
-QMAKE_CXXFLAGS_RELEASE -= -O1
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE -= -O0
+#QMAKE_CXXFLAGS_RELEASE -= -O1
+#QMAKE_CXXFLAGS_RELEASE -= -O2
+#QMAKE_CXXFLAGS_RELEASE -= -O0
 
 SOURCES += main.cpp\
         dfrssfilter.cpp \
@@ -45,9 +45,17 @@ CONFIG += c++11
 RESOURCES += \
     res.qrc
 
-win32: LIBS += -L$$PWD/ -llibtag
-
-INCLUDEPATH += $$PWD/
-DEPENDPATH += $$PWD/
-
 DISTFILES +=
+
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/./release/ -llibtag.dll
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/./debug/ -llibtag.dll
+
+#INCLUDEPATH += $$PWD/taglib
+#DEPENDPATH += $$PWD/taglib
+
+
+win32: LIBS += -L$$PWD/./ -llibtag.dll
+
+INCLUDEPATH += $$PWD/.
+DEPENDPATH += $$PWD/.
