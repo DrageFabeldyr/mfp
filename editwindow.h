@@ -7,6 +7,10 @@
 
 #include "feeds.h"
 
+#include <pthread.h> // для использования потоков для "оживления" поиска
+#include <semaphore.h>
+
+
 class EditWindow : public QWidget
 {
     Q_OBJECT
@@ -48,6 +52,9 @@ private:
     QLabel *hint;
     QPushButton *artistsButton;
     QStringList artists;
+
+    pthread_t artists_trd;  // поток артистов
+    sem_t artists_sem;    // семафор артистов
 };
 
 #endif // EDITWINDOW_H
