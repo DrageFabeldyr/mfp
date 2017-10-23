@@ -38,6 +38,9 @@ public slots:
     void ShowEditFeed();
     void FilterDel();
     void FeedDel();
+    void filters_check_all();
+    void filters_uncheck_all();
+    void filters_delete_all();
 
 private:
     FeedModel  *feedModel;
@@ -46,14 +49,19 @@ private:
     QTreeView  *feedList;
     QTreeView  *filterList;
     QVBoxLayout *v_layout;
+    QVBoxLayout *vb_layout;     // объединение рядов кнопок фильтров
     QHBoxLayout *h1_layout;
     QPushButton * feedAdd;
     QPushButton * feedDel;
     QPushButton * feedEdit;
-    QHBoxLayout *h2_layout;
+    QHBoxLayout *h2_layout;     // верхний ряд кнопок фильтров
+    QHBoxLayout *h3_layout;     // нижний ряд кнопок фильтров
     QPushButton * filterAdd;
     QPushButton * filterDel;
     QPushButton * filterEdit;
+    QPushButton * filterCheckAll;
+    QPushButton * filterUncheckAll;
+    QPushButton * filterDeleteAll;
     EditWindow *editW;
     QLabel *hint1;
     QLabel *hint2;

@@ -39,6 +39,21 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     filterEdit->setText(tr("Редактировать"));
     filterDel->setText(tr("Удалить"));
 
+    h3_layout = new QHBoxLayout;
+    filterCheckAll = new QPushButton;
+    filterUncheckAll = new QPushButton;
+    filterDeleteAll = new QPushButton;
+    h3_layout->addWidget(filterCheckAll);
+    h3_layout->addWidget(filterUncheckAll);
+    h3_layout->addWidget(filterDeleteAll);
+    filterCheckAll->setText(tr("Включить все"));
+    filterUncheckAll->setText(tr("Отключить все"));
+    filterDeleteAll->setText(tr("Удалить все"));
+
+    vb_layout = new QVBoxLayout;
+    vb_layout->addLayout(h2_layout);
+    vb_layout->addLayout(h3_layout);
+
     hint1 = new QLabel(this);
     hint2 = new QLabel(this);
     hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
@@ -48,7 +63,7 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     v_layout->addLayout(h1_layout);
     v_layout->addWidget(feedList);
     v_layout->addWidget(hint1);
-    v_layout->addLayout(h2_layout);
+    v_layout->addLayout(vb_layout);
     v_layout->addWidget(filterList);
     v_layout->addWidget(hint2);
 
@@ -56,15 +71,18 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
 
     resize(640,480);
     setWindowTitle("RSS-ленты и фильтры");
-    connect(feedList,   SIGNAL(clicked(QModelIndex)),       this, SLOT(UpdateFilter(QModelIndex)));
-    connect(feedList,   SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFeed(QModelIndex)));
+    connect(feedList, SIGNAL(clicked(QModelIndex)), this, SLOT(UpdateFilter(QModelIndex)));
+    connect(feedList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFeed(QModelIndex)));
     connect(filterList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFilter(QModelIndex)));
-    connect(filterAdd,  SIGNAL(clicked(bool)), this, SLOT(ShowAddFilter()));
-    connect(feedAdd,    SIGNAL(clicked(bool)), this, SLOT(ShowAddFeed()));
+    connect(filterAdd, SIGNAL(clicked(bool)), this, SLOT(ShowAddFilter()));
+    connect(feedAdd, SIGNAL(clicked(bool)), this, SLOT(ShowAddFeed()));
     connect(filterEdit, SIGNAL(clicked(bool)), this, SLOT(ShowEditFilter()));
-    connect(feedEdit,   SIGNAL(clicked(bool)), this, SLOT(ShowEditFeed()));
-    connect(filterDel,  SIGNAL(clicked(bool)), this, SLOT(FilterDel()));
-    connect(feedDel,    SIGNAL(clicked(bool)), this, SLOT(FeedDel()));
+    connect(feedEdit, SIGNAL(clicked(bool)), this, SLOT(ShowEditFeed()));
+    connect(filterDel, SIGNAL(clicked(bool)), this, SLOT(FilterDel()));
+    connect(feedDel, SIGNAL(clicked(bool)), this, SLOT(FeedDel()));
+    connect(filterCheckAll, SIGNAL(clicked(bool)), this, SLOT(filters_check_all()));
+    connect(filterUncheckAll, SIGNAL(clicked(bool)), this, SLOT(filters_uncheck_all()));
+    connect(filterDeleteAll, SIGNAL(clicked(bool)), this, SLOT(filters_delete_all()));
 
     this->setWindowIcon(QIcon(":/rss.ico"));
 
@@ -186,4 +204,22 @@ void FeedsAndFilters::showEvent(QShowEvent * event)
 {
     Q_UNUSED(event);
     settings->timer->stop(); // останавливаем таймер на время работы с окном
+}
+
+void FeedsAndFilters::filters_check_all()
+{
+
+}
+
+void FeedsAndFilters::filters_uncheck_all()
+{
+
+}
+
+void FeedsAndFilters::filters_delete_all()
+{
+    int filters_num = 0;
+    for (int i = 0; i < filters_num; i++)
+        pFeeds->DeleteFilterById(i);
+    updateFilters();
 }

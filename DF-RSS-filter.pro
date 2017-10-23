@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     feedsandfilters.cpp \
     feedmodel.cpp \
     filtermodel.cpp \
-    editwindow.cpp
+    editwindow.cpp \
+    artist_scanner.cpp
 
 HEADERS  += dfrssfilter.h \
     settings.h \
@@ -35,7 +36,8 @@ HEADERS  += dfrssfilter.h \
     feedsandfilters.h \
     feedmodel.h \
     filtermodel.h \
-    editwindow.h
+    editwindow.h \
+    artist_scanner.h
 
 FORMS    += dfrssfilter.ui \
     settings.ui

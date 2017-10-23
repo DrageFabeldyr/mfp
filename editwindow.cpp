@@ -1,9 +1,11 @@
 #include "feedsandfilters.h"
 #include "editwindow.h"
-
+/*
 #include "taglib/fileref.h"
 #include "taglib/taglib.h"
 #include "taglib/tag.h"
+*/
+#include "artist_scanner.h"
 
 //int step = 0;
 
@@ -203,14 +205,29 @@ void EditWindow::search_artists()
         if (nameEdit->text().isEmpty()) // если не задан адрес
             return; // выходим
         search_init = !search_init;
-        QString test = nameEdit->text().trimmed();
-        /* всё равно не работает, нужна многопоточность
+        QString path = nameEdit->text().trimmed();
+        /* всё равно не работает, нужна многопоточность*/
         artistsButton->setEnabled(false);
-        cancelButton->setEnabled(false);
+        //cancelButton->setEnabled(false);
         hint->setText("Идёт поиск");
-        */
+        /**/
+
+        // запускаем поток поиска
+        QThread *thread= new QThread;
+        artist_scanner *my = new artist_scanner;
+
+        my->moveToThread(thread);
+
+        connect(my, SIGNAL(send(int, int, bool)), this, SLOT(update(int, int, bool)));
+        connect(thread, SIGNAL(started()), my, SLOT(searching()));
+        connect(this, SIGNAL(send_params(QString, int, int, bool)), my, SLOT(receive_params(QString, int, int, bool)), Qt::DirectConnection);
+
+        emit send_params(path, id, idFeed, enableCheck->checkState()); // путь к папке, id ленты, галочка активности
+
+        thread->start();
+/*
         artists.clear();
-        searching(test);
+        searching(path);
 
         // запись данных в БД (надо как-то потом переработать дублирование функции SaveData)
         for (int i = 0; i < artists.size(); i++)
@@ -226,9 +243,21 @@ void EditWindow::search_artists()
         hint->setText(QString("Найдено исполнителей: %1").arg(artists.size()));
         artistsButton->setEnabled(false);
         cancelButton->setText("ОК");
+        */
     }
 }
 
+void EditWindow::update(int i, int j, bool flag)
+{
+    hint->setText(QString("Найдено исполнителей: %1, Файлов проверено: %2").arg(i).arg(j));
+    if (flag)
+    {
+        cancelButton->setText("ОК");
+        cancelButton->setEnabled(true);
+    }
+}
+
+/*
 void EditWindow::searching(QString path)
 {
     //qDebug() <<  "*********************************************************************************************************************";
@@ -247,7 +276,8 @@ void EditWindow::searching(QString path)
     foreach (QFileInfo i_file, folderitems)
     {
         QString i_filename(i_file.fileName());
-        if (/*i_filename == "." || i_filename == ".." || */i_filename.isEmpty())
+        //if (i_filename == "." || i_filename == ".." || i_filename.isEmpty())
+        if (i_filename.isEmpty())
             continue;
 
         if (i_file.isDir())
@@ -279,3 +309,4 @@ void EditWindow::searching(QString path)
         }
     }
 }
+*/

@@ -7,9 +7,6 @@
 
 #include "feeds.h"
 
-#include <pthread.h> // для использования потоков для "оживления" поиска
-#include <semaphore.h>
-
 
 class EditWindow : public QWidget
 {
@@ -21,13 +18,16 @@ public:
     ~EditWindow();
 
 signals:
+    void send_params(QString, int, int, bool);
 
 public slots:
-    private slots:
+
+private slots:
     void SaveData();
     void search_artists();
-    void searching(QString path);
+    //void searching(QString path);
     void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
+    void update (int i, int j, bool flag);
 
 private:
     Feeds *pFeeds;
@@ -52,9 +52,6 @@ private:
     QLabel *hint;
     QPushButton *artistsButton;
     QStringList artists;
-
-    pthread_t artists_trd;  // поток артистов
-    sem_t artists_sem;    // семафор артистов
 };
 
 #endif // EDITWINDOW_H
