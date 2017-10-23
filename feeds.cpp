@@ -57,7 +57,6 @@ void Feeds::OpenDB()
                "title varchar(100), "
                "value varchar(100), "
                "status INTEGER)");
-
 }
 
 void Feeds::GetFeedById(Feed * feed)
@@ -226,6 +225,7 @@ void Feeds::GetActiveFeedsList(QList<Feed> &feeds)
         feed.link = query.value(1).toString();
         feed.title = query.value(2).toString();
         feed.is_on = query.value(3).toBool();
+
         feeds.push_back(feed);
         feed.Clear();
     }

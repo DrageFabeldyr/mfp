@@ -7,7 +7,6 @@ Feed::Feed()
     is_on = false;
     id = -1;
     filters.clear();
-    filters_num = 0;
 }
 
 Feed::Feed(int id)
@@ -17,7 +16,6 @@ Feed::Feed(int id)
     is_on = false;
     this->id = id;
     filters.clear();
-    filters_num = 0;
 }
 
 void Feed::Clear()
@@ -27,5 +25,4 @@ void Feed::Clear()
     is_on = false;
     id = -1;
     filters.clear();
-    filters_num = 0;
 }

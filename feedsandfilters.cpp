@@ -218,8 +218,5 @@ void FeedsAndFilters::filters_uncheck_all()
 
 void FeedsAndFilters::filters_delete_all()
 {
-    int filters_num = 0;
-    for (int i = 0; i < filters_num; i++)
-        pFeeds->DeleteFilterById(i);
-    updateFilters();
+
 }
