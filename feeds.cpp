@@ -281,3 +281,26 @@ void Feeds::ChangeStatusFeed(const int id, const int status)
         return;
     }
 }
+
+// удаление всех фильтров
+void Feeds::DeleteAllFilters(int id_feed)
+{
+    QSqlQuery query;
+    QString prepQuery = "DELETE FROM FILTER  WHERE idFeed = :id ";
+    query.prepare(prepQuery);
+    query.bindValue(":id", id_feed);
+    query.exec();
+}
+
+void Feeds::ChangeStatusAllFilters(int id_feed, int status)
+{
+    QSqlQuery query;
+    QString prepQuery = "UPDATE FILTER SET status = :status WHERE idFeed = :id ";
+    query.prepare(prepQuery);
+    query.bindValue(":id", id_feed);
+    query.bindValue(":status", status);
+    if(!query.exec())
+    {
+        return;
+    }
+}

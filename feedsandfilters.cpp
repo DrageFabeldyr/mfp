@@ -16,6 +16,8 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
 
     filterList = new QTreeView (this);
     filterList->setModel(filterModel);
+    filterList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
+    filterList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
 
     h1_layout = new QHBoxLayout;
     feedAdd = new QPushButton;
@@ -92,6 +94,7 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
 void FeedsAndFilters::updateFeeds()
 {
     feedModel->Update();
+    // и на всякий случай:
     feedList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
     feedList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
 }
@@ -99,6 +102,7 @@ void FeedsAndFilters::updateFeeds()
 void FeedsAndFilters::updateFilters()
 {
     filterModel->Update();
+    // и на всякий случай:
     filterList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
     filterList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
 }
@@ -155,7 +159,7 @@ void FeedsAndFilters::ShowEditFilter(QModelIndex indexx)
 
 void FeedsAndFilters::ShowAddFilter()
 {
-    if (feedList->selectionModel()->selectedIndexes().empty())
+    if (feedList->selectionModel()->selectedIndexes().isEmpty())
         return;   
 
     QModelIndex mindex = feedModel->index(feedList->selectionModel()->selectedIndexes().first().row(), 3);
@@ -206,17 +210,31 @@ void FeedsAndFilters::showEvent(QShowEvent * event)
     settings->timer->stop(); // останавливаем таймер на время работы с окном
 }
 
+void FeedsAndFilters::filters_delete_all()
+{
+    if (feedList->selectionModel()->selectedIndexes().isEmpty()) // чтобы показались фильтры лента должна быть выделена
+        return;
+    QModelIndex mindex =  feedModel->index(feedList->selectionModel()->selectedIndexes().first().row(), 3);
+    pFeeds->DeleteAllFilters(feedModel->data(mindex, Qt::DisplayRole).toInt());
+    updateFilters();
+
+}
+
 void FeedsAndFilters::filters_check_all()
 {
-
+    filters_change_status_all(1);
 }
 
 void FeedsAndFilters::filters_uncheck_all()
 {
-
+    filters_change_status_all(0);
 }
 
-void FeedsAndFilters::filters_delete_all()
+void FeedsAndFilters::filters_change_status_all(int status)
 {
-
+    if (feedList->selectionModel()->selectedIndexes().isEmpty()) // чтобы показались фильтры лента должна быть выделена
+        return;
+    QModelIndex mindex =  feedModel->index(feedList->selectionModel()->selectedIndexes().first().row(), 3);
+    pFeeds->ChangeStatusAllFilters(feedModel->data(mindex, Qt::DisplayRole).toInt(), status);
+    updateFilters();
 }

@@ -38,9 +38,11 @@ public slots:
     void ShowEditFeed();
     void FilterDel();
     void FeedDel();
+
+    void filters_change_status_all(int status);
+    void filters_delete_all();
     void filters_check_all();
     void filters_uncheck_all();
-    void filters_delete_all();
 
 private:
     FeedModel  *feedModel;

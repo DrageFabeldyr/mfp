@@ -36,6 +36,9 @@ public:
     void ChangeStatusFilter(const int id, const int status);
     void ChangeStatusFeed(const int id, const int status);
 
+    void DeleteAllFilters(int id_feed);
+    void ChangeStatusAllFilters(int id_feed, int status);
+
 
 private:
     void OpenDB();

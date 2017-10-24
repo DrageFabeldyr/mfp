@@ -14,6 +14,7 @@ void FeedModel::Update()
     setQuery(prepQuery, pFeeds->db);
 }
 
+// функция создания заголовка списка лент
 QVariant FeedModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -30,6 +31,9 @@ QVariant FeedModel::headerData(int section, Qt::Orientation orientation, int rol
             break;
         case 3:
             return "id";
+            break;
+        case 4:
+            return "Кол-во фильтров";
             break;
         default:
             return "";
