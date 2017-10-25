@@ -25,7 +25,6 @@ public slots:
 private slots:
     void SaveData();
     void search_artists();
-    //void searching(QString path);
     void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
     void update (int i, int j, bool flag);
 
@@ -35,7 +34,6 @@ private:
     int id;
     int idFeed;
     bool select;
-    bool search_init = true;
 
     QLabel *nameLabel;
     QLabel *valueLabel;
@@ -51,7 +49,6 @@ private:
     QHBoxLayout *buttons_layout;
     QLabel *hint;
     QPushButton *artistsButton;
-    QStringList artists;
 };
 
 #endif // EDITWINDOW_H
