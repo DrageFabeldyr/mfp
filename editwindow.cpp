@@ -138,7 +138,8 @@ void EditWindow::SaveData()
 {
     if (type == enFeed)
     {
-        if (!(valueEdit->text().contains("http", Qt::CaseInsensitive) && valueEdit->text().contains("://")) )
+        QString feed_link = valueEdit->text().trimmed();
+        if (!(feed_link.contains("http", Qt::CaseInsensitive) && feed_link.contains("://")) || (feed_link.count(QRegExp("//")) != 1))
         {
             hint->setText("Ошибка в адресе ленты");
             return; // сразу выходит из функции
@@ -150,7 +151,14 @@ void EditWindow::SaveData()
         }
         Feed feed(id);
         feed.link = valueEdit->text().trimmed();
-        feed.title = nameEdit->text().trimmed();
+        QString feed_name = nameEdit->text().trimmed();
+        if (feed_name.length() == 0)
+        {
+            int start = feed_link.indexOf("//") + 2;
+            int end = feed_link.indexOf(".");
+            feed_name = feed_link.mid(start, end - start);
+        }
+        feed.title = feed_name;
         feed.is_on = enableCheck->checkState();
         pFeeds->SaveFeed(&feed);
     }

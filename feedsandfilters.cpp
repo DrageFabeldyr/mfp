@@ -18,6 +18,7 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     filterList->setModel(filterModel);
     filterList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
     filterList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
+    filterList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     h1_layout = new QHBoxLayout;
     feedAdd = new QPushButton;
@@ -193,8 +194,17 @@ void FeedsAndFilters::FilterDel()
 {
     if (filterList->selectionModel()->selectedIndexes().empty())
         return;
+    /*
+    // так было реализовано удаление одного выделенного элемента, когда можно было выбрать только один
     QModelIndex mindex =  filterModel->index(filterList->selectionModel()->selectedIndexes().first().row(), 3);
     pFeeds->DeleteFilterById(filterModel->data(mindex, Qt::DisplayRole).toInt());
+    updateFilters();
+    */
+    QModelIndexList selected = filterList->selectionModel()->selectedIndexes();
+    foreach (QModelIndex mindex, selected)
+    {
+         pFeeds->DeleteFilterById(filterModel->data(mindex, Qt::DisplayRole).toInt());
+    }
     updateFilters();
 }
 
@@ -217,7 +227,6 @@ void FeedsAndFilters::filters_delete_all()
     QModelIndex mindex =  feedModel->index(feedList->selectionModel()->selectedIndexes().first().row(), 3);
     pFeeds->DeleteAllFilters(feedModel->data(mindex, Qt::DisplayRole).toInt());
     updateFilters();
-
 }
 
 void FeedsAndFilters::filters_check_all()
