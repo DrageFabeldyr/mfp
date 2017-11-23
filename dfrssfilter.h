@@ -20,6 +20,7 @@
 #include "settings.h"
 #include "filter.h"
 #include "feeds.h"
+#include "feedsandfilters.h"
 
 extern QString prog_name_ver;
 
@@ -32,9 +33,8 @@ public:
     ~DFRSSFilter();
 
     Settings *settings = nullptr;
-
     Feeds *pFeeds;
-    void GetNumActiveFilters(int num_of_active_filters);
+    FeedsAndFilters *feedsandfilters = nullptr; // обнулим указатель, чтобы программа не валилась при проверке на существование
 
 public slots:
     void fetch();
@@ -48,6 +48,7 @@ public slots:
     void edit_feeds_and_filters();
     void quit();
     void unlight();
+    void set_language(int language);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -83,6 +84,9 @@ private:
     QAction *menu_feeds_and_filters;
     QAction *menu_quit;
     QAction *tray_quit;
+    QMenu *lang_menu;
+    QAction *lang_ru;
+    QAction *lang_en;
 
 
     bool need_a_name; // для проверки необходимости обновления имени окна
@@ -98,6 +102,8 @@ private:
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);
     void clear_results();
+    void set_lang_ru();
+    void set_lang_en();
     // <-- dm
 };
 

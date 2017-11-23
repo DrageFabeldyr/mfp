@@ -4,8 +4,7 @@
 
 #include "dfrssfilter.h"
 #include "ui_dfrssfilter.h"
-#include "settings.h"
-#include "feedsandfilters.h"
+//#include "settings.h"
 
 //QMutex mutex;
 
@@ -52,6 +51,8 @@ DFRSSFilter::~DFRSSFilter()
     delete hboxLayout;
     delete treeWidget;
     delete fetchButton;
+    delete readButton;
+    delete clearButton;
     delete hint;
     delete trayIconMenu,
     delete main_menu;
@@ -136,21 +137,33 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     // нужно обязательно создавать action, потому что menu при нажатии не отрабатывает, а раскрывается
     // пункт работы с настройками
     menu_settings = new QAction(tr("Настройки"), this);
+    menu_settings->setIcon(QIcon(":/img/settings.ico"));
     main_menu->addAction(menu_settings);
-    menu_settings->setIcon(QIcon(":/settings.ico"));
     connect(menu_settings, SIGNAL(triggered()), this, SLOT(edit_settings()));
     // пункт работы с лентами и фильтрами
     menu_feeds_and_filters = new QAction(tr("RSS-ленты"), this);
+    menu_feeds_and_filters->setIcon(QIcon(":/img/rss.ico"));
     main_menu->addAction(menu_feeds_and_filters);
-    menu_feeds_and_filters->setIcon(QIcon(":/rss.ico"));
     connect(menu_feeds_and_filters, SIGNAL(triggered()), this, SLOT(edit_feeds_and_filters()));
     // пункт выхода из программы
     menu_quit = new QAction("Выход", this);
+    menu_quit->setIcon(QIcon(":/img/exit.ico"));
     main_menu->addAction(menu_quit);
-    menu_quit->setIcon(QIcon(":/exit.ico"));
     connect(menu_quit, SIGNAL(triggered()), this, SLOT(quit()));
 
+    lang_menu = new QMenu(this);
+    lang_menu->setTitle("Язык");
+    lang_ru = new QAction(tr("Русский"), this);
+    lang_ru->setIcon(QIcon(":/img/ru.ico"));
+    lang_menu->addAction(lang_ru);
+    connect(lang_ru, SIGNAL(triggered()), this, SLOT(set_lang_ru()));
+    lang_en = new QAction(tr("English"), this);
+    lang_en->setIcon(QIcon(":/img/en.ico"));
+    lang_menu->addAction(lang_en);
+    connect(lang_en, SIGNAL(triggered()), this, SLOT(set_lang_en()));
+
     mainmenubar->addMenu(main_menu);
+    mainmenubar->addMenu(lang_menu);
     mainmenubar->show();
 
     layout = new QVBoxLayout;
@@ -169,12 +182,12 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     layout->addWidget(treeWidget);
     setLayout(layout);
 
-    setWindowTitle(prog_name_ver);
+    setWindowTitle("DFRSS-Filter " + prog_name_ver);
     resize(640,480);
 
     // создаем пункты контекстного меню в трее
     tray_quit = new QAction(tr("&Выход"), this);
-    tray_quit->setIcon(QIcon(":/exit.ico"));
+    tray_quit->setIcon(QIcon(":/img/exit.ico"));
     connect(tray_quit, SIGNAL(triggered()), this, SLOT(quit()));
 
     // создаем само контекстное меню, добавляем в него созданные только что пункты
@@ -182,7 +195,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     trayIconMenu->addAction(tray_quit);
 
     trayIcon = new QSystemTrayIcon();
-    trayIcon->setIcon(QIcon(":/trell.ico"));
+    trayIcon->setIcon(QIcon(":/img/trell.ico"));
     trayIcon->setContextMenu(trayIconMenu); // добавляем контекстное меню
     trayIcon->show();
     // соединяем сигнал активации значка в системном трее со слотом обработки этого события
@@ -194,12 +207,11 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     // первый запуск процедуры поиска через 5 секунд после обработки
     connect(settings->timer, SIGNAL(timeout()), this, SLOT(fetch()));
     settings->timer->start(3 * 1000);
-//    settings->timer->start(settings->request_period); // обновление по таймеру
+    //    settings->timer->start(settings->request_period); // обновление по таймеру
 
     connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), settings->timer, SLOT(start())); // в случае клика по новости таймер сбрасывается
 
-    this->setWindowIcon(QIcon(":/trell.ico"));
-
+    this->setWindowIcon(QIcon(":/img/trell.ico"));
 }
 
 // Начинает сетевой запрос и соединяет необходимые сигналы
@@ -242,6 +254,10 @@ void DFRSSFilter::fetch()
     }
     have_news = false; // сбрасываем флаг информирования
     fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
+    clearButton->setEnabled(false); // чтобы не сбить работу программы
+    readButton->setEnabled(false);  // чтобы не сбить работу программы
+    main_menu->setEnabled(false); // чтобы не сбить работу программы
+    lang_menu->setEnabled(false);  // чтобы не сбить работу программы
     need_a_name = true;
     xml.clear();
     QUrl url(feeds.at(0).link);
@@ -310,6 +326,10 @@ void DFRSSFilter::finished(QNetworkReply *reply)
     if (counter < feeds.size())
     {
         fetchButton->setEnabled(false); // кнопка станет неактивной только если есть хоть одна активная лента
+        clearButton->setEnabled(false); // чтобы не сбить работу программы
+        readButton->setEnabled(false);  // чтобы не сбить работу программы
+        main_menu->setEnabled(false); // чтобы не сбить работу программы
+        lang_menu->setEnabled(false);  // чтобы не сбить работу программы
         need_a_name = true;
         xml.clear();
         QUrl url(feeds.at(counter).link);
@@ -336,10 +356,34 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         // если окно свёрнуто или убрано и есть новости - выведем уведомление
         if ((!this->isVisible() || this->isMinimized()) && have_news)
         {
-            trayIcon->showMessage("", QString("Есть новости (%1)").arg(num_of_new_news), QSystemTrayIcon::Information, settings->show_period);
+            switch (settings->current_language)
+            {
+            case 1:
+                trayIcon->showMessage("", QString("Есть новости (%1)").arg(num_of_new_news), QSystemTrayIcon::Information, settings->show_period);
+                break;
+            case 2:
+                trayIcon->showMessage("", QString("Have news (%1)").arg(num_of_new_news), QSystemTrayIcon::Information, settings->show_period);
+                break;
+            default:
+                break;
+            }
         }
-        hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+        switch (settings->current_language)
+        {
+        case 1:
+            hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+            break;
+        case 2:
+            hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+            break;
+        default:
+            break;
+        }
         fetchButton->setEnabled(true);
+        clearButton->setEnabled(true);
+        readButton->setEnabled(true);
+        main_menu->setEnabled(true);
+        lang_menu->setEnabled(true);
         settings->timer->start(settings->request_period); // после обновления списка результатов запускаем таймер на нормальный интервал
     }
 }
@@ -553,7 +597,17 @@ void DFRSSFilter::itemActivated(QTreeWidgetItem * item)
                 num_of_new_news -= 1;
                 red_lines--;
                 total_red_lines--;
-                hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+                switch (settings->current_language)
+                {
+                case 1:
+                    hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+                    break;
+                case 2:
+                    hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+                    break;
+                default:
+                    break;
+                }
             }
         }
         // если новость была единственной новой в ленте - снимаем выделение с ленты
@@ -576,7 +630,8 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 // открытие окна работы с настройками
 void DFRSSFilter::edit_settings()
 {
-    settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint/* | Qt::Tool*/);
+    //settings->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint/* | Qt::Tool*/);
+    settings->setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия, убрать иконку из панели задач
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
     settings->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
@@ -586,13 +641,14 @@ void DFRSSFilter::edit_settings()
 // открытие окна работы с лентами и фильтрами
 void DFRSSFilter::edit_feeds_and_filters()
 {
-    FeedsAndFilters *win = new FeedsAndFilters(this);
-    win->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint/* | Qt::Tool*/);
+    //FeedsAndFilters *win = new FeedsAndFilters(this);
+    if (!feedsandfilters)
+        feedsandfilters = new FeedsAndFilters(this);
+    feedsandfilters->setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия, убрать иконку из панели задач
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает
-
-    win->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
-    win->show();                                       // и рисуем его
+    feedsandfilters->setAttribute(Qt::WA_ShowModal, true);         // блокирует родительское окно
+    feedsandfilters->show();                                       // и рисуем его
 }
 
 // выход из программы
@@ -608,7 +664,17 @@ void DFRSSFilter::clear_results()
     num_of_new_news = 0; // сбросим кол-во новых новостей
     num_of_results = 0; // сбросим количество выведенных новостей
     readButton->setStyleSheet("color: black;"); // снимем выделение с кнопки (если есть)
-    hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
+    switch (settings->current_language)
+    {
+    case 1:
+        hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
+        break;
+    case 2:
+        hint->setText("Wait until results appear automatically or press \"Search\" button");
+        break;
+    default:
+        break;
+    }
 }
 
 // снятие выделения с новых новостей
@@ -624,7 +690,17 @@ void DFRSSFilter::unlight()
     }
     num_of_new_news = 0;
     readButton->setStyleSheet("color: black;");
-    hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
+    switch (settings->current_language)
+    {
+    case 1:
+        hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
+        break;
+    case 2:
+        hint->setText(QString("Double click will open new in browser (Total news: %1, New: 0)").arg(num_of_results));
+        break;
+    default:
+        break;
+    }
 }
 
 // функция парсинга теговых страниц бэндкампа
@@ -816,4 +892,64 @@ void DFRSSFilter::parsebandcamp(QByteArray bandcampdata)
             tempstr += bandcampdata[i]; // и переписываем её
 
     }
+}
+
+void DFRSSFilter::set_language(int language)
+{
+    switch (language)
+    {
+    case 1:
+        main_menu->setTitle("Меню");
+        menu_settings->setText("Настройки");
+        menu_feeds_and_filters->setText("RSS-ленты");
+        menu_quit->setText("Выход");
+        lang_menu->setTitle("Язык");
+        lang_ru->setText("Русский");
+        lang_en->setText("English");
+        fetchButton->setText("Поиск");
+        clearButton->setText("Очистить");
+        readButton->setText("Прочитано");
+        if (num_of_new_news > 0)
+            hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+        else if (num_of_results > 0)
+            hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
+        else
+            hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
+       tray_quit->setText("Выход");
+        update();
+        break;
+    case 2:
+        main_menu->setTitle("Menu");
+        menu_settings->setText("Settings");
+        menu_feeds_and_filters->setText("RSS-feeds");
+        menu_quit->setText("Quit");
+        lang_menu->setTitle("Language");
+        lang_ru->setText("Русский");
+        lang_en->setText("English");
+        fetchButton->setText("Search");
+        clearButton->setText("Clear");
+        readButton->setText("Checked");
+        if (num_of_new_news > 0)
+            hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+        else if (num_of_results > 0)
+            hint->setText(QString("Double click will open new in browser (Total news: %1, New: 0)").arg(num_of_results));
+        else
+            hint->setText("Wait until results appear automatically or press \"Search\" button");
+        tray_quit->setText("Quit");
+        break;
+    default:
+        break;
+    }
+}
+
+void DFRSSFilter::set_lang_ru()
+{
+    settings->current_language = 1;
+    set_language(settings->current_language);
+}
+
+void DFRSSFilter::set_lang_en()
+{
+    settings->current_language = 2;
+    set_language(settings->current_language);
 }
