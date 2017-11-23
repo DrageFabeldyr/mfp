@@ -1,9 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file>trell.ico</file>
-        <file>exit.ico</file>
-        <file>filter.ico</file>
-        <file>rss.ico</file>
-        <file>settings.ico</file>
+        <file>img/rss.ico</file>
+        <file>img/filter.ico</file>
+        <file>img/settings.ico</file>
+        <file>img/trell.ico</file>
+        <file>img/en.ico</file>
+        <file>img/ru.ico</file>
+        <file>img/exit.ico</file>
     </qresource>
 </RCC>

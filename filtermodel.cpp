@@ -1,4 +1,5 @@
 #include "filtermodel.h"
+#include "dfrssfilter.h"
 
 
 FilterModel::FilterModel(QObject *parent) : QSqlQueryModel(parent)
@@ -8,6 +9,7 @@ FilterModel::FilterModel(QObject *parent) : QSqlQueryModel(parent)
     prepQuery = "select status, title, value, id from FILTER WHERE idFeed = " + idFeed + " ORDER BY title";
     setQuery(prepQuery, pFeeds->db);
     checkedCollum = 0; // колонка в которой CheckBox
+    settings = static_cast<DFRSSFilter*>(parent)->settings; // приводим тип, т.к. parent у нас QWidget
 }
 
 void FilterModel::Update()
@@ -44,10 +46,30 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
             return "";
             break;
         case 1:
-            return "Значение";
+            switch (settings->current_language)
+            {
+            case 1:
+                return "Значение";
+                break;
+            case 2:
+                return "Filter";
+                break;
+            default:
+                break;
+            }
             break;
         case 2:
-            return "Комментарий";
+            switch (settings->current_language)
+            {
+            case 1:
+                return "Комментарий";
+                break;
+            case 2:
+                return "Comment";
+                break;
+            default:
+                break;
+            }
             break;
         case 3:
             return "id";

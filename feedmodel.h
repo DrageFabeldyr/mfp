@@ -5,12 +5,15 @@
 #include <QObject>
 #include <QString>
 
-#include "dfrssfilter.h"
+//#include "dfrssfilter.h"
 #include "feeds.h"
+#include "settings.h"
+
 
 class FeedModel : public QSqlQueryModel
 {
     Q_OBJECT
+
 public:
     explicit FeedModel(QObject * parent = 0);
     QVariant data(const QModelIndex &index, int role) const;
@@ -18,6 +21,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     void Update();
+    Settings *settings = nullptr;
 
 private:
     Feeds *pFeeds;

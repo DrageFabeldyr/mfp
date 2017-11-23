@@ -1,7 +1,7 @@
 #include "dfrssfilter.h"
 #include <QApplication>
 
-#include "settings.h"
+//#include "settings.h"
 
 QString prog_name_ver;
 
@@ -10,7 +10,7 @@ QString prog_name_ver;
  * ввода пользователя и выходит с подходящим возвращаемым значением когда он закрывается */
 int main(int argc, char **argv)
 {
-    prog_name_ver = "Version: 0.9";
+    prog_name_ver = "1.0";
     QApplication app(argc, argv);
     DFRSSFilter *dfrssfilter = new DFRSSFilter;
 

@@ -1,4 +1,5 @@
 #include "feedmodel.h"
+#include "dfrssfilter.h"
 
 
 FeedModel::FeedModel(QObject *parent) : QSqlQueryModel(parent)
@@ -7,6 +8,7 @@ FeedModel::FeedModel(QObject *parent) : QSqlQueryModel(parent)
     prepQuery = "select status, title, link, id from FEEDS ORDER BY title"; // в алфавитном порядке по названию
     setQuery(prepQuery, pFeeds->db);
     checkedColumn = 0; // колонка в которой CheckBox
+    settings = static_cast<DFRSSFilter*>(parent)->settings; // приводим тип, т.к. parent у нас QWidget
 }
 
 void FeedModel::Update()
@@ -19,21 +21,39 @@ QVariant FeedModel::headerData(int section, Qt::Orientation orientation, int rol
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
-        switch (section) {
+        switch (section)
+        {
         case 0:
             return "";
             break;
         case 1:
-            return "Имя ленты";
+            switch (settings->current_language)
+            {
+            case 1:
+                return "Имя ленты";
+                break;
+            case 2:
+                return "Feed name";
+                break;
+            default:
+                break;
+            }
             break;
         case 2:
-            return "Ссылка";
+            switch (settings->current_language)
+            {
+            case 1:
+                return "Ссылка";
+                break;
+            case 2:
+                return "URL";
+                break;
+            default:
+                break;
+            }
             break;
         case 3:
             return "id";
-            break;
-        case 4:
-            return "Кол-во фильтров";
             break;
         default:
             return "";

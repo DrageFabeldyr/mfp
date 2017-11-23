@@ -9,22 +9,23 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-#include "dfrssfilter.h"
+//#include "dfrssfilter.h"
 #include "feedmodel.h"
 #include "filtermodel.h"
 #include "settings.h"
 #include "editwindow.h"
-
+#include <QMenu>
 
 class FeedsAndFilters : public QWidget
 {
     Q_OBJECT
+
 public:
-    FeedsAndFilters(QWidget *parent);
+    explicit FeedsAndFilters(QWidget *parent = 0);
+    ~FeedsAndFilters();
     Feeds *pFeeds;
     int parentFeedId;
     Settings *settings = nullptr;
-
 
 public slots:
     void UpdateFilter(QModelIndex index);
@@ -51,6 +52,7 @@ private:
     QTreeView  *feedList;
     QTreeView  *filterList;
     QVBoxLayout *v_layout;
+    /*
     QVBoxLayout *vb_layout;     // объединение рядов кнопок фильтров
     QHBoxLayout *h1_layout;
     QPushButton * feedAdd;
@@ -64,13 +66,35 @@ private:
     QPushButton * filterCheckAll;
     QPushButton * filterUncheckAll;
     QPushButton * filterDeleteAll;
+    */
     EditWindow *editW;
     QLabel *hint1;
     QLabel *hint2;
 
+
+    QMenu *feeds_menu = nullptr;    // обнулим указатель, чтобы программа не валилась при проверке на существование
+    QMenu *filters_menu = nullptr;    // обнулим указатель, чтобы программа не валилась при проверке на существование
+    QAction *feeds_menu_add;
+    QAction *feeds_menu_edit;
+    QAction *feeds_menu_del;
+    QAction *feeds_menu_add_filters;
+    QAction *feeds_menu_del_all_filters;
+    QAction *feeds_menu_on_all_filters;
+    QAction *feeds_menu_off_all_filters;
+    QAction *filters_menu_add;
+    QAction *filters_menu_edit;
+    QAction *filters_menu_del;
+    QAction *filters_menu_del_all;
+    QAction *filters_menu_on_all;
+    QAction *filters_menu_off_all;
+
 private slots:
     void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;
+
+protected slots:
+    void slot_feeds_menu();  // обработка контекстного меню
+    void slot_filters_menu();  // обработка контекстного меню
 };
 
 #endif // FEEDSANDFILTERS_H

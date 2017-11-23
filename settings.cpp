@@ -4,25 +4,48 @@
 #include <QDir>
 #include <QSettings>
 
+#include "dfrssfilter.h"
 
 
-Settings::Settings(QWidget *parent) : QWidget(), ui(new Ui::settings)
+Settings::Settings(QWidget *parent) : QWidget(parent)//, ui(new Ui::settings)
 {
     parentW = parent;
-    setWindowTitle("Настройки");
+    //setWindowTitle("Настройки");
 
 
     min_to_tray = new QCheckBox(this);
-    min_to_tray->setText("Сворачивать в трей");
+    //min_to_tray->setText("Сворачивать в трей");
     close_to_tray = new QCheckBox(this);
-    close_to_tray->setText("Сворачивать в трей при закрытии");
+    //close_to_tray->setText("Сворачивать в трей при закрытии");
     run_in_tray = new QCheckBox(this);
-    run_in_tray->setText("Сворачивать в трей при запуске");
+    //run_in_tray->setText("Сворачивать в трей при запуске");
     activate_filters = new QCheckBox(this);
-    activate_filters->setText("Активировать фильтры при добавлении");
+    //activate_filters->setText("Активировать фильтры при добавлении");
     activate_feeds = new QCheckBox(this);
-    activate_feeds->setText("Активировать ленты при добавлении");
-
+    //activate_feeds->setText("Активировать ленты при добавлении");
+    /*
+    switch (current_language)
+    {
+    case 1:
+        setWindowTitle("Настройки");
+        min_to_tray->setText("Сворачивать в трей");
+        close_to_tray->setText("Сворачивать в трей при закрытии");
+        run_in_tray->setText("Сворачивать в трей при запуске");
+        activate_filters->setText("Активировать фильтры при добавлении");
+        activate_feeds->setText("Активировать ленты при добавлении");
+        break;
+    case 2:
+        setWindowTitle("Settings");
+        min_to_tray->setText("Minimize to tray");
+        close_to_tray->setText("Close to tray");
+        run_in_tray->setText("Start minimized to tray");
+        activate_filters->setText("Set new filters active");
+        activate_feeds->setText("Set new feeds active");
+        break;
+    default:
+        break;
+    }
+    */
     layout = new QVBoxLayout;
     layout->addWidget(min_to_tray);
     layout->addWidget(close_to_tray);
@@ -34,12 +57,11 @@ Settings::Settings(QWidget *parent) : QWidget(), ui(new Ui::settings)
 
     timer = new QTimer(this);
 
-    this->setWindowIcon(QIcon(":/settings.ico"));
+    this->setWindowIcon(QIcon(":/img/settings.ico"));
 }
 
 Settings::~Settings()
 {
-    delete ui;
     delete layout;
     delete min_to_tray;
     delete close_to_tray;
@@ -103,4 +125,25 @@ void Settings::showEvent(QShowEvent * event)
     move(parentW->window()->frameGeometry().topLeft() +
          parentW->window()->rect().center() - rect().center());
     timer->stop(); // останавливаем таймер на время работы с окном
+    switch (current_language)
+    {
+    case 1:
+        setWindowTitle("Настройки");
+        min_to_tray->setText("Сворачивать в трей");
+        close_to_tray->setText("Сворачивать в трей при закрытии");
+        run_in_tray->setText("Сворачивать в трей при запуске");
+        activate_filters->setText("Активировать фильтры при добавлении");
+        activate_feeds->setText("Активировать ленты при добавлении");
+        break;
+    case 2:
+        setWindowTitle("Settings");
+        min_to_tray->setText("Minimize to tray");
+        close_to_tray->setText("Close to tray");
+        run_in_tray->setText("Start minimized to tray");
+        activate_filters->setText("Set new filters active");
+        activate_feeds->setText("Set new feeds active");
+        break;
+    default:
+        break;
+    }
 }

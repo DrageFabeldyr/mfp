@@ -7,11 +7,6 @@
 #include <QCloseEvent>
 #include <QTimer>
 
-
-namespace Ui {
-class settings;
-}
-
 class Settings : public QWidget
 {
     Q_OBJECT
@@ -26,13 +21,13 @@ public:
     int request_period; // период, через который запрашиваются новости в миллисекундах
     int show_period; // время, которое висит уведомление в трее
     QTimer *timer;
+    int current_language = 1;
 
 public slots:
     void read_settings();     // чтение настроек из файла
     void write_settings();    // запись настроек в файл
 
 private:
-    Ui::settings *ui;
     QVBoxLayout *layout;
     QString settingFile = "Setting.ini";
     QWidget *parentW;

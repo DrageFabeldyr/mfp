@@ -1,6 +1,8 @@
 #include "feedsandfilters.h"
+#include "dfrssfilter.h"
 
-FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
+
+FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
 {
     pFeeds = static_cast<DFRSSFilter*>(parent)->pFeeds; // приводим тип, т.к. parent у нас QWidget
     settings = static_cast<DFRSSFilter*>(parent)->settings; // приводим тип, т.к. parent у нас QWidget
@@ -11,6 +13,9 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     feedList->setModel(feedModel);
     feedList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
     feedList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
+    feedList->setSelectionMode(QAbstractItemView::ExtendedSelection);   // чтобы можно было выделить несколько
+    feedList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(feedList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_feeds_menu()));
 
     filterModel = new FilterModel(parent);
 
@@ -18,8 +23,10 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     filterList->setModel(filterModel);
     filterList->setColumnWidth(0, 40); // чтобы не было видно численного значения "галочки"
     filterList->hideColumn(3); // спрячем столбец с id (он нужен для работы с БД)
-    filterList->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
+    filterList->setSelectionMode(QAbstractItemView::ExtendedSelection); // чтобы можно было выделить несколько
+    filterList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(filterList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_filters_menu()));
+/*
     h1_layout = new QHBoxLayout;
     feedAdd = new QPushButton;
     feedEdit = new QPushButton;
@@ -56,27 +63,41 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     vb_layout = new QVBoxLayout;
     vb_layout->addLayout(h2_layout);
     vb_layout->addLayout(h3_layout);
-
+*/
     hint1 = new QLabel(this);
     hint2 = new QLabel(this);
-    hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
-    hint2->setText("Добавление, редактирование и удаление фильтров доступно только после выбора ленты, которой они принадлежат");
-
+    /*
+    switch (settings->current_language)
+    {
+    case 1:
+        hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
+        hint2->setText("Добавление, редактирование и удаление фильтров доступно только после выбора ленты, которой они принадлежат");
+        setWindowTitle("RSS-ленты и фильтры");
+        break;
+    case 2:
+        hint1->setText("Feed with no filters will have all news");
+        hint2->setText("Choose feed to add, edit or delete its filters");
+        setWindowTitle("RSS-feeds and filters");
+        break;
+    default:
+        break;
+    }
+    */
     v_layout = new QVBoxLayout;
-    v_layout->addLayout(h1_layout);
+    //v_layout->addLayout(h1_layout);
     v_layout->addWidget(feedList);
     v_layout->addWidget(hint1);
-    v_layout->addLayout(vb_layout);
+    //v_layout->addLayout(vb_layout);
     v_layout->addWidget(filterList);
     v_layout->addWidget(hint2);
 
     setLayout(v_layout); // установка главного лэйаута
 
     resize(640,480);
-    setWindowTitle("RSS-ленты и фильтры");
     connect(feedList, SIGNAL(clicked(QModelIndex)), this, SLOT(UpdateFilter(QModelIndex)));
     connect(feedList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFeed(QModelIndex)));
     connect(filterList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFilter(QModelIndex)));
+    /*
     connect(filterAdd, SIGNAL(clicked(bool)), this, SLOT(ShowAddFilter()));
     connect(feedAdd, SIGNAL(clicked(bool)), this, SLOT(ShowAddFeed()));
     connect(filterEdit, SIGNAL(clicked(bool)), this, SLOT(ShowEditFilter()));
@@ -86,10 +107,23 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget()
     connect(filterCheckAll, SIGNAL(clicked(bool)), this, SLOT(filters_check_all()));
     connect(filterUncheckAll, SIGNAL(clicked(bool)), this, SLOT(filters_uncheck_all()));
     connect(filterDeleteAll, SIGNAL(clicked(bool)), this, SLOT(filters_delete_all()));
+    */
+    this->setWindowIcon(QIcon(":/img/rss.ico"));
+}
 
-    this->setWindowIcon(QIcon(":/rss.ico"));
-
-    show();
+FeedsAndFilters::~FeedsAndFilters()
+{
+    delete feedModel;
+    delete filterModel;
+    delete model2;
+    delete feedList;
+    delete filterList;
+    delete v_layout;
+    delete editW;
+    delete hint1;
+    delete hint2;
+    delete feeds_menu;
+    delete filters_menu;
 }
 
 void FeedsAndFilters::updateFeeds()
@@ -121,9 +155,16 @@ void FeedsAndFilters::ShowEditFeed()
 {
     if (feedList->selectionModel()->selectedIndexes().isEmpty())
         return;
+    /*
     QModelIndex mindex = feedList->selectionModel()->selectedIndexes().first();
-
     ShowEditFeed(mindex);
+    */
+    QModelIndexList selected = feedList->selectionModel()->selectedIndexes();
+    foreach (QModelIndex mindex, selected)
+    {
+        if (mindex.column() == 0) // иначе берёт каждую строку столько раз, сколько колонок в дереве
+            ShowEditFeed(mindex);
+    }
 }
 
 // функция обработки редактирования по двойному клику на ленту
@@ -142,9 +183,16 @@ void FeedsAndFilters::ShowEditFilter()
 {
     if (filterList->selectionModel()->selectedIndexes().isEmpty())
         return;
+    /*
     QModelIndex mindex =  filterList->selectionModel()->selectedIndexes().first();
-
     ShowEditFilter(mindex);
+    */
+    QModelIndexList selected = filterList->selectionModel()->selectedIndexes();
+    foreach (QModelIndex mindex, selected)
+    {
+        if (mindex.column() == 0) // иначе берёт каждую строку столько раз, сколько колонок в дереве
+            ShowEditFilter(mindex);
+    }
 }
 
 // функция обработки редактирования по двойному клику на фильтр
@@ -184,8 +232,17 @@ void FeedsAndFilters::FeedDel()
 {
     if (feedList->selectionModel()->selectedIndexes().empty())
         return;
+    /*
     QModelIndex mindex =  feedModel->index(feedList->selectionModel()->selectedIndexes().first().row(), 3);
     pFeeds->DeleteFeedById(feedModel->data(mindex, Qt::DisplayRole).toInt());
+    updateFeeds();
+    updateFilters();
+    */
+    QModelIndexList selected = feedList->selectionModel()->selectedIndexes();
+    foreach (QModelIndex mindex, selected)
+    {
+        pFeeds->DeleteFeedById(feedModel->data(mindex, Qt::DisplayRole).toInt());
+    }
     updateFeeds();
     updateFilters();
 }
@@ -218,6 +275,21 @@ void FeedsAndFilters::showEvent(QShowEvent * event)
 {
     Q_UNUSED(event);
     settings->timer->stop(); // останавливаем таймер на время работы с окном
+    switch (settings->current_language)
+    {
+    case 1:
+        hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
+        hint2->setText("Добавление, редактирование и удаление фильтров доступно только после выбора ленты, которой они принадлежат");
+        setWindowTitle("RSS-ленты и фильтры");
+        break;
+    case 2:
+        hint1->setText("Feed with no filters will have all news");
+        hint2->setText("Choose feed to add, edit or delete its filters");
+        setWindowTitle("RSS-feeds and filters");
+        break;
+    default:
+        break;
+    }
 }
 
 void FeedsAndFilters::filters_delete_all()
@@ -246,4 +318,137 @@ void FeedsAndFilters::filters_change_status_all(int status)
     QModelIndex mindex =  feedModel->index(feedList->selectionModel()->selectedIndexes().first().row(), 3);
     pFeeds->ChangeStatusAllFilters(feedModel->data(mindex, Qt::DisplayRole).toInt(), status);
     updateFilters();
+}
+
+void FeedsAndFilters::slot_feeds_menu()
+{
+    updateFilters();
+
+    if (!feeds_menu)
+    {
+        feeds_menu = new QMenu;
+        // добавить
+        feeds_menu_add = new QAction(this);
+        //feeds_menu_add->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_add);
+        connect(feeds_menu_add, SIGNAL(triggered()), this, SLOT(ShowAddFeed()));
+        // редактировать
+        feeds_menu_edit = new QAction(this);
+        //feeds_menu_edit->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_edit);
+        connect(feeds_menu_edit, SIGNAL(triggered()), this, SLOT(ShowEditFeed()));
+        // удалить
+        feeds_menu_del = new QAction(this);
+        //feeds_menu_del->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_del);
+        connect(feeds_menu_del, SIGNAL(triggered()), this, SLOT(FeedDel()));
+        // разделитель
+        feeds_menu->insertSeparator(0);
+        // добавить фильтр(ы)
+        feeds_menu_add_filters = new QAction(this);
+        //feeds_menu_add_filters->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_add_filters);
+        connect(feeds_menu_add_filters, SIGNAL(triggered()), this, SLOT(ShowAddFilter()));
+        // удалить все фильтры
+        feeds_menu_del_all_filters = new QAction(this);
+        //feeds_menu_del_all_filters->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_del_all_filters);
+        connect(feeds_menu_del_all_filters, SIGNAL(triggered()), this, SLOT(filters_delete_all()));
+        // включить все фильтры
+        feeds_menu_on_all_filters = new QAction(this);
+        //feeds_menu_on_all_filters->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_on_all_filters);
+        connect(feeds_menu_on_all_filters, SIGNAL(triggered()), this, SLOT(filters_check_all()));
+        // выключить все фильтры
+        feeds_menu_off_all_filters = new QAction(this);
+        //feeds_menu_off_all_filters->setIcon(QIcon(":/img/settings.ico"));
+        feeds_menu->addAction(feeds_menu_off_all_filters);
+        connect(feeds_menu_off_all_filters, SIGNAL(triggered()), this, SLOT(filters_uncheck_all()));
+    }
+    switch (settings->current_language)
+    {
+    case 1:
+        feeds_menu_add->setText("Добавить");
+        feeds_menu_edit->setText("Редактировать");
+        feeds_menu_del->setText("Удалить");
+        feeds_menu_add_filters->setText("Добавить фильтр(ы)");
+        feeds_menu_del_all_filters->setText("Удалить все фильтры");
+        feeds_menu_on_all_filters->setText("Включить все фильтры");
+        feeds_menu_off_all_filters->setText("Выключить все фильтры");
+        break;
+    case 2:
+        feeds_menu_add->setText("Add");
+        feeds_menu_edit->setText("Edit");
+        feeds_menu_del->setText("Delete");
+        feeds_menu_add_filters->setText("Add filter(s)");
+        feeds_menu_del_all_filters->setText("Delete all filters");
+        feeds_menu_on_all_filters->setText("Enable all filters");
+        feeds_menu_off_all_filters->setText("Disable all filters");
+        break;
+    default:
+        break;
+    }
+    feeds_menu->exec(QCursor::pos());
+}
+
+void FeedsAndFilters::slot_filters_menu()
+{
+    if (!filters_menu)
+    {
+        filters_menu = new QMenu;
+        // добавить
+        filters_menu_add = new QAction(this);
+        //feeds_menu_add->setIcon(QIcon(":/img/settings.ico"));
+        filters_menu->addAction(filters_menu_add);
+        connect(filters_menu_add, SIGNAL(triggered()), this, SLOT(ShowAddFilter()));
+        // редактировать
+        filters_menu_edit = new QAction(this);
+        //filters_menu_edit->setIcon(QIcon(":/img/settings.ico"));
+        filters_menu->addAction(filters_menu_edit);
+        connect(filters_menu_edit, SIGNAL(triggered()), this, SLOT(ShowEditFilter()));
+        // удалить
+        filters_menu_del = new QAction(this);
+        //filters_menu_del->setIcon(QIcon(":/img/settings.ico"));
+        filters_menu->addAction(filters_menu_del);
+        connect(filters_menu_del, SIGNAL(triggered()), this, SLOT(FilterDel()));
+        // разделитель
+        filters_menu->insertSeparator(0);
+        // удалить все фильтры
+        filters_menu_del_all = new QAction(this);
+        //filters_menu_del_all->setIcon(QIcon(":/img/settings.ico"));
+        filters_menu->addAction(filters_menu_del_all);
+        connect(filters_menu_del_all, SIGNAL(triggered()), this, SLOT(filters_delete_all()));
+        // включить все фильтры
+        filters_menu_on_all = new QAction(this);
+        //filters_menu_on_all->setIcon(QIcon(":/img/settings.ico"));
+        filters_menu->addAction(filters_menu_on_all);
+        connect(filters_menu_on_all, SIGNAL(triggered()), this, SLOT(filters_check_all()));
+        // выключить все фильтры
+        filters_menu_off_all = new QAction(this);
+        //filters_menu_off_all->setIcon(QIcon(":/img/settings.ico"));
+        filters_menu->addAction(filters_menu_off_all);
+        connect(filters_menu_off_all, SIGNAL(triggered()), this, SLOT(filters_uncheck_all()));
+    }
+    switch (settings->current_language)
+    {
+    case 1:
+        filters_menu_add->setText("Добавить");
+        filters_menu_edit->setText("Редактировать");
+        filters_menu_del->setText("Удалить");
+        filters_menu_del_all->setText("Удалить все");
+        filters_menu_on_all->setText("Включить все");
+        filters_menu_off_all->setText("Выключить все");
+        break;
+    case 2:
+        filters_menu_add->setText("Add");
+        filters_menu_edit->setText("Edit");
+        filters_menu_del->setText("Delete");
+        filters_menu_del_all->setText("Delete all");
+        filters_menu_on_all->setText("Enable all");
+        filters_menu_off_all->setText("Disable all");
+        break;
+    default:
+        break;
+    }
+    filters_menu->exec(QCursor::pos());
 }

@@ -5,12 +5,15 @@
 #include <QObject>
 #include <QString>
 
-#include "dfrssfilter.h"
+//#include "dfrssfilter.h"
 #include "feeds.h"
+#include "settings.h"
+
 
 class FilterModel : public QSqlQueryModel
 {
     Q_OBJECT
+
 public:
     explicit FilterModel(QObject * parent = 0);
     QVariant data(const QModelIndex &index, int role) const;
@@ -20,6 +23,7 @@ public:
 
     QString idFeed;
     void Update();
+    Settings *settings = nullptr;
 
 private:
     Feeds *pFeeds;
