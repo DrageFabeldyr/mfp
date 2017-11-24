@@ -204,10 +204,9 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     // устанавливаем наш обработчик событий
     installEventFilter(this);
 
-    // первый запуск процедуры поиска через 5 секунд после обработки
+    // первый запуск процедуры поиска
     connect(settings->timer, SIGNAL(timeout()), this, SLOT(fetch()));
-    settings->timer->start(3 * 1000);
-    //    settings->timer->start(settings->request_period); // обновление по таймеру
+    settings->timer->start(); // обновление по таймеру//
 
     connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), settings->timer, SLOT(start())); // в случае клика по новости таймер сбрасывается
 
