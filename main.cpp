@@ -10,12 +10,11 @@ QString prog_name_ver;
  * ввода пользователя и выходит с подходящим возвращаемым значением когда он закрывается */
 int main(int argc, char **argv)
 {
-    prog_name_ver = "1.0";
+    prog_name_ver = "1.0.1";
     QApplication app(argc, argv);
     DFRSSFilter *dfrssfilter = new DFRSSFilter;
 
     if (!dfrssfilter->settings->run_in_tray->isChecked()) // если нет галочки "запускать свёрнутым в трей"
         dfrssfilter->show(); // рисуем
-
     return app.exec();
 }

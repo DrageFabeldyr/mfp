@@ -206,11 +206,12 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     // первый запуск процедуры поиска
     connect(settings->timer, SIGNAL(timeout()), this, SLOT(fetch()));
-    settings->timer->start(); // обновление по таймеру//
 
     connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), settings->timer, SLOT(start())); // в случае клика по новости таймер сбрасывается
 
     this->setWindowIcon(QIcon(":/img/trell.ico"));
+
+    fetch();
 }
 
 // Начинает сетевой запрос и соединяет необходимые сигналы

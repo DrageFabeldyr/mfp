@@ -56,7 +56,6 @@ Settings::Settings(QWidget *parent) : QWidget(parent)//, ui(new Ui::settings)
     setLayout(layout);
 
     timer = new QTimer(this);
-    timer->setInterval(request_init_period);
 
     this->setWindowIcon(QIcon(":/img/settings.ico"));
 }
@@ -75,8 +74,6 @@ Settings::~Settings()
 // чтение сохранённых настроек
 void Settings::read_settings()
 {
-    QString str;
-
     QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
     QSettings setting_file(name, QSettings::IniFormat);
     min_to_tray->setChecked(setting_file.value("min_to_tray", false).toBool());
@@ -89,8 +86,9 @@ void Settings::read_settings()
     activateFeeds = setting_file.value("activate_feeds", false).toBool();
 
     request_period = 10*60*1000; // запрос новостей раз в 10 минут (потом будет чтение из файла)
-    request_init_period = 10*1000; // первый запрос новостей будет через 10 секунд после запуска программы
     show_period = 20*1000; // уведомление в трее будет висеть 20 секунд
+
+    //timer->setInterval(request_init_period);
 }
 
 // сохранение настроек
