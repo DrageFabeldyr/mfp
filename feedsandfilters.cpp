@@ -93,7 +93,9 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
 
     setLayout(v_layout); // установка главного лэйаута
 
+#ifdef Q_OS_WIN32
     resize(640,480);
+#endif
     connect(feedList, SIGNAL(clicked(QModelIndex)), this, SLOT(UpdateFilter(QModelIndex)));
     connect(feedList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFeed(QModelIndex)));
     connect(filterList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowEditFilter(QModelIndex)));
@@ -279,7 +281,7 @@ void FeedsAndFilters::showEvent(QShowEvent * event)
     {
     case 1:
         hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
-        hint2->setText("Добавление, редактирование и удаление фильтров доступно только после выбора ленты, которой они принадлежат");
+        hint2->setText("Работа с фильтрами доступна только после выбора ленты, которой они принадлежат");
         setWindowTitle("RSS-ленты и фильтры");
         break;
     case 2:

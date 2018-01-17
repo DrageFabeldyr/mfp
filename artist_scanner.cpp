@@ -25,6 +25,7 @@ void artist_scanner::receive_params(QString path, int id, int idFeed, bool is_ch
 
 void artist_scanner::searching(void)
 {
+#ifdef Q_OS_WIN32
     artists.clear();
 
     search(path);
@@ -42,10 +43,12 @@ void artist_scanner::searching(void)
         filter.idFeed = idFeed;
         pFeeds->SaveFilter(&filter);
     }
+#endif
 }
 
 void artist_scanner::search(QString path)
 {
+#ifdef Q_OS_WIN32
     //qDebug() <<  "*********************************************************************************************************************";
     //qDebug() <<  path;
     bool new_artist;
@@ -98,4 +101,5 @@ void artist_scanner::search(QString path)
         }
         emit send(artist_num, file_num, is_done);
     }
+#endif
 }

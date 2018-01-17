@@ -170,7 +170,12 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 
     hboxLayout = new QHBoxLayout;
     hint = new QLabel(this);
+#ifdef Q_OS_WIN32
     hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
+#endif
+#ifdef Q_OS_ANDROID
+    hint->setText("Нажмите \"Поиск\"");
+#endif
 
     hboxLayout->addWidget(hint);
     hboxLayout->addWidget(clearButton);
@@ -183,8 +188,22 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     setLayout(layout);
 
     setWindowTitle("DFRSS-Filter " + prog_name_ver);
-    resize(640,480);
 
+#ifdef Q_OS_WIN32
+    screen_height = 480;
+    screen_width = 640;
+#endif
+    /*
+#ifdef Q_OS_ANDROID
+    //QScreen *screen = QApplication::screens().at(0);
+    screen = QApplication::screens().at(0);
+    screen_height = screen->availableSize().height();
+    screen_width = screen->availableSize().width();
+    // size - размер экрана, availableSize - рабочая область
+#endif
+*/
+    if ((screen_height > 100) && (screen_width > 100))
+        resize(screen_width, screen_height);
     // создаем пункты контекстного меню в трее
     tray_quit = new QAction(tr("&Выход"), this);
     tray_quit->setIcon(QIcon(":/img/exit.ico"));
@@ -370,6 +389,7 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         }
         switch (settings->current_language)
         {
+#ifdef Q_OS_WIN32
         case 1:
             hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
             break;
@@ -378,6 +398,17 @@ void DFRSSFilter::finished(QNetworkReply *reply)
             break;
         default:
             break;
+#endif
+#ifdef Q_OS_ANDROID
+        case 1:
+            hint->setText(QString("Новостей: %1, Новых: %2").arg(num_of_results).arg(num_of_new_news));
+            break;
+        case 2:
+            hint->setText(QString("Total: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+            break;
+        default:
+            break;
+#endif
         }
         fetchButton->setEnabled(true);
         clearButton->setEnabled(true);
@@ -599,14 +630,26 @@ void DFRSSFilter::itemActivated(QTreeWidgetItem * item)
                 total_red_lines--;
                 switch (settings->current_language)
                 {
-                case 1:
-                    hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
-                    break;
-                case 2:
-                    hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
-                    break;
-                default:
-                    break;
+#ifdef Q_OS_WIN32
+                    case 1:
+                        hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+                        break;
+                    case 2:
+                        hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+                        break;
+                    default:
+                        break;
+#endif
+#ifdef Q_OS_ANDROID
+                    case 1:
+                        hint->setText(QString("Новостей: %1, Новых: %2").arg(num_of_results).arg(num_of_new_news));
+                        break;
+                    case 2:
+                        hint->setText(QString("Total: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+                        break;
+                    default:
+                        break;
+#endif
                 }
             }
         }
@@ -666,6 +709,7 @@ void DFRSSFilter::clear_results()
     readButton->setStyleSheet("color: black;"); // снимем выделение с кнопки (если есть)
     switch (settings->current_language)
     {
+#ifdef Q_OS_WIN32
     case 1:
         hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
         break;
@@ -674,6 +718,17 @@ void DFRSSFilter::clear_results()
         break;
     default:
         break;
+#endif
+#ifdef Q_OS_ANDROID
+    case 1:
+        hint->setText("");
+        break;
+    case 2:
+        hint->setText("Wait or press \"Search\"");
+        break;
+    default:
+        break;
+#endif
     }
 }
 
@@ -692,14 +747,26 @@ void DFRSSFilter::unlight()
     readButton->setStyleSheet("color: black;");
     switch (settings->current_language)
     {
-    case 1:
-        hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
-        break;
-    case 2:
-        hint->setText(QString("Double click will open new in browser (Total news: %1, New: 0)").arg(num_of_results));
-        break;
-    default:
-        break;
+#ifdef Q_OS_WIN32
+        case 1:
+            hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+            break;
+        case 2:
+            hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+            break;
+        default:
+            break;
+#endif
+#ifdef Q_OS_ANDROID
+        case 1:
+            hint->setText(QString("Новостей: %1, Новых: %2").arg(num_of_results).arg(num_of_new_news));
+            break;
+        case 2:
+            hint->setText(QString("Total: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+            break;
+        default:
+            break;
+#endif
     }
 }
 
@@ -909,12 +976,22 @@ void DFRSSFilter::set_language(int language)
         fetchButton->setText("Поиск");
         clearButton->setText("Очистить");
         readButton->setText("Прочитано");
+#ifdef Q_OS_WIN32
         if (num_of_new_news > 0)
             hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
         else if (num_of_results > 0)
             hint->setText(QString("Двойной клик по новости откроет её в браузере (Всего новостей: %1, Новых: 0)").arg(num_of_results));
         else
             hint->setText("Дождитесь автоматического обновления результатов или нажмите кнопку \"Поиск\"");
+#endif
+#ifdef Q_OS_ANDROID
+        if (num_of_new_news > 0)
+            hint->setText(QString("Новостей: %1, Новых: %2)").arg(num_of_results).arg(num_of_new_news));
+        else if (num_of_results > 0)
+            hint->setText(QString("Новостей: %1, Новых: 0)").arg(num_of_results));
+        else
+            hint->setText("");
+#endif
        tray_quit->setText("Выход");
         update();
         break;
@@ -929,12 +1006,22 @@ void DFRSSFilter::set_language(int language)
         fetchButton->setText("Search");
         clearButton->setText("Clear");
         readButton->setText("Checked");
+#ifdef Q_OS_WIN32
         if (num_of_new_news > 0)
             hint->setText(QString("Double click will open new in browser (Total news: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
         else if (num_of_results > 0)
             hint->setText(QString("Double click will open new in browser (Total news: %1, New: 0)").arg(num_of_results));
         else
             hint->setText("Wait until results appear automatically or press \"Search\" button");
+#endif
+#ifdef Q_OS_ANDROID
+        if (num_of_new_news > 0)
+            hint->setText(QString("Total: %1, New: %2)").arg(num_of_results).arg(num_of_new_news));
+        else if (num_of_results > 0)
+            hint->setText(QString("Total: %1, New: 0)").arg(num_of_results));
+        else
+            hint->setText("Wait or press \"Search\"");
+#endif
         tray_quit->setText("Quit");
         break;
     default:

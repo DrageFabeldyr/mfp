@@ -47,7 +47,20 @@ CONFIG += c++11
 RESOURCES += \
     res.qrc
 
-DISTFILES +=
+DISTFILES += \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat \
+    android/res/values/libs.xml \
+    android/res/values/libs.xml \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
 
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/./release/ -llibtag.dll
@@ -61,3 +74,5 @@ win32: LIBS += -L$$PWD/./ -llibtag.dll
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

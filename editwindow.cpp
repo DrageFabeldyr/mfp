@@ -71,7 +71,9 @@ EditWindow::EditWindow(const EditWindow::Type type, const int id, QWidget *paren
                              | Qt::CustomizeWindowHint
                              | Qt::WindowStaysOnTopHint);
 
+#ifdef Q_OS_WIN32
     resize(300, 150);
+#endif
     if (id == -1)
         adding = true;
     else

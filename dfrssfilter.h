@@ -17,6 +17,11 @@
 #include <QPushButton>
 #include <QMouseEvent>
 
+#ifdef Q_OS_ANDROID
+    #include <QScreen>
+#endif
+
+
 #include "settings.h"
 #include "filter.h"
 #include "feeds.h"
@@ -98,6 +103,12 @@ private:
     int num_of_new_news = 0; // количество новых новостей для вывода в уведомлении
 
     QString bandcamp_sucks;
+
+#ifdef Q_OS_ANDROID
+    QScreen *screen;
+#endif
+    int screen_height = 0;
+    int screen_width = 0;
 
 private slots:
     void show_hide(QSystemTrayIcon::ActivationReason);
