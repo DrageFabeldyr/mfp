@@ -39,7 +39,14 @@ void Feeds::GetFilters(QList<filters_struct> &filters, const Feed *feed)
 
 void Feeds::OpenDB()
 {
+//#ifdef Q_OS_WIN32
     QString name = qApp->applicationDirPath() + QDir::separator() + "DATA.DB";
+    /*
+#endif
+#ifdef Q_OS_ANDROID
+    QString name = "assets:/DATA.DB";
+#endif
+*/
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(name);
     if (!db.open()) {

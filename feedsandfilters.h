@@ -88,6 +88,11 @@ private:
     QAction *filters_menu_on_all;
     QAction *filters_menu_off_all;
 
+#ifdef Q_OS_ANDROID
+    QPushButton *close_fnf_button;
+#endif
+
+
 private slots:
     void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;

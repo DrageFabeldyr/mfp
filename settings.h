@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QCloseEvent>
 #include <QTimer>
+#include <QPushButton>  // чтобы закрыть окно в андроиде
 
 class Settings : public QWidget
 {
@@ -31,6 +32,9 @@ private:
     QVBoxLayout *layout;
     QString settingFile = "Setting.ini";
     QWidget *parentW;
+#ifdef Q_OS_ANDROID
+    QPushButton *save_settings_button;
+#endif
 
 private slots:
     void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;

@@ -91,6 +91,12 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
     v_layout->addWidget(filterList);
     v_layout->addWidget(hint2);
 
+#ifdef Q_OS_ANDROID
+    close_fnf_button = new QPushButton(tr("Закрыть"), this);
+    connect(close_fnf_button, SIGNAL(clicked()), this, SLOT(close())); // запуск по нажатию кнопки
+    v_layout->addWidget(close_fnf_button);
+#endif
+
     setLayout(v_layout); // установка главного лэйаута
 
 #ifdef Q_OS_WIN32

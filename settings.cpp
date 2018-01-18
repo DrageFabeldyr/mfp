@@ -52,6 +52,13 @@ Settings::Settings(QWidget *parent) : QWidget(parent)//, ui(new Ui::settings)
     layout->addWidget(run_in_tray);
     layout->addWidget(activate_filters);
     layout->addWidget(activate_feeds);
+
+#ifdef Q_OS_ANDROID
+    save_settings_button = new QPushButton(tr("Сохранить"), this);
+    connect(save_settings_button, SIGNAL(clicked()), this, SLOT(close())); // запуск по нажатию кнопки
+    layout->addWidget(save_settings_button);
+#endif
+
     layout->setMargin(0); // убирает промежуток между layout и границами окна
     setLayout(layout);
 
@@ -74,7 +81,12 @@ Settings::~Settings()
 // чтение сохранённых настроек
 void Settings::read_settings()
 {
+#ifdef Q_OS_WIN32
     QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
+#endif
+#ifdef Q_OS_ANDROID
+    QString name = "assets:/" + settingFile;
+#endif
     QSettings setting_file(name, QSettings::IniFormat);
     min_to_tray->setChecked(setting_file.value("min_to_tray", false).toBool());
     close_to_tray->setChecked(setting_file.value("close_to_tray", false).toBool());
@@ -96,7 +108,12 @@ void Settings::write_settings()
 {
     activateFilters = activate_filters->isChecked();
     activateFeeds = activate_feeds->isChecked();
+#ifdef Q_OS_WIN32
     QString name = qApp->applicationDirPath() + QDir::separator() + settingFile;
+#endif
+#ifdef Q_OS_ANDROID
+    QString name = "assets:/" + settingFile;
+#endif
     QSettings setting_file(name, QSettings::IniFormat);
     if (setting_file.isWritable())
     {

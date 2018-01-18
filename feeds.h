@@ -47,8 +47,6 @@ private:
     void AddFilter(filters_struct * filter);
     void UpdateFilter(filters_struct * filter);
 
-
-
 };
 
 #endif // FEEDS_H
