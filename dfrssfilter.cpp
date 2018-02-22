@@ -100,6 +100,8 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
     settings = new Settings(this);
     pFeeds = new Feeds();
+    feedsandfilters = new FeedsAndFilters(this);
+
     settings->read_settings();
 
     win_max = false; // окно не развёрнуто
@@ -193,16 +195,18 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     screen_height = 480;
     screen_width = 640;
 #endif
-    /*
+    //*
 #ifdef Q_OS_ANDROID
     //QScreen *screen = QApplication::screens().at(0);
     screen = QApplication::screens().at(0);
     screen_height = screen->availableSize().height();
     screen_width = screen->availableSize().width();
+//    screen_height = screen->size().height();
+//    screen_width = screen->size().width();
     // size - размер экрана, availableSize - рабочая область
 #endif
-*/
-    if ((screen_height > 100) && (screen_width > 100))
+//*/
+    //if ((screen_height > 100) && (screen_width > 100))  // в андроиде переменные останутся нулями
         resize(screen_width, screen_height);
     // создаем пункты контекстного меню в трее
     tray_quit = new QAction(tr("&Выход"), this);
@@ -369,7 +373,7 @@ void DFRSSFilter::finished(QNetworkReply *reply)
             have_news = true; // значит есть новые
             num_of_new_news += new_num_of_results - num_of_results; // считаем кол-во новых новостей
             num_of_results = new_num_of_results; // запомним новое значение для следующей проверки
-            readButton->setStyleSheet("color: red;");
+            //readButton->setStyleSheet("color: red;");
         }
 
         // если окно свёрнуто или убрано и есть новости - выведем уведомление
@@ -658,8 +662,8 @@ void DFRSSFilter::itemActivated(QTreeWidgetItem * item)
             treeWidget->topLevelItem(i)->setForeground(0,*(new QBrush(Qt::black,Qt::Dense6Pattern)));
     }
     // если новость была единственной новой - снимем выделение с кнопки
-    if (total_red_lines <= 0) // на всякий случай - мало ли уйдёт в минус
-        readButton->setStyleSheet("color: black;");
+    //if (total_red_lines <= 0) // на всякий случай - мало ли уйдёт в минус
+        //readButton->setStyleSheet("color: black;");
 }
 
 void DFRSSFilter::error(QNetworkReply::NetworkError)
@@ -706,7 +710,7 @@ void DFRSSFilter::clear_results()
     treeWidget->clear();
     num_of_new_news = 0; // сбросим кол-во новых новостей
     num_of_results = 0; // сбросим количество выведенных новостей
-    readButton->setStyleSheet("color: black;"); // снимем выделение с кнопки (если есть)
+    //readButton->setStyleSheet("color: black;"); // снимем выделение с кнопки (если есть)
     switch (settings->current_language)
     {
 #ifdef Q_OS_WIN32
@@ -744,7 +748,7 @@ void DFRSSFilter::unlight()
         }
     }
     num_of_new_news = 0;
-    readButton->setStyleSheet("color: black;");
+    //readButton->setStyleSheet("color: black;");
     switch (settings->current_language)
     {
 #ifdef Q_OS_WIN32
@@ -1040,3 +1044,9 @@ void DFRSSFilter::set_lang_en()
     settings->current_language = 2;
     set_language(settings->current_language);
 }
+
+void DFRSSFilter::grabGestures(const QList<Qt::GestureType> &gestures)
+{
+    feedsandfilters->grabGestures(gestures);
+}
+

@@ -1,4 +1,5 @@
 #include "feeds.h"
+#include <QStandardPaths>   // для размещения базы в андроиде
 
 Feeds::Feeds()
 {
@@ -39,17 +40,37 @@ void Feeds::GetFilters(QList<filters_struct> &filters, const Feed *feed)
 
 void Feeds::OpenDB()
 {
-//#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN32
     QString name = qApp->applicationDirPath() + QDir::separator() + "DATA.DB";
-    /*
 #endif
 #ifdef Q_OS_ANDROID
-    QString name = "assets:/DATA.DB";
+    //find if database exists at user's home directory location
+    QString folder = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    //QFileInfo databaseFileInfo(QString("%1/%2").arg(folder).arg("DATA.DB"));
+    //QString  name = databaseFileInfo.absoluteFilePath();
+    QString  name = folder + "/DATA.DB";
+
+    QFileInfo databaseFileInfo(name);
+    if(!databaseFileInfo.exists())
+    {
+        bool copySuccess = QFile::copy(QString("assets:/DATA.DB"), name);
+        if (!copySuccess)
+        {
+            QMessageBox::critical(0, QString("Error:"), QString("Could not copy database from assets to %1").arg(name), QMessageBox::Ok);
+            name.clear();
+        }
+        else
+        {
+            QMessageBox::critical(0, QString("Yeah:"), QString("Database copied to %1").arg(name), QMessageBox::Ok);
+        }
+    }
+    else
+        QMessageBox::critical(0, QString("Yeah:"), QString("Database exist").arg(name), QMessageBox::Ok);
 #endif
-*/
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(name);
-    if (!db.open()) {
+    if (!db.open())
+    {
         QMessageBox::critical(0, qApp->tr("Невозможно открыть базу"), qApp->tr("Невозможно создать подключение"), QMessageBox::Cancel);
         return ;
     }

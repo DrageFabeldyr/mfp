@@ -18,7 +18,7 @@
 #include <QMouseEvent>
 
 #ifdef Q_OS_ANDROID
-    #include <QScreen>
+    #include <QScreen>  // для возможности получить разрешение экрана телефона
 #endif
 
 
@@ -36,6 +36,7 @@ class DFRSSFilter : public QWidget
 public:
     DFRSSFilter(QWidget *widget = 0);
     ~DFRSSFilter();
+    void grabGestures(const QList<Qt::GestureType> &gestures);
 
     Settings *settings = nullptr;
     Feeds *pFeeds;

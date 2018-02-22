@@ -4,6 +4,9 @@
 
 FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
 {
+    this->setAttribute(Qt::WA_AcceptTouchEvents, true); // для обработки нажатия на экран
+
+
     pFeeds = static_cast<DFRSSFilter*>(parent)->pFeeds; // приводим тип, т.к. parent у нас QWidget
     settings = static_cast<DFRSSFilter*>(parent)->settings; // приводим тип, т.к. parent у нас QWidget
 
@@ -16,6 +19,10 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
     feedList->setSelectionMode(QAbstractItemView::ExtendedSelection);   // чтобы можно было выделить несколько
     feedList->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(feedList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_feeds_menu()));
+#ifdef Q_OS_ANDROID
+    feedList->setAttribute(Qt::WA_AcceptTouchEvents, true); // для обработки нажатия на экран
+    feedList->setAttribute(Qt::WA_StaticContents);
+#endif
 
     filterModel = new FilterModel(parent);
 
@@ -26,6 +33,10 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
     filterList->setSelectionMode(QAbstractItemView::ExtendedSelection); // чтобы можно было выделить несколько
     filterList->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(filterList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_filters_menu()));
+#ifdef Q_OS_ANDROID
+    filterList->setAttribute(Qt::WA_AcceptTouchEvents, true); // для обработки нажатия на экран
+    filterList->setAttribute(Qt::WA_StaticContents);
+#endif
 /*
     h1_layout = new QHBoxLayout;
     feedAdd = new QPushButton;
@@ -117,6 +128,11 @@ FeedsAndFilters::FeedsAndFilters(QWidget *parent): QWidget(parent)
     connect(filterDeleteAll, SIGNAL(clicked(bool)), this, SLOT(filters_delete_all()));
     */
     this->setWindowIcon(QIcon(":/img/rss.ico"));
+
+    // устанавливаем наш обработчик событий
+    installEventFilter(this);
+    feedList->installEventFilter(this);
+    filterList->installEventFilter(this);
 }
 
 FeedsAndFilters::~FeedsAndFilters()
@@ -273,33 +289,6 @@ void FeedsAndFilters::FilterDel()
     updateFilters();
 }
 
-void FeedsAndFilters::closeEvent(QCloseEvent *event)
-{
-    Q_UNUSED(event);
-    settings->timer->start(); // закрыли окно - запустили таймер
-}
-
-void FeedsAndFilters::showEvent(QShowEvent * event)
-{
-    Q_UNUSED(event);
-    settings->timer->stop(); // останавливаем таймер на время работы с окном
-    switch (settings->current_language)
-    {
-    case 1:
-        hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
-        hint2->setText("Работа с фильтрами доступна только после выбора ленты, которой они принадлежат");
-        setWindowTitle("RSS-ленты и фильтры");
-        break;
-    case 2:
-        hint1->setText("Feed with no filters will have all news");
-        hint2->setText("Choose feed to add, edit or delete its filters");
-        setWindowTitle("RSS-feeds and filters");
-        break;
-    default:
-        break;
-    }
-}
-
 void FeedsAndFilters::filters_delete_all()
 {
     if (feedList->selectionModel()->selectedIndexes().isEmpty()) // чтобы показались фильтры лента должна быть выделена
@@ -397,6 +386,19 @@ void FeedsAndFilters::slot_feeds_menu()
         break;
     }
     feeds_menu->exec(QCursor::pos());
+    /*
+#ifdef Q_OS_WIN32
+    feeds_menu->exec(QCursor::pos());
+#endif
+#ifdef Q_OS_ANDROID
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+    if (touchPoints.count() == 1)
+    {
+        feeds_menu->exec(touchPoints.first().pos());
+     }
+#endif
+*/
 }
 
 void FeedsAndFilters::slot_filters_menu()
@@ -460,3 +462,106 @@ void FeedsAndFilters::slot_filters_menu()
     }
     filters_menu->exec(QCursor::pos());
 }
+/*
+void FeedsAndFilters::closeEvent(QCloseEvent *event)
+{
+    Q_UNUSED(event);
+    settings->timer->start(); // закрыли окно - запустили таймер
+}
+
+void FeedsAndFilters::showEvent(QShowEvent * event)
+{
+    Q_UNUSED(event);
+    settings->timer->stop(); // останавливаем таймер на время работы с окном
+    switch (settings->current_language)
+    {
+    case 1:
+        hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
+        hint2->setText("Работа с фильтрами доступна только после выбора ленты");
+        setWindowTitle("RSS-ленты и фильтры");
+        break;
+    case 2:
+        hint1->setText("Feed with no filters will have all news");
+        hint2->setText("Choose feed to work with filters");
+        setWindowTitle("RSS-feeds and filters");
+        break;
+    default:
+        break;
+    }
+}
+*/
+// обработчик событий сворачивания/разворачивания
+bool FeedsAndFilters::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::Show && obj != NULL)
+    {
+        Q_UNUSED(event);
+        settings->timer->stop(); // останавливаем таймер на время работы с окном
+        switch (settings->current_language)
+        {
+        case 1:
+            hint1->setText("В ленте, не имеющей фильтров, будут выведены все новости");
+            hint2->setText("Работа с фильтрами доступна только после выбора ленты");
+            setWindowTitle("RSS-ленты и фильтры");
+            break;
+        case 2:
+            hint1->setText("Feed with no filters will have all news");
+            hint2->setText("Choose feed to work with filters");
+            setWindowTitle("RSS-feeds and filters");
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (event->type() == QEvent::Close && obj != NULL)
+    {
+        Q_UNUSED(event);
+        settings->timer->start(); // закрыли окно - запустили таймер
+    }
+
+    return false;
+}
+
+// обработка пальценажатий
+#ifdef Q_OS_ANDROID
+void FeedsAndFilters::grabGestures(const QList<Qt::GestureType> &gestures)
+{
+    foreach (Qt::GestureType gesture, gestures)
+        grabGesture(gesture);
+}
+
+bool FeedsAndFilters::event(QEvent *event)
+{
+    if (event->type() == QEvent::Gesture)
+        return gestureEvent(static_cast<QGestureEvent*>(event));
+    return QWidget::event(event);
+}
+
+bool FeedsAndFilters::gestureEvent(QGestureEvent *event)
+{
+    if (QGesture *tap_and_hold = event->gesture(Qt::TapAndHoldGesture))
+        tap_and_holdTriggered(static_cast<QTapAndHoldGesture *>(tap_and_hold));
+    return true;
+}
+
+void FeedsAndFilters::tap_and_holdTriggered(QTapAndHoldGesture *gesture)
+{
+    if (gesture->state() == Qt::GestureFinished)
+    {
+        /*
+        if (gesture->horizontalDirection() == QSwipeGesture::Left
+            || gesture->verticalDirection() == QSwipeGesture::Up) {
+            qCDebug(lcExample) << "swipeTriggered(): swipe to previous";
+            goPrevImage();
+        } else {
+            qCDebug(lcExample) << "swipeTriggered(): swipe to next";
+            goNextImage();
+        }
+        */
+        //slot_feeds_menu();
+        close();
+        //update();
+    }
+}
+#endif

@@ -7,46 +7,17 @@
 #include "dfrssfilter.h"
 
 
-Settings::Settings(QWidget *parent) : QWidget(parent)//, ui(new Ui::settings)
+Settings::Settings(QWidget *parent) : QWidget(parent)
 {
     parentW = parent;
-    //setWindowTitle("Настройки");
 
-
-    min_to_tray = new QCheckBox(this);
-    //min_to_tray->setText("Сворачивать в трей");
-    close_to_tray = new QCheckBox(this);
-    //close_to_tray->setText("Сворачивать в трей при закрытии");
-    run_in_tray = new QCheckBox(this);
-    //run_in_tray->setText("Сворачивать в трей при запуске");
-    activate_filters = new QCheckBox(this);
-    //activate_filters->setText("Активировать фильтры при добавлении");
-    activate_feeds = new QCheckBox(this);
-    //activate_feeds->setText("Активировать ленты при добавлении");
-    /*
-    switch (current_language)
-    {
-    case 1:
-        setWindowTitle("Настройки");
-        min_to_tray->setText("Сворачивать в трей");
-        close_to_tray->setText("Сворачивать в трей при закрытии");
-        run_in_tray->setText("Сворачивать в трей при запуске");
-        activate_filters->setText("Активировать фильтры при добавлении");
-        activate_feeds->setText("Активировать ленты при добавлении");
-        break;
-    case 2:
-        setWindowTitle("Settings");
-        min_to_tray->setText("Minimize to tray");
-        close_to_tray->setText("Close to tray");
-        run_in_tray->setText("Start minimized to tray");
-        activate_filters->setText("Set new filters active");
-        activate_feeds->setText("Set new feeds active");
-        break;
-    default:
-        break;
-    }
-    */
     layout = new QVBoxLayout;
+    min_to_tray = new QCheckBox(this);
+    close_to_tray = new QCheckBox(this);
+    run_in_tray = new QCheckBox(this);
+    activate_filters = new QCheckBox(this);
+    activate_feeds = new QCheckBox(this);
+
     layout->addWidget(min_to_tray);
     layout->addWidget(close_to_tray);
     layout->addWidget(run_in_tray);
@@ -54,6 +25,9 @@ Settings::Settings(QWidget *parent) : QWidget(parent)//, ui(new Ui::settings)
     layout->addWidget(activate_feeds);
 
 #ifdef Q_OS_ANDROID
+    min_to_tray->setVisible(false);
+    close_to_tray->setVisible(false);
+    run_in_tray->setVisible(false);
     save_settings_button = new QPushButton(tr("Сохранить"), this);
     connect(save_settings_button, SIGNAL(clicked()), this, SLOT(close())); // запуск по нажатию кнопки
     layout->addWidget(save_settings_button);

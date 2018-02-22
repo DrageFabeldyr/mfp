@@ -74,6 +74,7 @@ EditWindow::EditWindow(const EditWindow::Type type, const int id, QWidget *paren
 #ifdef Q_OS_WIN32
     resize(300, 150);
 #endif
+
     if (id == -1)
         adding = true;
     else
@@ -87,7 +88,9 @@ EditWindow::EditWindow(const EditWindow::Type type, const int id, QWidget *paren
 
     if (type == EditWindow::enFilter)
     {
+#ifdef Q_OS_WIN32
         artistsButton->setVisible(true);
+#endif
         this->setWindowIcon(QIcon(":/img/filter.ico")); // если фильтр - ставим значок фильтра
         filters_struct filter(id);
         if (id != -1)

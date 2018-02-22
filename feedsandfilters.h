@@ -16,6 +16,18 @@
 #include "editwindow.h"
 #include <QMenu>
 
+ // для пальценажатия
+#ifdef Q_OS_ANDROID
+
+#include <QtWidgets>
+
+QT_BEGIN_NAMESPACE
+class QGestureEvent;
+class QTapAndHoldGesture;
+QT_END_NAMESPACE
+
+#endif
+
 class FeedsAndFilters : public QWidget
 {
     Q_OBJECT
@@ -26,6 +38,8 @@ public:
     Feeds *pFeeds;
     int parentFeedId;
     Settings *settings = nullptr;
+
+    void grabGestures(const QList<Qt::GestureType> &gestures);
 
 public slots:
     void UpdateFilter(QModelIndex index);
@@ -90,12 +104,20 @@ private:
 
 #ifdef Q_OS_ANDROID
     QPushButton *close_fnf_button;
+    bool gestureEvent(QGestureEvent *event);
+    void tap_and_holdTriggered(QTapAndHoldGesture*);
 #endif
 
-
+/*
 private slots:
     void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;
+*/
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+#ifdef Q_OS_ANDROID
+    bool event(QEvent *event) override;
+#endif
 
 protected slots:
     void slot_feeds_menu();  // обработка контекстного меню
