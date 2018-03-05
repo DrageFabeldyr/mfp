@@ -9,7 +9,6 @@
 #include "feeds.h"
 #include "settings.h"
 
-
 class FeedModel : public QSqlQueryModel
 {
     Q_OBJECT
@@ -28,7 +27,5 @@ private:
     QString prepQuery;
     int checkedColumn;
 };
-
-
 
 #endif // FEEDMODEL_H

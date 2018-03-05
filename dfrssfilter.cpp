@@ -1049,4 +1049,3 @@ void DFRSSFilter::grabGestures(const QList<Qt::GestureType> &gestures)
 {
     feedsandfilters->grabGestures(gestures);
 }
-

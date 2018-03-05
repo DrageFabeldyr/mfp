@@ -16,16 +16,14 @@
 #include "editwindow.h"
 #include <QMenu>
 
- // для пальценажатия
+// для пальценажатия
 #ifdef Q_OS_ANDROID
+    #include <QtWidgets>
 
-#include <QtWidgets>
-
-QT_BEGIN_NAMESPACE
-class QGestureEvent;
-class QTapAndHoldGesture;
-QT_END_NAMESPACE
-
+    QT_BEGIN_NAMESPACE
+    class QGestureEvent;
+    class QTapAndHoldGesture;
+    QT_END_NAMESPACE
 #endif
 
 class FeedsAndFilters : public QWidget
@@ -39,7 +37,9 @@ public:
     int parentFeedId;
     Settings *settings = nullptr;
 
+#ifdef Q_OS_ANDROID
     void grabGestures(const QList<Qt::GestureType> &gestures);
+#endif
 
 public slots:
     void UpdateFilter(QModelIndex index);
@@ -102,26 +102,23 @@ private:
     QAction *filters_menu_on_all;
     QAction *filters_menu_off_all;
 
-#ifdef Q_OS_ANDROID
-    QPushButton *close_fnf_button;
-    bool gestureEvent(QGestureEvent *event);
-    void tap_and_holdTriggered(QTapAndHoldGesture*);
-#endif
-
-/*
-private slots:
-    void closeEvent(QCloseEvent * event) Q_DECL_OVERRIDE;
-    void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;
-*/
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
-#ifdef Q_OS_ANDROID
-    bool event(QEvent *event) override;
-#endif
 
 protected slots:
     void slot_feeds_menu();  // обработка контекстного меню
     void slot_filters_menu();  // обработка контекстного меню
+
+#ifdef Q_OS_ANDROID
+private:
+    QPushButton *close_fnf_button;
+    bool gestureEvent(QGestureEvent *event);
+    void tap_and_holdTriggered(QTapAndHoldGesture*);
+
+protected:
+    bool event(QEvent *event) override;
+#endif
+
 };
 
 #endif // FEEDSANDFILTERS_H
