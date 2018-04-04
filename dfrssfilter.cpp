@@ -620,7 +620,7 @@ void DFRSSFilter::itemActivated(QTreeWidgetItem * item)
         for (int j = 0; j < treeWidget->topLevelItem(i)->childCount(); j++)
         {
             // посчитаем количество выделенных строк
-            if (treeWidget->topLevelItem(i)->child(j)->foreground(0) == QBrush(Qt::red,Qt::Dense6Pattern))
+            if (treeWidget->topLevelItem(i)->child(j)->foreground(0) == QBrush(Qt::red, Qt::Dense6Pattern))
             {
                 red_lines++;
                 total_red_lines++;

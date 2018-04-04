@@ -60,8 +60,7 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat \
-    android/assets/DATA.DB
+    android/gradlew.bat
 
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/./release/ -llibtag.dll

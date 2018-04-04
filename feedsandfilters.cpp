@@ -390,20 +390,12 @@ void FeedsAndFilters::slot_feeds_menu()
     default:
         break;
     }
-    feeds_menu->exec(QCursor::pos());
-    /*
 #ifdef Q_OS_WIN32
     feeds_menu->exec(QCursor::pos());
 #endif
 #ifdef Q_OS_ANDROID
-    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
-    QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
-    if (touchPoints.count() == 1)
-    {
-        feeds_menu->exec(touchPoints.first().pos());
-     }
+    feeds_menu->exec(feeds_menu->pos());
 #endif
-*/
 }
 
 void FeedsAndFilters::slot_filters_menu()
@@ -465,8 +457,14 @@ void FeedsAndFilters::slot_filters_menu()
     default:
         break;
     }
+#ifdef Q_OS_WIN32
     filters_menu->exec(QCursor::pos());
+#endif
+#ifdef Q_OS_ANDROID
+    filters_menu->exec(filterList->pos());
+#endif
 }
+
 /*
 void FeedsAndFilters::closeEvent(QCloseEvent *event)
 {
@@ -554,9 +552,19 @@ void FeedsAndFilters::tap_and_holdTriggered(QTapAndHoldGesture *gesture)
 {
     if (gesture->state() == Qt::GestureFinished)
     {
-        //slot_feeds_menu();
-        //if (gesture->objectName() == "feedList")
-            close();
+        if ((gesture->position().y() > filterList->pos().y()) && (gesture->position().y() < (filterList->pos().y() + filterList->height())))
+        {
+            //if (!filterList->selectionModel()->selectedIndexes().empty())
+            if (!feedList->selectionModel()->selectedIndexes().empty())     // т.к. работа фильтры принадлежат ленте
+                slot_filters_menu();
+                //close();
+        }
+        if ((gesture->position().y() > feedList->pos().y()) && (gesture->position().y() < (feedList->pos().y() + feedList->height())))
+        {
+            //if (!feedList->selectionModel()->selectedIndexes().empty())
+                slot_feeds_menu();
+                //close();
+        }
     }
 }
 #endif

@@ -97,6 +97,9 @@ void Settings::write_settings()
         setting_file.setValue("activate_filters", activate_filters->isChecked());
         setting_file.setValue("activate_feeds", activate_feeds->isChecked());
     }
+#ifdef Q_OS_ANDROID
+    QMessageBox::critical(0, QString("Yeah:"), QString("Settings saved at %1").arg(name), QMessageBox::Ok);
+#endif
 }
 
 void Settings::closeEvent(QCloseEvent *event)

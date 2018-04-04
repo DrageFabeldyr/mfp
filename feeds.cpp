@@ -44,29 +44,55 @@ void Feeds::OpenDB()
     QString name = qApp->applicationDirPath() + QDir::separator() + "DATA.DB";
 #endif
 #ifdef Q_OS_ANDROID
-    //find if database exists at user's home directory location
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     //QFileInfo databaseFileInfo(QString("%1/%2").arg(folder).arg("DATA.DB"));
     //QString  name = databaseFileInfo.absoluteFilePath();
     QString  name = folder + "/DATA.DB";
+    //*/
+    QString new_name = QStandardPaths::locate(QStandardPaths::DownloadLocation, "DATA.DB", QStandardPaths::LocateFile);
+
+    //QString name = "assets:/DATA.DB";
+    //QFile(name).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ReadOther | QFileDevice::WriteOther);
+    //QFile(new_name).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ReadOther | QFileDevice::WriteOther);
 
     QFileInfo databaseFileInfo(name);
-    if(!databaseFileInfo.exists())
+    if (databaseFileInfo.exists())
     {
-        bool copySuccess = QFile::copy(QString("assets:/DATA.DB"), name);
-        if (!copySuccess)
+        QMessageBox::critical(0, QString("Yeah:"), QString("Database exists at %1").arg(name), QMessageBox::Ok);
+    }
+    else
+    {
+        QMessageBox::critical(0, QString("Fuck:"), QString("No database").arg(name), QMessageBox::Ok);
+    }
+    QFileInfo newdatabaseFileInfo(new_name);
+    if (newdatabaseFileInfo.exists())
+    {
+        QMessageBox::critical(0, QString("Attention!"), QString("New database at %1").arg(new_name), QMessageBox::Ok);
+        QFile::remove(name); // удалим старую базу
+        bool copySuccess = QFile::copy(new_name, name);
+        if (copySuccess)
         {
-            QMessageBox::critical(0, QString("Error:"), QString("Could not copy database from assets to %1").arg(name), QMessageBox::Ok);
-            name.clear();
+            QMessageBox::critical(0, QString("Yeah!"), "Database update success", QMessageBox::Ok);
+            //newdatabaseFileInfo.setCaching(false);
+            bool removetest = QFile::remove(new_name); // не отображается в проводнике, но работает
+            if (removetest)
+                QMessageBox::critical(0, QString("Yeah!"), "Success", QMessageBox::Ok);
+            else
+                QMessageBox::critical(0, QString("Error!"), "Suck ass", QMessageBox::Ok);
+
         }
         else
         {
-            QMessageBox::critical(0, QString("Yeah:"), QString("Database copied to %1").arg(name), QMessageBox::Ok);
+            QMessageBox::critical(0, QString("Error!"), "Database update sucks ass", QMessageBox::Ok);
         }
     }
     else
-        QMessageBox::critical(0, QString("Yeah:"), QString("Database exist").arg(name), QMessageBox::Ok);
+    {
+        QMessageBox::critical(0, QString("Fuck:"), QString("No new database").arg(name), QMessageBox::Ok);
+    }
 #endif
+
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(name);
     if (!db.open())
