@@ -49,7 +49,7 @@ void Feeds::OpenDB()
     //QFileInfo databaseFileInfo(QString("%1/%2").arg(folder).arg("DATA.DB"));
     //QString  name = databaseFileInfo.absoluteFilePath();
     QString  name = folder + "/DATA.DB";
-    //*/
+
     QString new_name = QStandardPaths::locate(QStandardPaths::DownloadLocation, "DATA.DB", QStandardPaths::LocateFile);
 
     //QString name = "assets:/DATA.DB";
@@ -69,18 +69,16 @@ void Feeds::OpenDB()
     if (newdatabaseFileInfo.exists())
     {
         QMessageBox::critical(0, QString("Attention!"), QString("New database at %1").arg(new_name), QMessageBox::Ok);
-        QFile::remove(name); // удалим старую базу
+        QFile::remove(name); // удалим старую базу, иначе не скопируется
         bool copySuccess = QFile::copy(new_name, name);
         if (copySuccess)
         {
             QMessageBox::critical(0, QString("Yeah!"), "Database update success", QMessageBox::Ok);
-            //newdatabaseFileInfo.setCaching(false);
-            bool removetest = QFile::remove(new_name); // не отображается в проводнике, но работает
+            bool removetest = QFile::remove(new_name); // проводник Windows почему-то продолжает его видеть, но копировать и открыть не может
             if (removetest)
                 QMessageBox::critical(0, QString("Yeah!"), "Success", QMessageBox::Ok);
             else
                 QMessageBox::critical(0, QString("Error!"), "Suck ass", QMessageBox::Ok);
-
         }
         else
         {
